@@ -214,7 +214,7 @@
       </div>
 
       <div class="fgroup">
-        <div class="lbl">Massif</div>
+        <div class="lbl">Massif <span style="opacity:.6;font-weight:400">· choisis pour filtrer</span></div>
         <div class="chips" id="massifChips"></div>
       </div>
 
@@ -375,7 +375,7 @@ const DUREE_STEPS = [{l:'1j',v:1},{l:'2j',v:2},{l:'3j',v:3},{l:'4j',v:4},{l:'Tou
 const DANGER_STEPS = [{l:'Faible',v:1},{l:'Modéré',v:2},{l:'Tous',v:3}];
 const MOIS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 
-const state = {size:1, season:0, mode:'hono', disc:'tous', massifs:new Set(MASSIFS), cotMax:5, duree:99, mois:0, dangerMax:3, only82:false, sort:'alt'};
+const state = {size:1, season:0, mode:'hono', disc:'tous', massifs:new Set(), cotMax:5, duree:99, mois:0, dangerMax:3, only82:false, sort:'alt'};
 
 const fmt = n => n==null ? '—' : Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,"'");
 const $ = s => document.querySelector(s);
@@ -385,7 +385,7 @@ function buildChips(){
   const c = $('#massifChips');
   MASSIFS.forEach(m=>{
     const b=document.createElement('button'); b.className='chip'; b.textContent=m;
-    b.setAttribute('aria-pressed','true');
+    b.setAttribute('aria-pressed','false');
     b.onclick=()=>{ b.getAttribute('aria-pressed')==='true' ? (state.massifs.delete(m),b.setAttribute('aria-pressed','false')) : (state.massifs.add(m),b.setAttribute('aria-pressed','true')); render(); };
     c.appendChild(b);
   });
@@ -425,7 +425,7 @@ function priceFor(c){
 
 function passes(c){
   if(state.disc!=='tous' && c.disc!==state.disc) return false;
-  if(!state.massifs.has(c.massif)) return false;
+  if(state.massifs.size>0 && !state.massifs.has(c.massif)) return false;
   if(c.disc==='alpinisme' && c.cotN>state.cotMax) return false;
   if(c.dMin>state.duree) return false;
   if(state.mois>0){ const inS = c.m1<=c.m2 ? (state.mois>=c.m1&&state.mois<=c.m2) : (state.mois>=c.m1||state.mois<=c.m2); if(!inS) return false; }
@@ -523,8 +523,8 @@ $('#modeSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); 
 $('#sortSel').onchange=e=>{ state.sort=e.target.value; render(); };
 $('#only82').onchange=e=>{ state.only82=e.target.checked; render(); };
 $('#resetBtn').onclick=()=>{
-  state.disc='tous'; state.size=1; state.massifs=new Set(MASSIFS); state.cotMax=5; state.duree=99; state.mois=0; state.dangerMax=3; state.only82=false;
-  document.querySelectorAll('#massifChips .chip').forEach(c=>c.setAttribute('aria-pressed','true'));
+  state.disc='tous'; state.size=1; state.massifs=new Set(); state.cotMax=5; state.duree=99; state.mois=0; state.dangerMax=3; state.only82=false;
+  document.querySelectorAll('#massifChips .chip').forEach(c=>c.setAttribute('aria-pressed','false'));
   document.querySelectorAll('#discSeg button').forEach((b,i)=>b.setAttribute('aria-pressed', DISC_STEPS[i].v==='tous'?'true':'false'));
   setSeg('#cotSeg',5); setSeg('#dureeSeg',99); setSeg('#dangerSeg',3);
   $('#sizeSel').value='1'; $('#moisSel').value='0'; $('#only82').checked=false; render();
