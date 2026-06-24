@@ -35,8 +35,8 @@
 
   /* ---- Header ---- */
   header{position:relative; background:var(--rock); color:#eaf0f1; overflow:hidden}
-  .topo{position:absolute; inset:0; opacity:.16; pointer-events:none}
-  .topo path{fill:none; stroke:#7fb3bf; stroke-width:1}
+  .hero-topo{position:absolute; inset:0; opacity:.16; pointer-events:none}
+  .hero-topo path{fill:none; stroke:#7fb3bf; stroke-width:1}
   .head-inner{position:relative; max-width:1080px; margin:0 auto; padding:30px 22px 26px}
   .brand{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
   .brand h1{font-family:'Archivo',sans-serif; font-weight:800; font-size:clamp(24px,4.5vw,38px); letter-spacing:-.02em; line-height:1}
@@ -164,12 +164,6 @@
   .row1{gap:10px}
   .panel-h{flex-wrap:wrap; gap:8px}
   .reset{white-space:nowrap}
-  /* anti-bavure de rendu (Android Chrome) : en-tête au-dessus, pas de transform composité */
-  header{z-index:5; isolation:isolate}
-  .wrap{position:relative; z-index:1}
-  .card{transform:none !important}
-  .card:hover{transform:none; border-color:#b9c3ba}
-  .expand{transition:none}
   .topo{margin-top:11px; font-size:13px; line-height:1.55; color:var(--rock2)}
   .topo b{font-family:'JetBrains Mono'; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ice-deep); display:block; margin-bottom:3px}
   .topo-warn{display:block; margin-top:5px; font-size:11.5px; color:var(--muted); font-style:italic}
@@ -184,7 +178,7 @@
 </head>
 <body>
 <header>
-  <svg class="topo" viewBox="0 0 1080 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <svg class="hero-topo" viewBox="0 0 1080 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <path d="M-20,180 C150,140 260,200 420,150 C600,95 720,175 900,120 C1000,92 1080,140 1120,118"/>
     <path d="M-20,150 C150,110 270,165 430,118 C610,66 730,142 905,90 C1005,62 1085,108 1120,88"/>
     <path d="M-20,120 C160,84 280,132 440,88 C620,40 740,110 910,62 C1010,36 1090,78 1120,60"/>
