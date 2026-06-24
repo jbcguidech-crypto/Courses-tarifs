@@ -169,11 +169,21 @@
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
       <span class="sub">UIAGM · Les Paccots</span>
     </div>
-    <p class="tagline">Catalogue de courses, grille tarifaire et aide à la décision. Filtre par massif, cotation, jours disponibles, mois et danger objectif — le prix s'ajuste selon la taille du groupe (1 à 6).</p>
-    <div class="controls">
-      <div class="ctrl">
-        <label>Taille du groupe</label>
-        <select class="sortsel" id="sizeSel" aria-label="Taille du groupe">
+    <p class="tagline">Catalogue de courses, grille tarifaire et aide à la décision. Règle la taille du groupe, la saison et l'affichage, puis filtre par discipline, massif, cotation, jours, mois et danger.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="board">
+    <aside class="panel" aria-label="Filtres">
+      <div class="panel-h">
+        <h2>Réglages &amp; filtres</h2>
+        <button class="reset" id="resetBtn">tout réinitialiser</button>
+      </div>
+
+      <div class="fgroup">
+        <div class="lbl">Taille du groupe</div>
+        <select class="sortsel" id="sizeSel" aria-label="Taille du groupe" style="width:100%">
           <option value="1">1 personne</option>
           <option value="2">2 personnes</option>
           <option value="3">3 personnes</option>
@@ -182,31 +192,24 @@
           <option value="6">6 personnes</option>
         </select>
       </div>
-      <div class="ctrl">
-        <label>Saison</label>
-        <div class="seg" id="seasonSeg" role="group" aria-label="Saison tarifaire">
+
+      <div class="fgroup">
+        <div class="lbl">Saison</div>
+        <div class="seg mini" id="seasonSeg" role="group" aria-label="Saison tarifaire">
           <button data-s="0" aria-pressed="true">Normale</button>
           <button data-s="12" aria-pressed="false">Haute (+12%)</button>
         </div>
       </div>
-      <div class="ctrl">
-        <label>Affichage du prix</label>
-        <div class="seg" id="modeSeg" role="group" aria-label="Type de prix affiché">
+
+      <div class="fgroup">
+        <div class="lbl">Affichage du prix</div>
+        <div class="seg mini" id="modeSeg" role="group" aria-label="Type de prix affiché">
           <button data-m="hono" aria-pressed="true">Honoraires</button>
           <button data-m="tc" aria-pressed="false">Tout compris ~</button>
         </div>
       </div>
-    </div>
-  </div>
-</header>
 
-<div class="wrap">
-  <div class="board">
-    <aside class="panel" aria-label="Filtres">
-      <div class="panel-h">
-        <h2>Filtrer</h2>
-        <button class="reset" id="resetBtn">tout réinitialiser</button>
-      </div>
+      <div style="height:1px;background:rgba(0,0,0,.10);margin:6px 0 16px"></div>
 
       <div class="fgroup">
         <div class="lbl">Discipline</div>
