@@ -115,7 +115,7 @@
   .tag.s82{background:var(--ice-soft); color:var(--ice-deep); border-color:transparent}
 
   .expand{grid-column:1/-1; border-top:1px dashed var(--line); padding:0 17px; max-height:0; overflow:hidden; transition:max-height .25s ease, padding .25s ease}
-  .card.open .expand{max-height:420px; padding:14px 17px 16px}
+  .card.open .expand{max-height:1000px; padding:14px 17px 16px}
   .card.open{border-color:var(--ice)}
   .expand p{font-size:13.5px; color:var(--rock2); margin-bottom:10px}
   .expand .frais{font-size:12.5px; color:var(--muted); margin-bottom:12px}
@@ -151,6 +151,25 @@
   .cgc-sec p{font-size:13.5px; color:var(--rock2); line-height:1.55}
   .cgc-sec .k{font-family:'JetBrains Mono'; font-size:12.5px; color:var(--ink)}
   .cgc-note{margin-top:8px; padding:12px 14px; background:var(--ice-soft); border-radius:10px; font-size:12.5px; color:var(--ice-deep)}
+  /* --- corrections cadrage --- */
+  html,body{overflow-x:hidden}
+  .head-inner{display:flex; flex-direction:column}
+  .cgc-link{position:static; align-self:flex-end; margin:0 0 14px 0}
+  .board{grid-template-columns:268px minmax(0,1fr)}
+  @media(max-width:840px){ .board{grid-template-columns:minmax(0,1fr)} }
+  main{min-width:0}
+  .card{grid-template-columns:64px minmax(0,1fr)}
+  .titleblock{min-width:0}
+  .titleblock h3{overflow-wrap:anywhere}
+  .row1{gap:10px}
+  .panel-h{flex-wrap:wrap; gap:8px}
+  .reset{white-space:nowrap}
+  .topo{margin-top:11px; font-size:13px; line-height:1.55; color:var(--rock2)}
+  .topo b{font-family:'JetBrains Mono'; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ice-deep); display:block; margin-bottom:3px}
+  .topo-warn{display:block; margin-top:5px; font-size:11.5px; color:var(--muted); font-style:italic}
+  .topo-links{margin-top:12px; display:flex; flex-wrap:wrap; gap:8px}
+  .topo-links a{font-family:'JetBrains Mono'; font-size:11.5px; text-decoration:none; color:var(--ice-deep); background:var(--ice-soft); border:1px solid var(--line); padding:6px 11px; border-radius:7px}
+  .topo-links a:hover{background:#dceaee}
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -178,7 +197,7 @@
     <aside class="panel" aria-label="Filtres">
       <div class="panel-h">
         <h2>Réglages &amp; filtres</h2>
-        <button class="reset" id="resetBtn">tout réinitialiser</button>
+        <button class="reset" id="resetBtn">réinitialiser</button>
       </div>
 
       <div class="fgroup">
@@ -319,8 +338,8 @@ const COURSES = [
   {nom:`Mont Blanc — voie normale (Goûter)`, disc:`alpinisme`, massif:`Mont-Blanc`, alt:4810, cotN:3, cot:`PD+/AD`, dMin:2,dMax:3, maxP:2, eng:1800, danger:3, est:false, m1:6,m2:9, refuge:`Tête Rousse / Goûter`, note:`Le plus haut des Alpes. Couloir du Goûter exposé en août — préférer juin-juillet, septembre.`},
   {nom:`Aiguille du Chardonnet — arête Forbes`, disc:`alpinisme`, massif:`Mont-Blanc`, alt:3824, cotN:3.5, cot:`AD`, dMin:2,dMax:2, maxP:2, eng:1650, danger:2, est:false, m1:6,m2:8, refuge:`Refuge Albert 1er`, note:`Une des plus belles arêtes de neige des Alpes. État à valider en fin d'été.`},
   {nom:`Tour Ronde — face Nord`, disc:`alpinisme`, massif:`Mont-Blanc`, alt:3792, cotN:3.5, cot:`AD`, dMin:2,dMax:2, maxP:2, eng:1500, danger:2, est:false, m1:5,m2:7, refuge:`Refuge Torino`, note:`Course de glace (50-55°) classique et accessible. Meilleure en juin-juillet.`},
-  {nom:`Gastlosen — traversée classique`, disc:`alpinisme`, massif:`Préalpes`, alt:2200, cotN:2, cot:`PD`, dMin:1,dMax:1, maxP:2, eng:700, danger:1, est:false, m1:6,m2:9, refuge:`—  (à la journée)`, note:`Escalade d'arête à deux pas des Paccots. Journée découverte.`},
-  {nom:`Gastlosen — traversée moderne`, disc:`alpinisme`, massif:`Préalpes`, alt:2200, cotN:3.5, cot:`AD`, dMin:1,dMax:1, maxP:2, eng:800, danger:1, est:false, m1:6,m2:9, refuge:`—  (à la journée)`, note:`Variante plus engagée de l'arête, rocher technique.`},
+  {nom:`Gastlosen — traversée classique`, disc:`escalade`, massif:`Préalpes`, alt:2200, cotN:2, cot:`IV–V (UIAA)`, dMin:1,dMax:1, maxP:2, eng:700, danger:1, est:false, m1:6,m2:9, refuge:`—  (à la journée)`, note:`Traversée d'arête calcaire à deux pas des Paccots, avec un pas de V en libre. Cotation à confirmer par le guide.`},
+  {nom:`Gastlosen — traversée moderne`, disc:`escalade`, massif:`Préalpes`, alt:2200, cotN:3.5, cot:`6a–6b`, dMin:1,dMax:1, maxP:2, eng:800, danger:1, est:false, m1:6,m2:9, refuge:`—  (à la journée)`, note:`Grande voie / arête engagée, ~18 longueurs jusqu'à 6b. Cotation à confirmer par le guide.`},
 
   // — ALPINISME (nouvelles) —
   {nom:`Breithorn (traversée)`, disc:`alpinisme`, massif:`Valais`, alt:4164, cotN:2, cot:`F/PD`, dMin:1,dMax:1, maxP:4, eng:800, danger:1, est:false, m1:6,m2:9, refuge:`Téléphérique Klein Matterhorn`, note:`4000 le plus guidé des Alpes (téléphérique). Produit d'entrée.`},
@@ -369,6 +388,8 @@ const FRAIS = {
   'Journée ski de randonnée':40, 'Haute Route Chamonix–Zermatt':700, 'Berner Haute Route':620, 'Ski 4000 (Allalinhorn, Punta Gnifetti, Strahlhorn)':200, 'Sella Ronda / ski Dolomites':70,
 };
 COURSES.forEach(c => c.frais = FRAIS[c.nom] ?? 0);
+const TOPO = {"Bishorn": "Depuis Zinal, montée à la cabane de Tracuit (~5 h). Le lendemain, voie glaciaire facile par le glacier du Turtmann jusqu'à l'arête sommitale neigeuse. Pas de difficulté technique soutenue mais crevasses et pente finale en neige. Retour par le même itinéraire. Excellent premier 4000.", "Weisshorn": "Depuis Randa, longue montée à la Weisshornhütte. Voie normale par l'arête Est (Ostgrat) : arête de neige et rocher (II-III) longue, soutenue et exposée, qui demande endurance et pied sûr. Départ très matinal indispensable. Course d'engagement guidée en 1:1.", "Cervin — voie normale (Hörnli)": "Depuis Zermatt, accès à la Hörnlihütte (3260 m). Ascension par l'arête du Hörnli : rocher II-III avec passages équipés de cordes fixes (Moseleyplatte, épaule, toit) puis neige sommitale. Foule et chutes de pierres possibles, départ à la frontale. La descente par la même arête est souvent le plus délicat.", "Cervin — traversée (Lion → Hörnli)": "Montée côté italien par l'arête du Lion (refuge Carrel), passages raides équipés (échelles, cordes fixes) jusqu'au sommet, puis descente par l'arête du Hörnli côté suisse. Course longue et engagée (AD+/D) qui exige les deux versants en condition.", "Weissmies — arête SE (Südgrat)": "Depuis Saas-Almagell, cabane d'Almageller. Arête S/SE rocher-neige propre et esthétique, à l'écart des séracs de la voie NW. Belle escalade facile en altitude (AD) ; descente possible par la voie normale NW.", "Lagginhorn — arête WSW": "Depuis la Weissmieshütte, arête WSW essentiellement rocheuse (II, quelques ressauts), danger objectif faible. Course de rocher facile en haute montagne ; soigner l'itinéraire dans la partie sommitale. Combine bien avec le Weissmies.", "Alphubel — Rotgrat": "Depuis Täsch (cabane), arête NW « Rotgrat » mêlant rocher et neige (AD), longue mais sans difficulté extrême, sommet glaciaire. Descente fréquente par la voie normale (Feejoch).", "Nadelgrat": "Traversée d'arête (Hohberghorn, Stecknadelhorn, Nadelhorn) neige et rocher (AD/AD+) enchaînant plusieurs 4000. Longue et exposée, demande un bon niveau. Accès Mischabel / Bordierhütte.", "Täschhorn — Domgrat": "Traversée depuis le Dom par le Domgrat : un des 4000 les plus difficiles, rocher et neige soutenus et très exposés (D). Engagement sérieux, réservé aux clients expérimentés.", "Nordend": "Depuis la Monte Rosa Hütte, montée par le Silbersattel puis arête et ressaut rocheux (III) jusqu'au sommet (AD). Souvent combiné avec la Pointe Dufour. Grande course glaciaire d'altitude.", "Tour des 4000 du Mont Rose (Spaghetti)": "Depuis Punta Indren (Alagna), enchaînement sur plusieurs jours des 4000 italiens du Mont Rose (Gnifetti, Zumstein, Parrot, Ludwigshöhe, Balmenhorn…), nuits en refuge d'altitude (Gnifetti, Margherita). Terrain glaciaire facile (F/PD), gros volume de sommets ; idéal pour l'acclimatation.", "Schreckhorn — arête SW": "Depuis la Schreckhornhütte, couloir d'accès puis arête SW en granit (escalade III, un pas IV) (AD+). Rocher de qualité ; passer le couloir au bon regel. Course alpine soutenue de l'Oberland.", "Finsteraarhorn — arête NW": "Course remote au cœur de l'Oberland (Finsteraarhornhütte). Arête NW neige et rocher (AD), approche longue (3 j), ambiance haute montagne isolée. Le toit de l'Oberland.", "Gross Grünhorn — arête SW": "Depuis la Konkordiahütte (glacier d'Aletsch), itinéraire glaciaire puis arête SW (AD). Sommet élégant et peu fréquenté, longue course sur 3 jours.", "Piz Bernina — Spallagrat": "Depuis Diavolezza/Bellavista, nuit au refuge Marco e Rosa. Voie normale par le Spallagrat (arête SE), neige et rocher (AD). Seul 4000 des Alpes orientales.", "Piz Bernina — Biancograt": "L'« arête blanche » : fil de neige aérien et esthétique (AD+) depuis la Tschiervahütte, jonction au Piz Bianco puis arête rocheuse jusqu'au Piz Bernina. Course mythique guidée en 1:1 ; exige une arête en bonne condition.", "Traversée de la Meije": "Depuis La Grave, refuge du Promontoire. Traversée du Grand Pic à la Meije orientale, rocher et neige soutenus et exposés (D−). Grande course historique et longue ; sous 4000 m.", "Mont Blanc — voie normale (Goûter)": "Depuis Saint-Gervais (Nid d'Aigle), traversée du couloir du Goûter exposé aux chutes de pierres, refuges Tête Rousse / Goûter, puis Dôme du Goûter et arête des Bosses en neige (PD+/AD). Très haute altitude : météo et acclimatation déterminantes.", "Aiguille du Chardonnet — arête Forbes": "Depuis le refuge Albert 1er, arête Forbes (arête NE) : superbe fil de neige (AD), un des plus beaux des Alpes. Vérifier l'état de l'arête et la rimaye en fin d'été.", "Tour Ronde — face Nord": "Depuis le refuge Torino (Helbronner), face nord de glace 50-55° (AD), course-école classique et accessible. Meilleure en début d'été ; glace vive possible en août.", "Gastlosen — traversée classique": "Préalpes fribourgeoises : traversée d'arête calcaire à deux pas des Paccots, avec au moins un pas de V (UIAA) en libre. Journée d'escalade alpine. Cotation et itinéraire à confirmer par le guide.", "Gastlosen — traversée moderne": "Grande voie d'escalade engagée des Gastlosen : environ 18 longueurs jusqu'à 6b sur calcaire. Journée soutenue, bien plus dure que la traversée classique. Cotation et longueurs à confirmer par le guide.", "Breithorn (traversée)": "Depuis le Klein Matterhorn (téléphérique), voie glaciaire courte (F/PD) vers le Breithorn occidental, traversée des pointes possible. Le 4000 le plus accessible ; crevasses et altitude restent réelles.", "Gran Paradiso": "Depuis Pont (Valsavarenche), refuge Chabod ou Vittorio Emanuele. Voie glaciaire (F) jusqu'au ressaut sommital rocheux (court pas vers la Madone). 4000 idéal pour débuter.", "Dôme des Écrins": "Depuis Pré de Madame Carle, refuge des Écrins. Voie glaciaire (PD) avec pente sommitale, vue sur la Barre. Le grand 4000 dauphinois.", "Aiguille du Tour / initiation 4000": "Depuis le refuge Albert 1er, glacier du Tour jusqu'aux sommets N/S de l'Aiguille du Tour (F/PD), court rocher final. Parfait stage glacier / initiation à l'alpinisme.", "Grande voie (Salbit, Grimsel, Miroir d'Argentine)": "Journée de grande voie en rocher : granit du Salbit/Grimsel ou calcaire du Miroir d'Argentine, longueurs 5c-6a selon le secteur. Choix de la voie selon niveau et météo.", "Grande voie engagée (Salbit Westgrat, Dolomites)": "Objectif rocher plus sérieux sur 2 jours (arête W du Salbit, Dolomites), 6a-6b / TD, ambiance soutenue et altitude.", "Via ferrata": "Parcours câblé (K2-K4) accessible : gestion des longes et de l'effort, nombreuses lignes en Suisse, France et Italie. Idéal familial ou pour découvrir le gaz en sécurité.", "Couenne / perfectionnement": "Journée d'escalade sportive en falaise (initiation jusqu'à 6b) : technique de pieds, assurage et manœuvres. Site adapté au niveau du groupe.", "Journée cascade (Kandersteg / Cogne / Écrins)": "Goulottes et cascades de glace (WI 3-5) à Kandersteg, Cogne ou dans les Écrins : broches, relais, piolet-traction. Les conditions de gel sont déterminantes.", "Goulotte / mixte": "Terrain alpin hivernal (M / WI 4) mêlant neige, glace et rocher : engagement et lecture d'itinéraire. Accès par une cabane selon le massif.", "Stage cascade 3 j (Cogne / Kandersteg)": "Séjour à Cogne ou Kandersteg, progression sur 3 jours en cascade de glace (WI 3-5). Petit groupe, axé sur l'autonomie.", "Vallée Blanche": "Descente hors-piste glaciaire depuis l'Aiguille du Midi (arête de départ exposée), environ 20 km et 2700 m de descente vers Chamonix/Montenvers. Crevasses : encordement parfois nécessaire. Niveau ski 4-5.", "Journée hors-piste (Verbier / Zermatt / Engelberg)": "Hors-piste encadré (Verbier, Zermatt, Engelberg…), choix des pentes selon la nivologie et gestion du risque d'avalanche. Niveau ski 4.", "Journée ski de randonnée": "Sortie à peaux (montée + descente) : conversions, conduite de course et nivologie, depuis Les Paccots et alentours. Niveau ski 2-4.", "Grand-Combin — traversée à ski": "Traversée de printemps à ski (PD+/AD), refuges Valsorey/Panossière, ambiance haute montagne glaciaire. Conditions de neige déterminantes.", "Haute Route Chamonix–Zermatt": "Raid à ski sur 6 jours, refuges, cols et sommets (Pigne d'Arolla, Tête Blanche…), niveau ski 4 / PD. Le grand classique : endurance et météo sont les clés.", "Berner Haute Route": "Raid à ski de 5-6 jours dans l'Oberland (glacier d'Aletsch), plus sauvage. Refuges et longues étapes glaciaires.", "Ski 4000 (Allalinhorn, Punta Gnifetti, Strahlhorn)": "Ascension à ski d'un 4000 facile (Allalinhorn, Punta Gnifetti, Strahlhorn) sur 2 jours, niveau ski 4 / PD. Sommet d'altitude accessible à peaux.", "Sella Ronda / ski Dolomites": "Ski itinérant autour du massif du Sella (liaisons et hors-piste doux), ambiance dolomitique, niveau ski 2-3. Accessible et spectaculaire."};
+COURSES.forEach(c => c.topo = TOPO[c.nom] || '');
 
 const MASSIFS = ['Valais','Mont Rose','Alpes bernoises','Bernina','Mont-Blanc','Écrins','Préalpes','Italie','Suisse centrale'];
 const DISC_LABEL = {alpinisme:'Alpinisme', escalade:'Escalade', cascade:'Cascade de glace', 'hors-piste':'Ski hors-piste', 'ski-rando':'Ski de randonnée'};
@@ -382,6 +403,15 @@ const state = {size:1, season:0, mode:'hono', disc:'tous', massifs:new Set(), co
 
 const fmt = n => n==null ? '—' : Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,"'");
 const $ = s => document.querySelector(s);
+const tq = q => 'https://www.google.com/search?q=' + encodeURIComponent(q);
+function topoLinks(c){
+  const ski = c.disc==='ski-rando' || c.disc==='hors-piste';
+  const a1 = `<a target="_blank" rel="noopener" href="${tq('site:camptocamp.org/routes '+c.nom)}">Topo Camptocamp ↗</a>`;
+  const a2 = ski
+    ? `<a target="_blank" rel="noopener" href="${tq('site:skitour.fr '+c.nom)}">Topo Skitour ↗</a>`
+    : `<a target="_blank" rel="noopener" href="${tq(c.nom+' topo voie')}">Autres topos ↗</a>`;
+  return `<div class="topo-links">${a1}${a2}</div>`;
+}
 
 /* build filter controls */
 function buildChips(){
@@ -499,6 +529,8 @@ function render(){
       </div>
       <div class="expand">
         <p>${c.note}</p>
+        ${c.topo?`<div class="topo"><b>Aperçu · indicatif</b> ${c.topo} <span class="topo-warn">⚠️ Résumé non vérifié, à titre d'orientation seulement. Il ne remplace ni un topo de référence à jour, ni la reconnaissance et le jugement du guide. Cotations, conditions et itinéraire à vérifier avant toute course.</span></div>`:''}
+        ${topoLinks(c)}
         <div class="frais"><b>Frais en sus estimés</b> ~CHF ${fmt(c.frais)} / pers. (client + part guide) : refuge ${c.refuge}, remontées, repas, transferts, location matériel. Approximatif, à confirmer.</div>
         <div class="devis">
           <button class="copybtn">Copier le devis</button>
