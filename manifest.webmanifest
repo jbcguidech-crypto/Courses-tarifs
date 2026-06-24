@@ -2,6 +2,7 @@
   "name": "Courses & Tarifs — Guide UIAGM",
   "short_name": "Courses & Tarifs",
   "description": "Catalogue de courses, grille tarifaire et aide à la décision pour le guidage en montagne.",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
