@@ -164,15 +164,15 @@
   .row1{gap:10px}
   .panel-h{flex-wrap:wrap; gap:8px}
   .reset{white-space:nowrap}
-  .topo{margin-top:11px; font-size:13px; line-height:1.55; color:var(--rock2)}
-  .topo b{font-family:'JetBrains Mono'; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ice-deep); display:block; margin-bottom:3px}
-  .topo-warn{display:block; margin-top:5px; font-size:11.5px; color:var(--muted); font-style:italic}
-  .topo-warn.ok{color:var(--green); font-style:normal}
+  .rinfo{margin-top:11px; font-size:13px; line-height:1.55; color:var(--rock2)}
+  .rinfo b{font-family:'JetBrains Mono'; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ice-deep); display:block; margin-bottom:3px}
+  .rwarn{display:block; margin-top:5px; font-size:11.5px; color:var(--muted); font-style:italic}
+  .rwarn.ok{color:var(--green); font-style:normal}
   .tag.warn{background:var(--amber-bg); color:var(--amber); border-color:transparent}
   .tag.ok{background:var(--green-bg); color:var(--green); border-color:transparent}
-  .topo-links{margin-top:12px; display:flex; flex-wrap:wrap; gap:8px}
-  .topo-links a{font-family:'JetBrains Mono'; font-size:11.5px; text-decoration:none; color:var(--ice-deep); background:var(--ice-soft); border:1px solid var(--line); padding:6px 11px; border-radius:7px}
-  .topo-links a:hover{background:#dceaee}
+  .rlinks{margin-top:12px; display:flex; flex-wrap:wrap; gap:8px}
+  .rlinks a{font-family:'JetBrains Mono'; font-size:11.5px; text-decoration:none; color:var(--ice-deep); background:var(--ice-soft); border:1px solid var(--line); padding:6px 11px; border-radius:7px}
+  .rlinks a:hover{background:#dceaee}
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -415,7 +415,7 @@ function topoLinks(c){
   const a2 = ski
     ? `<a target="_blank" rel="noopener" href="${tq('site:skitour.fr '+c.nom)}">Topo Skitour ↗</a>`
     : `<a target="_blank" rel="noopener" href="${tq(c.nom+' topo voie')}">Autres topos ↗</a>`;
-  return `<div class="topo-links">${a1}${a2}</div>`;
+  return `<div class="rlinks">${a1}${a2}</div>`;
 }
 
 /* build filter controls */
@@ -535,7 +535,7 @@ function render(){
       </div>
       <div class="expand">
         <p>${c.note}</p>
-        ${c.topo?`<div class="topo"><b>Aperçu · indicatif</b> ${c.topo} <span class="topo-warn ${c.verif?'ok':''}">${c.verif?'✓ Validé par le guide.':'⚠️ Résumé non vérifié, à titre d\'orientation seulement : il ne remplace ni un topo de référence à jour, ni la reconnaissance et le jugement du guide. Cotations, conditions et itinéraire à vérifier avant toute course.'}</span></div>`:''}
+        ${c.topo?`<div class="rinfo"><b>Aperçu · indicatif</b> ${c.topo} <span class="rwarn ${c.verif?'ok':''}">${c.verif?'✓ Validé par le guide.':'⚠️ Résumé non vérifié, à titre d\'orientation seulement : il ne remplace ni un topo de référence à jour, ni la reconnaissance et le jugement du guide. Cotations, conditions et itinéraire à vérifier avant toute course.'}</span></div>`:''}
         ${topoLinks(c)}
         <div class="frais"><b>Frais en sus estimés</b> ~CHF ${fmt(c.frais)} / pers. (client + part guide) : refuge ${c.refuge}, remontées, repas, transferts, location matériel. Approximatif, à confirmer.</div>
         <div class="devis">
