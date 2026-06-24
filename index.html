@@ -164,6 +164,12 @@
   .row1{gap:10px}
   .panel-h{flex-wrap:wrap; gap:8px}
   .reset{white-space:nowrap}
+  /* anti-bavure de rendu (Android Chrome) : en-tête au-dessus, pas de transform composité */
+  header{z-index:5; isolation:isolate}
+  .wrap{position:relative; z-index:1}
+  .card{transform:none !important}
+  .card:hover{transform:none; border-color:#b9c3ba}
+  .expand{transition:none}
   .topo{margin-top:11px; font-size:13px; line-height:1.55; color:var(--rock2)}
   .topo b{font-family:'JetBrains Mono'; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ice-deep); display:block; margin-bottom:3px}
   .topo-warn{display:block; margin-top:5px; font-size:11.5px; color:var(--muted); font-style:italic}
