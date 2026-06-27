@@ -62,6 +62,12 @@
   .panel-h{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px}
   .panel-h h2{font-family:'Archivo'; font-weight:700; font-size:15px; letter-spacing:-.01em}
   .reset{font-family:'JetBrains Mono';font-size:11px; color:var(--ice-deep); background:none; border:none; cursor:pointer; text-decoration:underline}
+  .search-wrap{position:relative;margin-bottom:20px}
+  .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.45;pointer-events:none}
+  #searchInp{width:100%;box-sizing:border-box;padding:8px 10px 8px 34px;background:var(--rock1);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--snow);font-size:13.5px;font-family:inherit;outline:none;transition:border .2s}
+  #searchInp::placeholder{color:var(--muted)}
+  #searchInp:focus{border-color:var(--ice)}
+  .search-clear{position:absolute;right:9px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px 5px;display:none}
   .fgroup{margin-bottom:18px}
   .fgroup > .lbl{font-family:'JetBrains Mono'; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); margin-bottom:9px}
   .chips{display:flex; flex-wrap:wrap; gap:6px}
@@ -215,6 +221,15 @@
         <button class="reset" id="resetBtn">réinitialiser</button>
       </div>
 
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="2"/>
+          <line x1="12.5" y1="12.5" x2="17" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input id="searchInp" type="search" placeholder="Rechercher une course…" autocomplete="off" spellcheck="false">
+        <button class="search-clear" id="searchClear" aria-label="Effacer">×</button>
+      </div>
+
       <div class="fgroup">
         <div class="lbl">Taille du groupe</div>
         <select class="sortsel" id="sizeSel" aria-label="Taille du groupe" style="width:100%">
@@ -305,7 +320,7 @@
   <footer>
     <button class="cgc-foot-btn" id="cgcOpenFoot">📄 Conditions générales d'engagement (CGC)</button>
     <button class="cgc-foot-btn" id="installBtn" hidden style="margin-left:8px">📲 Installer l'app</button><br>
-    <div style="margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:11px; opacity:.55">version 2026-06-24 · v16</div>
+    <div style="margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:11px; opacity:.55">version 2026-06-24 · v17</div>
   </footer>
 </div>
 
@@ -568,7 +583,7 @@ const DUREE_STEPS = [{l:'1j',v:1},{l:'2j',v:2},{l:'3j',v:3},{l:'4j',v:4},{l:'Tou
 const DANGER_STEPS = [{l:'Faible',v:1},{l:'Modéré',v:2},{l:'Tous',v:3}];
 const MOIS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 
-const state = {size:1, season:0, mode:'hono', disc:'tous', massifs:new Set(), pays:new Set(), cotMax:5, duree:99, mois:0, dangerMax:3, only82:false, sort:'alt'};
+const state = {size:1, season:0, mode:'hono', disc:'tous', massifs:new Set(), pays:new Set(), q:'', cotMax:5, duree:99, mois:0, dangerMax:3, only82:false, sort:'alt'};
 
 const fmt = n => n==null ? '—' : Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,"'");
 const $ = s => document.querySelector(s);
@@ -646,6 +661,11 @@ function passes(c){
   if(state.mois>0){ const inS = c.m1<=c.m2 ? (state.mois>=c.m1&&state.mois<=c.m2) : (state.mois>=c.m1||state.mois<=c.m2); if(!inS) return false; }
   if(c.danger>state.dangerMax) return false;
   if(state.only82 && c.alt<4000) return false;
+  if(state.q){
+    const q=state.q.toLowerCase();
+    const hay=[c.nom,c.massif,c.cot,c.pays,c.refuge||'',c.note||''].join(' ').toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
   return true;
 }
 
@@ -741,7 +761,7 @@ $('#modeSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); 
 $('#sortSel').onchange=e=>{ state.sort=e.target.value; render(); };
 $('#only82').onchange=e=>{ state.only82=e.target.checked; render(); };
 $('#resetBtn').onclick=()=>{
-  state.disc='tous'; state.size=1; state.massifs=new Set(); state.pays=new Set(); state.cotMax=5; state.duree=99; state.mois=0; state.dangerMax=3; state.only82=false;
+  state.disc='tous'; state.size=1; state.massifs=new Set(); state.pays=new Set(); state.q=''; $('#searchInp').value=''; $('#searchClear').style.display='none'; state.cotMax=5; state.duree=99; state.mois=0; state.dangerMax=3; state.only82=false;
   document.querySelectorAll('#massifChips .chip').forEach(c=>c.setAttribute('aria-pressed','false'));
   document.querySelectorAll('#paysChips .chip').forEach(c=>c.setAttribute('aria-pressed','false'));
   document.querySelectorAll('#discSeg button').forEach((b,i)=>b.setAttribute('aria-pressed', DISC_STEPS[i].v==='tous'?'true':'false'));
@@ -750,6 +770,14 @@ $('#resetBtn').onclick=()=>{
 };
 function setSeg(id,v){ const c=$(id); [...c.children].forEach((b,i)=>{ const steps=id==='#cotSeg'?COT_STEPS:id==='#dureeSeg'?DUREE_STEPS:DANGER_STEPS; b.setAttribute('aria-pressed', steps[i].v===v?'true':'false'); }); }
 
+$('#searchInp').oninput=function(){
+  state.q=this.value.trim();
+  $('#searchClear').style.display=state.q?'block':'none';
+  render();
+};
+$('#searchClear').onclick=function(){
+  state.q=''; $('#searchInp').value=''; this.style.display='none'; render();
+};
 buildChips();
 buildSeg('#discSeg',DISC_STEPS,'disc','tous');
 buildSeg('#cotSeg',COT_STEPS,'cotMax',5);
