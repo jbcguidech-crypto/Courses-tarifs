@@ -197,9 +197,19 @@
   .matcol ul{list-style:none; padding:0; margin:0}
   .matcol li{font-size:12.5px; color:var(--rock2); line-height:1.5; padding-left:13px; position:relative; margin-bottom:2px}
   .matcol li:before{content:'·'; position:absolute; left:3px; color:var(--ice-deep)}
-  .mat-head{margin-top:14px; display:flex; align-items:center; gap:7px}
-  .mat-head b{font-family:'JetBrains Mono'; font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--ice-deep)}
-  .mat-note{font-size:11px; color:var(--rock2); opacity:.85}
+  .mat-wrap{margin-top:14px}
+  .mat-head{display:flex;align-items:center;gap:7px}
+  .mat-head b{font-family:'JetBrains Mono';font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ice-deep)}
+  .mat-note{font-size:11px;color:var(--rock2);opacity:.85}
+  .mat-prog{margin-left:auto;font-size:11px;font-weight:600;color:var(--muted);background:rgba(0,0,0,.07);padding:2px 8px;border-radius:10px;font-variant-numeric:tabular-nums}
+  .mat-rst{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px 4px;line-height:1;-webkit-tap-highlight-color:transparent}
+  .mat-rst:active{color:var(--rock)}
+  .mchk{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(0,0,0,.07);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .mchk:last-child{border-bottom:none}
+  .mchk.done .mtxt{color:var(--muted);text-decoration:line-through}
+  .mchk.done .mcb{background:var(--green);border-color:var(--green);color:#fff}
+  .mcb{width:22px;height:22px;min-width:22px;border-radius:6px;border:1.5px solid rgba(0,0,0,.22);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .15s;flex-shrink:0}
+  .mtxt{font-size:12.5px;color:var(--rock2);line-height:1.5;flex:1}
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -337,7 +347,7 @@
   <footer>
     <button class="cgc-foot-btn" id="cgcOpenFoot">📄 Conditions générales d'engagement (CGC)</button>
     <button class="cgc-foot-btn" id="installBtn" hidden style="margin-left:8px">📲 Installer l'app</button><br>
-    <div style="margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:11px; opacity:.55">version 2026-06-24 · v25</div>
+    <div style="margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:11px; opacity:.55">version 2026-06-24 · v26</div>
   </footer>
 </div>
 
@@ -591,12 +601,30 @@ COURSES.forEach(c => c.matStatus = MATSTATUS[c.nom]==='ok' ? 'ok' : 'no');
 const MAT_OVERRIDE = {"Traversée Rochefort–Jorasses": {"client": ["Chaussures d'alpinisme légères cramponnables + crampons (anti-bot)", "Piolet léger 55–57 cm", "Baudrier + casque + longe", "Chaussons d'escalade (option, rocher dégelé)", "ATC Guide/Reverso + mousqueton à vis + mousqueton simple", "2 machards (cordelette kevlar 5.5–6 mm)", "Frontale, lunettes cat. 3–4, gants", "Sac 30–35 L, vêtements chauds + Gore-Tex, doudoune légère", "Thermos, en-cas ; pharmacie (anti-douleur, anti-inflammatoire), crème indice 50", "Affaires de bivouac (Canzio / Boccalatte) : drap-sac léger"], "guide": ["Corde 8.5 mm × 50–55 m (rappels courts)", "4 dégaines (sangles rallongées 20 cm) + 2 sangles 60 cm + 2 sangles 120 cm", "Camalots C4 0.5 / 0.75 / 1 / 2 (becquets, fissures)", "Kit crevasse : 2 broches 16 cm, Micro Traxion, 2 poulies (Tandem), Tibloc, 3 mousq. à vis", "ATC Guide + mousquetons HMS, cordelette 5.5 mm (réchappe)", "Trousse de secours, communication"]}, "Traversée de la Meije": {"client": ["Chaussures d'alpinisme rigides cramponnables (IV en grosses requis)", "Crampons 12 pointes + anti-bottage", "Piolet 55–60 cm", "Baudrier (4 porte-matériel) + longe réglable + reverso", "Casque", "Gants fins de grimpe + paire chaude", "Lunettes cat. 3–4", "Lampe frontale + piles de rechange", "Sac 35–45 L", "3 couches + doudoune chaude (altitude ~4000 m) + Gore-Tex", "Drap-sac (2 nuits en refuge sans douche — Promontoire + Aigle)", "Bonnet + tour de cou + guêtres", "Thermos 1 L + gourde, crème indice élevé + stick", "Pharmacie perso + antidouleur", "Pique-nique J2 complet (8–15 h de course)", "Pièce d'identité, espèces (refuges)"], "guide": ["Corde à double 2× 50 m (indispensable : rappels 35–50 m, bergschrund)", "Friends Camalot C4 #0.3 / #0.4 / #0.5 / #0.75 / #1 (5 unités)", "4–6 dégaines légères + 2 sangles 120 cm + 2 sangles 60 cm", "4 mousquetons à vis + 2 HMS", "Reverso, 2 machards 6 mm", "Crampons + piolet (collectif si besoin)", "Trousse de secours + couverture de survie", "GPS, carte, communication", "Réservations refuges Promontoire + Aigle (réserver tôt en saison)"]}, "Breithorn occidental — voie normale": {"client": ["Chaussures d'alpinisme cramponnables (semi-auto)", "Crampons 10 pointes + anti-bottage", "Piolet classique 55–60 cm", "Baudrier léger + longe + 2 mousquetons à vis", "Casque", "Lunettes glacier cat. 3–4", "Gants chauds + bonnet", "Sac 25–30 L", "3 couches + doudoune légère (altitude ~4200 m)", "Thermos + en-cas", "Crème indice élevé + stick", "Pièce d'identité, titre de transport remontées"], "guide": ["Corde à simple 30–40 m Ø 8.5–9 mm (encordement glacier)", "2 broches 16 cm + kit crevasse (Micro Traxion, cordelette 6 mm)", "3 sangles 120 cm + mousquetons", "Reverso + HMS", "Trousse de secours + couverture de survie", "Communication"]}, "Breithorn — demi-traversée (occidental → central)": {"client": ["Chaussures d'alpinisme cramponnables (semi-auto ou auto)", "Crampons 12 pointes + anti-bottage", "Piolet classique 55–60 cm", "Baudrier + longe réglable + 2 mousquetons à vis", "Casque", "Lunettes cat. 3–4, gants chauds, bonnet", "Sac 30 L + thermos", "3 couches + doudoune + Gore-Tex", "Crème + stick, trousse perso, pièce d'identité"], "guide": ["Corde à simple 40 m Ø 8.5–9 mm", "2–3 broches 16 cm + kit crevasse (Micro Traxion, cordelette 6 mm, 2 mousq. à vis)", "4 sangles (2× 60 + 2× 120) + 4 mousquetons", "Reverso + HMS", "Trousse de secours + couverture de survie", "Communication"]}, "Breithorn — traversée complète (Roccia Nera → occidental)": {"client": ["Chaussures d'alpinisme rigides cramponnables", "Crampons techniques 12 pointes + anti-bottage (parfois retirés sur le rocher sec du central, mais indispensables pour Roccia Nera et arêtes)", "Piolet 55 cm", "Baudrier (4 porte-matériel) + longe réglable + reverso + 2 mousquetons à vis (1 HMS)", "Casque", "Gants fins de grimpe + paire chaude", "Lunettes cat. 3–4, bonnet, tour de cou", "Sac 30–35 L + thermos", "3 couches + doudoune + Gore-Tex", "Crème + stick, trousse perso", "Pièce d'identité, espèces (côté Ayas/Cervinia)"], "guide": ["Corde simple 60 m Ø 8.5–9 mm (rappels 2×30 m au Gendarme et sous le jumeau W — ancres en place) OU corde à double 2× 50 m", "⚠ Pas de friends nécessaires — ancres en place (spits, broches, pitons) sur tous les rappels", "4 broches 16 cm + kit crevasse (Micro Traxion, 2 poulies, cordelette 6 mm) — glacier di Verra crevassé", "6 mousquetons à vis + HMS + 4 sangles (60/120 cm)", "Reverso + matériel de réchappe (anneaux, maillons rapides)", "Trousse de secours + couverture de survie", "Communication"]}, "Traversée des Aiguilles Dorées — 2 j (refuge)": {"client": ["Chaussures d'alpinisme cramponnables (approche glacier)", "Crampons 12 pointes + anti-bottage (plateau du Trient)", "Piolet 55 cm (approche glacier uniquement)", "Baudrier (4 porte-matériel) + longe réglable", "Casque", "Chaussons d'escalade (vivement conseillé en 4+/5 sur granite)", "Gants fins de grimpe", "Reverso + 3 mousquetons à vis (dont 1 HMS) + 2 machards 6 mm", "Lunettes glacier (approche), bâtons (approche)", "Sac 30–35 L", "3 couches + Gore-Tex + doudoune légère", "Thermos + en-cas (longue journée)", "Crème + stick", "Pièce d'identité, espèces"], "guide": ["Corde à double 2× 50 m (rappels jusqu'à 45 m sur la traversée)", "Friends Camalot C4 : #0.3 / #0.4 / #0.5 / #0.75 / #1 / #1.5 (6 unités — granite 4+/5)", "6–8 dégaines + 3 sangles 60 cm + 2 sangles 120 cm + mousquetons", "3–4 pitons + marteau léger (relais de fortune éventuels)", "Cordelette 6 mm (anneaux réchappe)", "Reverso + HMS + maillons rapides", "Kit glacier allégé (2 broches 16 cm, cordelette 6 mm, Tibloc — approche Trient)", "Trousse de secours + couverture de survie", "Communication"]}, "Traversée des Aiguilles Dorées — 2 j (bivouac)": {"client": ["Chaussures d'alpinisme cramponnables (approche glacier)", "Crampons 12 pointes + anti-bottage (plateau du Trient)", "Piolet 55 cm (approche glacier uniquement)", "Baudrier (4 porte-matériel) + longe réglable", "Casque", "Chaussons d'escalade (vivement conseillé en 4+/5 sur granite)", "Gants fins de grimpe", "Reverso + 3 mousquetons à vis (dont 1 HMS) + 2 machards 6 mm", "Lunettes glacier (approche), bâtons (approche)", "Sac 30–35 L", "3 couches + Gore-Tex + doudoune légère", "Thermos + en-cas (longue journée)", "Crème + stick", "Pièce d'identité, espèces", "Sac de couchage chaud (bivouac non gardienné, 2983 m)", "Nourriture J1 soir + J2 matin complète (cuisine gaz sur place, pas de gardien)", "Réchaud + gamelle (ou utiliser cuisine bivouac)", "Lampe frontale + piles de rechange (accès non balisé de nuit possible)"], "guide": ["Corde à double 2× 50 m (rappels jusqu'à 45 m sur la traversée)", "Friends Camalot C4 : #0.3 / #0.4 / #0.5 / #0.75 / #1 / #1.5 (6 unités — granite 4+/5)", "6–8 dégaines + 3 sangles 60 cm + 2 sangles 120 cm + mousquetons", "3–4 pitons + marteau léger (relais de fortune éventuels)", "Cordelette 6 mm (anneaux réchappe)", "Reverso + HMS + maillons rapides", "Kit glacier allégé (2 broches 16 cm, cordelette 6 mm, Tibloc — approche Trient)", "Trousse de secours + couverture de survie", "Communication"]}, "Traversée des Aiguilles Dorées — 3 j (prépa + traversée)": {"client": ["Chaussures d'alpinisme cramponnables (approche glacier)", "Crampons 12 pointes + anti-bottage (plateau du Trient)", "Piolet 55 cm (approche glacier uniquement)", "Baudrier (4 porte-matériel) + longe réglable", "Casque", "Chaussons d'escalade (vivement conseillé en 4+/5 sur granite)", "Gants fins de grimpe", "Reverso + 3 mousquetons à vis (dont 1 HMS) + 2 machards 6 mm", "Lunettes glacier (approche), bâtons (approche)", "Sac 30–35 L", "3 couches + Gore-Tex + doudoune légère", "Thermos + en-cas (longue journée)", "Crème + stick", "Pièce d'identité, espèces"], "guide": ["Corde à double 2× 50 m (rappels jusqu'à 45 m sur la traversée)", "Friends Camalot C4 : #0.3 / #0.4 / #0.5 / #0.75 / #1 / #1.5 (6 unités — granite 4+/5)", "6–8 dégaines + 3 sangles 60 cm + 2 sangles 120 cm + mousquetons", "3–4 pitons + marteau léger (relais de fortune éventuels)", "Cordelette 6 mm (anneaux réchappe)", "Reverso + HMS + maillons rapides", "Kit glacier allégé (2 broches 16 cm, cordelette 6 mm, Tibloc — approche Trient)", "Trousse de secours + couverture de survie", "Communication"]}, "Weisshorn": {"client": ["Chaussures d'alpinisme cramponnables (semi-auto/auto)", "Crampons 12 pointes + anti-bottage", "Piolet classique 55–60 cm", "Baudrier + longe réglable + 2 mousquetons à vis (1 HMS)", "Casque", "2 machards 6 mm (60 + 120 cm)", "Lunettes cat. 3–4, gants chauds, bonnet", "Sac 35–40 L + thermos", "3 couches + doudoune + Gore-Tex", "Crème + stick, trousse perso", "Drap-sac (cabane)", "Espèces, pièce d'identité"], "guide": ["Corde simple 50 m Ø 8.5–9 mm (rappels max 20 m sur arête E)", "Quelques friends (Camalot C4 #0.5 / #1 / #2) + coinceurs câblés #3–6 (arête N : 'beaucoup de sangles')", "4 dégaines + 3 sangles (60/120 cm) + mousquetons", "Reverso + HMS", "Kit crevasse : 2 broches 16 cm, Micro Traxion, cordelette 6 mm (glacier Bishorn/approche)", "Trousse de secours + couverture de survie", "Communication"]}, "Dom": {"client": ["Chaussures d'alpinisme cramponnables (semi-auto ou cuir rigide)", "Crampons 12 pointes + anti-bottage (impératif)", "Piolet classique 55–60 cm", "Baudrier léger + 2 mousquetons à vis + 2 ficelous (auto-assurance) ", "Casque", "Lunettes glacier cat. 3–4, gants chauds + rechange, bonnet", "Sac 35–40 L + thermos", "3 couches + doudoune + Gore-Tex (altitude 4545 m)", "Crème + stick + trousse perso", "Drap-sac"], "guide": ["Corde à simple 30–40 m Ø 9 mm (glacier, mouvements simultanés)", "Pas de friends — voie glaciaire (passage rocheux Festijoch équipé câbles/échelles)", "Kit crevasse complet : 4 broches 16 cm, Micro Traxion, 2 poulies, Tibloc, cordelette 6 mm ~8 m, 4 mousq. à vis", "3 sangles 120 cm + mousquetons", "Reverso + HMS", "Trousse de secours + couverture de survie", "Communication"]}, "Zinalrothorn": {"client": ["Chaussures d'alpinisme rigides cramponnables", "Crampons techniques + anti-bottage", "Piolet 55 cm + 2e piolet ancreur (si saison tardive — Rothornjoch souvent en glace)", "Baudrier + longe + reverso + 2 mousquetons à vis", "Casque", "Lunettes cat. 3–4, gants fins + chauds", "Sac 30–35 L + thermos", "3 couches + doudoune + Gore-Tex", "Crème + stick, trousse perso", "Drap-sac"], "guide": ["Corde simple 50 m (rappels arête N, plusieurs spits en place)", "Camalot C4 : #0.5 / #0.75 / #1 / #2 (quelques friends suffisent — rocher bien équipé spits)", "2 sangles 120 cm + 2 sangles 60 cm + 4 dégaines + mousquetons", "Reverso + HMS + anneaux de réchappe", "Kit crevasse léger (2 broches, cordelette — glacier Rothornjoch)", "Trousse de secours + couverture de survie", "Communication"]}, "Ober Gabelhorn": {"client": ["Chaussures d'alpinisme rigides", "Crampons techniques + anti-bottage", "Piolet 55 cm", "Baudrier + longe + reverso + 2 mousquetons à vis", "Casque", "Gants fins + chauds", "Lunettes cat. 3–4", "Sac 30–35 L + thermos", "3 couches + doudoune + Gore-Tex", "Crème + stick, trousse perso", "Drap-sac (Rothornhütte)"], "guide": ["Corde simple 50 m Ø 8.5–9 mm (arête ENE, quelques rappels)", "Camalot C4 : #0.5 / #0.75 / #1 / #2 + coinceurs câblés #4–7", "4 dégaines + 3 sangles (60/120) + mousquetons", "Reverso + HMS + matériel de réchappe", "Kit crevasse (2 broches 16 cm, cordelette 6 mm)", "Trousse de secours + couverture de survie", "Communication"]}, "Dent Blanche": {"client": ["Chaussures d'alpinisme rigides cramponnables", "Crampons techniques + anti-bottage", "Piolet 55 cm", "Baudrier + longe réglable + reverso + 2 mousq. à vis", "Casque", "Gants fins de grimpe + paire chaude", "Lunettes cat. 3–4", "Sac 30–35 L + thermos", "3 couches + doudoune + Gore-Tex", "Crème + stick, trousse perso", "Drap-sac"], "guide": ["Corde simple 50 m (arête S, quelques rappels, certaines sections de mouvement simultané)", "Camalot C4 #0.5–#2 + coinceurs câblés #3–8 + décoinceur", "4–6 dégaines + 4 sangles (60/120) + mousquetons", "Reverso + HMS + réchappe", "Kit crevasse (2 broches 16 cm, cordelette 6 mm — glacier d'approche)", "Trousse de secours + couverture de survie", "Communication"]}, "Barre des Écrins": {"client": ["Chaussures d'alpinisme rigides cramponnables (pointe avant pour arête)", "Crampons + anti-bottage", "Piolet 55 cm", "Baudrier + longe + reverso + 2 mousquetons à vis (1 HMS)", "Casque", "Lunettes cat. 3–4, gants, bonnet", "Sac 35–40 L + thermos", "3 couches + doudoune + Gore-Tex", "Crème + stick, trousse perso", "Drap-sac (refuge des Écrins)"], "guide": ["Corde simple 50 m (rappel brèche Lory : 25 m, pitons en place)", "Quelques camalots (C4 #0.5 / #0.75 / #1) + jeu câblés #2–7 + décoinceur", "2 sangles 120 cm + 2 sangles 60 cm + mousquetons", "Kit crevasse (4 broches 16 cm, Micro Traxion, cordelette 6 mm — glacier Blanc crevassé)", "Reverso + HMS", "Trousse de secours + couverture de survie", "Communication"]}, "Piz Bernina — Biancograt": {"client": ["Chaussures d'alpinisme rigides cramponnables (III avec crampons requis)", "Crampons techniques 12 pointes", "Piolet 55 cm (+ 2e piolet si conditions iced)", "Baudrier + longe + reverso + 2 mousq. à vis", "Casque", "Gants fins + chauds (escalade froide)", "Lunettes cat. 3–4", "Sac 30–35 L + thermos", "3 couches + doudoune + Gore-Tex", "Drap-sac (Tschierva + Marco e Rosa)", "Crème, trousse perso, espèces"], "guide": ["Corde simple 50 m (ou une moitié de corde à double) — rappels ≤ 25 m", "1–2 friends Camalot C4 #0.5 / #0.75 (rack minimal — quelques broches en place)", "2–4 broches à glace 16 cm (si arête verglacée — quantité variable selon conditions)", "4–6 dégaines + 2 sangles 60 cm + 2 sangles 120 cm + mousquetons", "Reverso + HMS + matériel de réchappe", "Trousse de secours + couverture de survie", "Communication (téléphone cabane Tschierva : +41 81 842 63 91)"]}, "Jungfrau": {"client": ["Chaussures d'alpinisme cramponnables", "Crampons + anti-bottage", "Piolet 55 cm", "Baudrier + longe + 2 mousquetons à vis", "Casque", "Lunettes cat. 3–4, gants chauds, bonnet", "Sac 30 L + thermos", "3 couches + doudoune + Gore-Tex", "Crème + stick", "Drap-sac (Mönchsjochhütte)"], "guide": ["Corde simple 30–40 m Ø 9 mm (glacier + arête mixte — pas de rappels techniques)", "Pas de friends nécessaires (max III sur rochers sommitaux — pas de fissures protégeable)", "Kit crevasse : 4 broches 16 cm, Micro Traxion, 2 poulies, cordelette 6 mm", "3 sangles 120 cm + mousquetons", "Reverso + HMS", "Trousse de secours + couverture de survie", "Communication"]}, "Mönch": {"client": ["Chaussures d'alpinisme cramponnables", "Crampons + anti-bottage", "Piolet 55 cm", "Baudrier + longe + 2 mousquetons à vis", "Casque", "Lunettes cat. 3–4, gants, bonnet", "Sac 30 L + thermos", "3 couches + doudoune", "Crème + stick", "Drap-sac"], "guide": ["Corde simple 30–40 m Ø 9 mm", "Pas de friends (arête mixte simple — pas de protection en fissure)", "Kit crevasse léger (2 broches, Micro Traxion, cordelette 6 mm)", "3 sangles + mousquetons", "Reverso + HMS", "Trousse de secours + couverture de survie", "Communication"]}};
 function matFor(c){ return MAT_OVERRIDE[c.nom] || KITS[c.kit]; }
 function matBadge(st){ return st==='ok' ? '<span class="st ok">●&nbsp;✓</span>' : '<span class="st wip">●</span>'; }
+function esc(s){return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
+function getMS(n){try{return JSON.parse(localStorage.getItem('ms:'+n)||'{}')}catch(e){return{}}}
+function setMS(n,v){try{localStorage.setItem('ms:'+n,JSON.stringify(v))}catch(e){}}
 function materielHTML(c){
-  const k = matFor(c); if(!k) return '';
-  const li = a => a.map(x=>'<li>'+x+'</li>').join('');
-  return '<div class="mat-head"><b>Matériel</b> '+matBadge(c.matStatus)+' <span class="mat-note">'+(c.matStatus==='ok'?'validé':'à valider')+(MAT_OVERRIDE[c.nom]?' · spécifique':'')+'</span></div>'
-   + '<div class="mat"><div class="matcol"><b>Client · à apporter</b><ul>'+li(k.client)+'</ul></div>'
-   + '<div class="matcol"><b>Guide · fourni / collectif</b><ul>'+li(k.guide)+'</ul></div></div>';
+  const k=matFor(c); if(!k) return '';
+  const st=getMS(c.nom); const sc=st.c||{}; const sg=st.g||{};
+  const en=esc(c.nom);
+  const dC=k.client.filter((_,i)=>sc[i]).length;
+  const dG=k.guide.filter((_,i)=>sg[i]).length;
+  const tot=k.client.length+k.guide.length; const don=dC+dG;
+  const mkI=(side,idx,txt)=>{
+    const chk=(side==='c'?sc:sg)[idx];
+    return '<div class="mchk'+(chk?' done':'')+'" data-nom="'+en+'" data-side="'+side+'" data-idx="'+idx+'"><div class="mcb">'+(chk?'\u2713':'')+'</div><span class="mtxt">'+txt+'</span></div>';
+  };
+  return '<div class="mat-wrap">'
+   +'<div class="mat-head"><b>Matériel</b> '+matBadge(c.matStatus)
+   +' <span class="mat-note">'+(c.matStatus==='ok'?'validé':'à valider')+(MAT_OVERRIDE[c.nom]?' · spécifique':'')+'</span>'
+   +'<span class="mat-prog" data-total="'+tot+'">'+don+'/'+tot+'</span>'
+   +'<button class="mat-rst" data-nom="'+en+'" title="Tout décocher">↺</button>'
+   +'</div>'
+   +'<div class="mat">'
+   +'<div class="matcol"><b>Client · à apporter</b>'+k.client.map((x,i)=>mkI('c',i,x)).join('')+'</div>'
+   +'<div class="matcol"><b>Guide · fourni / collectif</b>'+k.guide.map((x,i)=>mkI('g',i,x)).join('')+'</div>'
+   +'</div></div>';
 }
 
 
@@ -814,6 +842,42 @@ buildSeg('#dureeSeg',DUREE_STEPS,'duree',99);
 buildSeg('#dangerSeg',DANGER_STEPS,'dangerMax',3);
 buildMois();
 render();
+
+/* Tick-list matériel — event delegation */
+document.getElementById('cards').addEventListener('click',function(e){
+  const it=e.target.closest('.mchk');
+  if(it){
+    const nom=it.dataset.nom,side=it.dataset.side,idx=+it.dataset.idx;
+    const st=getMS(nom);
+    if(!st[side]) st[side]={};
+    st[side][idx]=!st[side][idx];
+    setMS(nom,st);
+    it.classList.toggle('done',!!st[side][idx]);
+    it.querySelector('.mcb').textContent=st[side][idx]?'\u2713':'';
+    const wrap=it.closest('.mat-wrap');
+    if(wrap){
+      const course=COURSES.find(c=>c.nom===nom); if(!course) return;
+      const k=matFor(course); if(!k) return;
+      const s2=getMS(nom);
+      const d=k.client.filter((_,i)=>(s2.c||{})[i]).length+k.guide.filter((_,i)=>(s2.g||{})[i]).length;
+      const pr=wrap.querySelector('.mat-prog'); if(pr) pr.textContent=d+'/'+pr.dataset.total;
+    }
+    return;
+  }
+  const rb=e.target.closest('.mat-rst');
+  if(rb){
+    const nom=rb.dataset.nom;
+    setMS(nom,{});
+    const wrap=rb.closest('.mat-wrap');
+    if(wrap){
+      wrap.querySelectorAll('.mchk').forEach(el=>{
+        el.classList.remove('done');
+        el.querySelector('.mcb').textContent='';
+      });
+      const pr=wrap.querySelector('.mat-prog'); if(pr) pr.textContent='0/'+pr.dataset.total;
+    }
+  }
+});
 
 /* CGC modal */
 const cgc = $('#cgcModal');
