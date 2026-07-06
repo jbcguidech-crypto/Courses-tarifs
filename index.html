@@ -221,6 +221,14 @@
   .fab.show{opacity:1;pointer-events:auto}
   .fab button{width:46px;height:46px;border-radius:50%;border:none;background:var(--rock);color:#dfe9ea;font-size:18px;box-shadow:0 3px 14px rgba(0,0,0,.3);cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center}
   .fab button:active{transform:scale(.94)}
+  /* recap filtres actifs */
+  .afbar{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;align-items:center}
+  .afbar:empty{display:none}
+  .afchip{display:inline-flex;align-items:center;gap:5px;background:var(--ice-deep);color:#fff;border:none;border-radius:14px;padding:4px 10px;font-size:11.5px;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit}
+  .afchip .x{font-weight:700;opacity:.75;font-size:13px;line-height:1}
+  .afchip:active{opacity:.85}
+  .afchip.neutral{background:rgba(0,0,0,.10);color:var(--rock2)}
+  .afclear{background:none;border:none;color:var(--muted);font-size:11.5px;text-decoration:underline;cursor:pointer;padding:4px 6px;font-family:inherit}
   .mchk{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(0,0,0,.07);cursor:pointer;-webkit-tap-highlight-color:transparent}
   .mchk:last-child{border-bottom:none}
   .mchk.done .mtxt{color:var(--muted);text-decoration:line-through}
@@ -243,7 +251,7 @@
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v34</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v37</span></span>
     </div>
   </div>
 </header>
@@ -282,21 +290,25 @@
             </select>
           </div>
           <div class="fgroup">
+            <div class="lbl">Jours disponibles</div>
+            <select class="sortsel" style="width:100%" id="dureeSel" aria-label="Jours disponibles"></select>
+          </div>
+          <div class="fgroup">
             <div class="lbl">Saison</div>
-            <div class="seg mini" id="seasonSeg" role="group" aria-label="Saison tarifaire">
-              <button data-s="0" aria-pressed="true">Normale</button>
-              <button data-s="12" aria-pressed="false">Haute (+12%)</button>
-            </div>
+            <select class="sortsel" style="width:100%" id="seasonSel" aria-label="Saison tarifaire">
+              <option value="0">Normale</option>
+              <option value="12">Haute (+12%)</option>
+            </select>
           </div>
           <div class="fgroup" style="margin-bottom:6px">
             <div class="lbl">Affichage du prix</div>
-            <div class="seg mini" id="modeSeg" role="group" aria-label="Type de prix affiché">
-              <button data-m="hono" aria-pressed="true">Honoraires</button>
-              <button data-m="tc" aria-pressed="false">Tout compris ~</button>
-              <button data-m="inter" aria-pressed="false">Inter. −10%</button>
-              <button data-m="local" aria-pressed="false">Local +30% (hors CH)</button>
-              <button data-m="amis" aria-pressed="false">⭐ Fidèle</button>
-            </div>
+            <select class="sortsel" style="width:100%" id="modeSel" aria-label="Type de prix affiché">
+              <option value="hono">Honoraires</option>
+              <option value="tc">Tout compris ~</option>
+              <option value="inter">Intermédiaire −10%</option>
+              <option value="local">Local +30% (hors CH)</option>
+              <option value="amis">⭐ Fidèle −20%</option>
+            </select>
           </div>
         </div>
       </details>
@@ -306,12 +318,12 @@
         <summary class="accord-hdr">Géographie <span class="chev">▾</span></summary>
         <div class="accord-body">
           <div class="fgroup">
-            <div class="lbl">Massif <span style="opacity:.6;font-weight:400">· choisis pour filtrer</span></div>
-            <div class="chips" id="massifChips"></div>
+            <div class="lbl">Massif</div>
+            <select class="sortsel" style="width:100%" id="massifSel" aria-label="Massif"></select>
           </div>
           <div class="fgroup" style="margin-bottom:6px">
-            <div class="lbl">Pays <span style="opacity:.6;font-weight:400">· choisis pour filtrer</span></div>
-            <div class="chips" id="paysChips"></div>
+            <div class="lbl">Pays</div>
+            <select class="sortsel" style="width:100%" id="paysSel" aria-label="Pays"></select>
           </div>
         </div>
       </details>
@@ -322,15 +334,11 @@
         <div class="accord-body">
           <div class="fgroup">
             <div class="lbl">Discipline</div>
-            <div class="seg mini" id="discSeg" role="group" aria-label="Discipline"></div>
+            <select class="sortsel" style="width:100%" id="discSel" aria-label="Discipline"></select>
           </div>
           <div class="fgroup">
             <div class="lbl">Cotation max</div>
-            <div class="seg mini" id="cotSeg" role="group" aria-label="Cotation maximale"></div>
-          </div>
-          <div class="fgroup">
-            <div class="lbl">Jours disponibles</div>
-            <div class="seg mini" id="dureeSeg" role="group" aria-label="Jours disponibles"></div>
+            <select class="sortsel" style="width:100%" id="cotSel" aria-label="Cotation maximale"></select>
           </div>
           <div class="fgroup">
             <div class="lbl">Mois</div>
@@ -338,19 +346,21 @@
           </div>
           <div class="fgroup">
             <div class="lbl">Danger objectif max</div>
-            <div class="seg mini" id="dangerSeg" role="group" aria-label="Danger objectif maximum"></div>
+            <select class="sortsel" style="width:100%" id="dangerSel" aria-label="Danger objectif maximum"></select>
           </div>
           <div class="fgroup" style="margin-bottom:6px">
-            <div class="toggle-row">
-              <label class="switch"><input type="checkbox" id="only82"><span class="slider"></span></label>
-              <span>Compte pour les 82&nbsp;4000</span>
-            </div>
+            <div class="lbl">Sommets</div>
+            <select class="sortsel" style="width:100%" id="only82Sel" aria-label="Sélection sommets">
+              <option value="0">Toutes les courses</option>
+              <option value="1">Uniquement les 82 × 4000</option>
+            </select>
           </div>
         </div>
       </details>
     </aside>
 
     <main>
+      <div class="afbar" id="afbar"></div>
       <div class="resbar">
         <div class="count"><b id="cnt">0</b> course<span id="cntS">s</span></div>
         <button class="viewtoggle" id="viewToggle" aria-pressed="false" title="Basculer vue compacte">≡ Compact</button>
@@ -717,30 +727,24 @@ function topoLinks(c){
 }
 
 /* build filter controls */
-function buildChips(){
-  const c = $('#massifChips');
-  MASSIFS.forEach(m=>{
-    const b=document.createElement('button'); b.className='chip'; b.textContent=m;
-    b.setAttribute('aria-pressed','false');
-    b.onclick=()=>{ b.getAttribute('aria-pressed')==='true' ? (state.massifs.delete(m),b.setAttribute('aria-pressed','false')) : (state.massifs.add(m),b.setAttribute('aria-pressed','true')); render(); };
-    c.appendChild(b);
-  });
-  const cp = $('#paysChips');
-  PAYS.forEach(pp=>{
-    const b=document.createElement('button'); b.className='chip'; b.textContent=pp;
-    b.setAttribute('aria-pressed','false');
-    b.onclick=()=>{ b.getAttribute('aria-pressed')==='true' ? (state.pays.delete(pp),b.setAttribute('aria-pressed','false')) : (state.pays.add(pp),b.setAttribute('aria-pressed','true')); render(); };
-    cp.appendChild(b);
-  });
+function fillSel(id,opts,val){
+  const sel=$(id);
+  sel.innerHTML=opts.map(o=>`<option value="${o.v}">${o.l}</option>`).join('');
+  sel.value=String(val);
 }
-function buildSeg(id,steps,key,defVal){
-  const c=$(id);
-  steps.forEach(s=>{
-    const b=document.createElement('button'); b.textContent=s.l;
-    b.setAttribute('aria-pressed', s.v===defVal ? 'true':'false');
-    b.onclick=()=>{ state[key]=s.v; [...c.children].forEach(x=>x.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); render(); };
-    c.appendChild(b);
-  });
+function buildSelects(){
+  fillSel('#discSel',DISC_STEPS.map(x=>({l:x.l,v:x.v})),state.disc);
+  fillSel('#massifSel',[{l:'Tous les massifs',v:''}].concat(MASSIFS.map(m=>({l:m,v:m}))),[...state.massifs][0]||'');
+  fillSel('#paysSel',[{l:'Tous les pays',v:''}].concat(PAYS.map(pp=>({l:pp,v:pp}))),[...state.pays][0]||'');
+  fillSel('#cotSel',[{l:'PD max',v:2},{l:'AD− max',v:3},{l:'AD max',v:3.5},{l:'AD+ max',v:4},{l:'Toutes cotations',v:5}],state.cotMax);
+  fillSel('#dureeSel',[{l:'1 jour',v:1},{l:'≤ 2 jours',v:2},{l:'≤ 3 jours',v:3},{l:'≤ 4 jours',v:4},{l:'Toutes durées',v:99}],state.duree);
+  fillSel('#dangerSel',[{l:'Danger faible',v:1},{l:'Faible + modéré',v:2},{l:'Tous dangers',v:3}],state.dangerMax);
+  $('#discSel').onchange=e=>{ state.disc=e.target.value; render(); };
+  $('#massifSel').onchange=e=>{ state.massifs=new Set(e.target.value?[e.target.value]:[]); render(); };
+  $('#paysSel').onchange=e=>{ state.pays=new Set(e.target.value?[e.target.value]:[]); render(); };
+  $('#cotSel').onchange=e=>{ state.cotMax=+e.target.value; render(); };
+  $('#dureeSel').onchange=e=>{ state.duree=+e.target.value; render(); };
+  $('#dangerSel').onchange=e=>{ state.dangerMax=+e.target.value; render(); };
 }
 function buildMois(){
   const sel=$('#moisSel');
@@ -810,8 +814,47 @@ function devisText(c){
 }
 
 const OPEN_CARDS = new Set();
+function renderAF(){
+  const bar=$('#afbar'); const chips=[];
+  const add=(label,action)=>chips.push({label,action});
+  if(state.q) add('« '+state.q+' »','q');
+  if(state.disc!=='tous') add(DISC_LABEL[state.disc]||state.disc,'disc');
+  state.massifs.forEach(m=>add(m,'massif:'+m));
+  state.pays.forEach(pp=>add(pp,'pays:'+pp));
+  if(state.cotMax<5){ const c=COT_STEPS.find(x=>x.v===state.cotMax); add('≤ '+(c?c.l:state.cotMax),'cot'); }
+  if(state.duree<99) add('≤ '+state.duree+' j','duree');
+  if(state.mois>0) add(MOIS[state.mois],'mois');
+  if(state.dangerMax<3) add('danger ≤ '+state.dangerMax,'danger');
+  if(state.only82) add('82 × 4000','only82');
+  if(state.season>0) add('haute saison','season');
+  if(state.mode!=='hono') add({tc:'tout compris',inter:'inter. −10%',amis:'⭐ fidèle',local:'local +30%'}[state.mode]||state.mode,'mode');
+  if(state.size>1) add(state.size+' pers.','size');
+  bar.innerHTML = chips.length
+    ? chips.map((c,i)=>'<button class="afchip" data-a="'+c.action+'">'+c.label+' <span class="x">×</span></button>').join('')
+      +'<button class="afclear" data-a="__all">tout effacer</button>'
+    : '';
+}
+$('#afbar').addEventListener('click',function(e){
+  const b=e.target.closest('[data-a]'); if(!b) return;
+  const a=b.dataset.a;
+  if(a==='__all'){ $('#resetBtn').click(); return; }
+  if(a==='q'){ state.q=''; const si=$('#searchInp'); si.value=''; $('#searchClear').style.display='none'; }
+  else if(a==='disc') state.disc='tous';
+  else if(a.startsWith('massif:')) state.massifs.delete(a.slice(7));
+  else if(a.startsWith('pays:')) state.pays.delete(a.slice(5));
+  else if(a==='cot') state.cotMax=5;
+  else if(a==='duree') state.duree=99;
+  else if(a==='mois') state.mois=0;
+  else if(a==='danger') state.dangerMax=3;
+  else if(a==='only82') state.only82=false;
+  else if(a==='season') state.season=0;
+  else if(a==='mode') state.mode='hono';
+  else if(a==='size') state.size=1;
+  syncSelects(); render();
+});
 function render(){
   saveState();
+  renderAF();
   const list = COURSES.filter(passes);
   list.sort((a,b)=>{
     if(state.sort==='alt') return b.alt-a.alt;
@@ -885,8 +928,8 @@ function render(){
 
 /* top controls */
 $('#sizeSel').onchange=e=>{ state.size=+e.target.value; render(); };
-$('#seasonSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return; state.season=+b.dataset.s; [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); render(); });
-$('#modeSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return; state.mode=b.dataset.m; [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); render(); });
+$('#seasonSel').onchange=e=>{ state.season=+e.target.value; render(); };
+$('#modeSel').onchange=e=>{ state.mode=e.target.value; render(); };
 $('#sortSel').onchange=e=>{ state.sort=e.target.value; render(); };
 $('#viewToggle').onclick=function(){ state.compact=!state.compact; this.setAttribute('aria-pressed',state.compact); render(); };
 /* FAB */
@@ -904,16 +947,17 @@ $('#viewToggle').onclick=function(){ state.compact=!state.compact; this.setAttri
     window.scrollTo({top:0,behavior:'smooth'});
   };
 })();
-$('#only82').onchange=e=>{ state.only82=e.target.checked; render(); };
+$('#only82Sel').onchange=e=>{ state.only82=e.target.value==='1'; render(); };
 $('#resetBtn').onclick=()=>{
   state.disc='tous'; state.size=1; state.massifs=new Set(); state.pays=new Set(); state.q=''; var si=$('#searchInp'); if(si){si.value=''; $('#searchClear').style.display='none';} state.cotMax=5; state.duree=99; state.mois=0; state.dangerMax=3; state.only82=false;
-  document.querySelectorAll('#massifChips .chip').forEach(c=>c.setAttribute('aria-pressed','false'));
-  document.querySelectorAll('#paysChips .chip').forEach(c=>c.setAttribute('aria-pressed','false'));
-  document.querySelectorAll('#discSeg button').forEach((b,i)=>b.setAttribute('aria-pressed', DISC_STEPS[i].v==='tous'?'true':'false'));
-  setSeg('#cotSeg',5); setSeg('#dureeSeg',99); setSeg('#dangerSeg',3);
-  $('#sizeSel').value='1'; $('#moisSel').value='0'; $('#only82').checked=false; render();
+  syncSelects(); render();
 };
-function setSeg(id,v){ const c=$(id); [...c.children].forEach((b,i)=>{ const steps=id==='#cotSeg'?COT_STEPS:id==='#dureeSeg'?DUREE_STEPS:DANGER_STEPS; b.setAttribute('aria-pressed', steps[i].v===v?'true':'false'); }); }
+function syncSelects(){
+  $('#sizeSel').value=String(state.size); $('#seasonSel').value=String(state.season); $('#modeSel').value=state.mode;
+  $('#discSel').value=state.disc; $('#massifSel').value=[...state.massifs][0]||''; $('#paysSel').value=[...state.pays][0]||'';
+  $('#cotSel').value=String(state.cotMax); $('#dureeSel').value=String(state.duree); $('#dangerSel').value=String(state.dangerMax);
+  $('#moisSel').value=String(state.mois); $('#only82Sel').value=state.only82?'1':'0'; $('#sortSel').value=state.sort;
+}
 
 (function(){
   var inp=$('#searchInp'), clr=$('#searchClear');
@@ -931,24 +975,10 @@ function setSeg(id,v){ const c=$(id); [...c.children].forEach((b,i)=>{ const ste
     d.addEventListener('toggle', function(){ });
   });
 })();
-buildChips();
-buildSeg('#discSeg',DISC_STEPS,'disc',state.disc);
-buildSeg('#cotSeg',COT_STEPS,'cotMax',state.cotMax);
-buildSeg('#dureeSeg',DUREE_STEPS,'duree',state.duree);
-buildSeg('#dangerSeg',DANGER_STEPS,'dangerMax',state.dangerMax);
+buildSelects();
 buildMois();
-/* resynchroniser l'UI depuis l'état restauré */
-(function syncUI(){
-  $('#sizeSel').value=String(state.size);
-  $('#moisSel').value=String(state.mois);
-  $('#only82').checked=!!state.only82;
-  $('#sortSel').value=state.sort;
-  document.querySelectorAll('#seasonSeg button').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.s===state.season?'true':'false'));
-  document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.m===state.mode?'true':'false'));
-  document.querySelectorAll('#massifChips .chip').forEach(b=>b.setAttribute('aria-pressed', state.massifs.has(b.textContent)?'true':'false'));
-  document.querySelectorAll('#paysChips .chip').forEach(b=>b.setAttribute('aria-pressed', state.pays.has(b.textContent)?'true':'false'));
-  $('#viewToggle').setAttribute('aria-pressed', !!state.compact);
-})();
+syncSelects();
+$('#viewToggle').setAttribute('aria-pressed', !!state.compact);
 render();
 
 /* Tick-list matériel — event delegation */
