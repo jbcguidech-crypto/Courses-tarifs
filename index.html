@@ -251,7 +251,7 @@
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v43</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v44</span></span>
     </div>
   </div>
 </header>
@@ -892,8 +892,12 @@ function devisText(c){
   const tcLine = '\nFrais en sus estimés : ~CHF '+fmt(c.frais)+' / pers. (refuge, remontées, transferts — approximatif).';
   return c.nom+' — '+c.massif+' ('+c.alt+' m)\n'
     +'Discipline : '+DISC_LABEL[c.disc]+' · Cotation '+c.cot+' · '+(c.dMin===c.dMax?c.dMin+' j':c.dMin+'-'+c.dMax+' j')+' · max '+c.maxP+' pers.\n'
+    +'Niveau requis — physique : '+PHY_LABEL[c.phy]+' · technique : '+c.tech+'\n'
+    +(c.effort?'Effort : '+c.effort+'\n':'')
     +'Honoraires guide : '+solo+' (1 pers.).'+grp+sNote+tcLine+'\n'
-    +'Frais en sus à la charge du/des client(s) — part guide incluse : '+c.refuge+', remontées, repas, transferts, location de matériel.\n'
+    +'LE PRIX COMPREND : encadrement guide UIAGM, matériel collectif de sécurité, organisation et réservations.\n'
+    +'IL NE COMPREND PAS : refuges et ½ pension (y c. part guide), remontées et transferts, repas, matériel personnel, assurances.\n'
+    +'Assurances annulation et secours-rapatriement recommandées (non incluses).\n'
     +(c.est?'Honoraires indicatifs à confirmer.':'Honoraires indicatifs.')+amisNote;
 }
 
@@ -986,10 +990,12 @@ function render(){
       </div>
       <div class="expand">
         <p>${c.note}</p>
+        <div class="rinfo"><b>Niveau requis</b> Physique : ${PHY_LABEL[c.phy]}<br>Technique : ${c.tech}${c.effort?`<br><span style=\"opacity:.85\">Effort : ${c.effort}</span>`:''}</div>
         ${c.topo?`<div class="rinfo"><b>Aperçu ${statusBadge(c.status)}</b> ${c.topo}</div>`:''}
         ${topoLinks(c)}
         ${materielHTML(c)}
         <div class="frais"><b>Frais en sus estimés</b> ~CHF ${fmt(c.frais)} / pers. (client + part guide) : refuge ${c.refuge}, remontées, repas, transferts, location matériel. Approximatif, à confirmer.</div>
+        ${inclusHTML(c)}
         <div class="devis">
           <button class="copybtn">Copier le devis</button>
           <span class="copied" hidden>Devis copié ✓</span>
@@ -1064,6 +1070,63 @@ buildMois();
 syncSelects();
 $('#viewToggle').setAttribute('aria-pressed', !!state.compact);
 render();
+
+
+/* ===== Niveau requis (physique P1–P4 + technique) ===== */
+const PHY_LABEL={1:'P1 — accessible (200 m/h, 4–5 h)',2:'P2 — régulier (250–300 m/h, 5–7 h)',3:'P3 — très bonne condition (300–400 m/h, 8 h+)',4:'P4 — excellente condition (journées 12 h+)'};
+const NIVEAU_OVERRIDE = {  }; // ex. {"Bishorn":{phy:2,tech:"Bases de cramponnage"}}
+function phyFor(c){
+  if(/one push|intégrale de Peuterey|express/i.test(c.nom)) return 4;
+  if(c.cotN>=6) return 4;
+  if(c.dMax>=4) return 3;
+  if(c.cotN>=4 || c.dMax>=3) return 3;
+  if(c.dMax<=1 && c.cotN<=2 && c.danger<=1) return 1;
+  return 2;
+}
+function techFor(c){
+  const n=c.cotN;
+  if(c.disc==='alpinisme'){
+    if(n>=6) return 'Expert : V+/M5, glace raide, autonomie totale';
+    if(n>=4.5) return 'Solide en IV en grosses, glace 50°, expérience AD/D';
+    if(n>=3.5) return 'Autonome en PD/AD, rocher III en grosses, cramponnage sûr';
+    if(n>=2) return 'Bases de cramponnage, pied sûr, expérience glaciaire simple';
+    return 'Initiation possible — pied montagnard';
+  }
+  if(c.disc==='escalade'){
+    if(n>=5.5) return '6a et plus, à l\'aise en grande voie avec sac';
+    if(n>=4) return '5b/5c en tête ou second solide, rappels connus';
+    return '5a en second, pratique régulière en salle ou falaise';
+  }
+  if(c.disc==='cascade'){
+    if(n>=5) return 'Cascade 4+/5 acquise, mixte, autonomie aux relais';
+    if(n>=4) return 'WI3 acquis, aisance piolets-crampons';
+    return 'Initiation possible — bonne condition générale';
+  }
+  if(c.disc==='ski-rando'){
+    if(n>=3.5) return 'Toutes neiges, conversions parfaites, 1200 m+/jour, crampons/piolet';
+    if(n>=3) return 'Piste noire, hors-piste régulier, conversions acquises';
+    return 'Piste rouge à l\'aise — initiation rando possible';
+  }
+  if(c.disc==='hors-piste') return 'Piste noire à l\'aise, première expérience hors-piste bienvenue';
+  if(c.disc==='via-ferrata') return 'Vertige maîtrisé, condition de randonneur';
+  return '';
+}
+COURSES.forEach(c=>{
+  const o=NIVEAU_OVERRIDE[c.nom]||{};
+  c.phy=o.phy||phyFor(c);
+  c.tech=o.tech||techFor(c);
+});
+/* ===== Effort par jour (données sourcées, à compléter) ===== */
+const EFFORT = {"Bishorn": "J1 : +1500 m (~4 h) vers Tracuit. J2 : +900 m (~4 h) sommet, −2400 m retour Zinal.", "Weisshorn": "J1 : +1500 m (~4–5 h). J2 : +1570 m, 6 h montée + 5 h descente d'arête.", "Weisshorn — 3 j (confort)": "J1 : +1500 m. J2 : +1570 m AR (~11 h). J3 : −1500 m (~3 h).", "Dom": "J1 : +1530 m (~5 h). J2 : +1600 m sommet puis −3100 m jusqu'à Randa (10–12 h).", "Dom — 3 j (confort)": "J1 : +1530 m. J2 : +1600 m AR cabane (~9 h). J3 : −1530 m.", "Traversée de la Meije": "J1 : ~5 h (Enfetchores). J2 : 8–15 h d'arête. J3 : −2000 m (~3 h).", "Traversée de la Meije (2 j)": "J1 : ~5 h. J2 : 12–16 h, −2300 m jusqu'à La Grave.", "Meije orientale — voie normale (2 j)": "J1 : +1800 m (5–7 h). J2 : +450 m (~4–5 h AR) puis descente vallée.", "Barre des Écrins": "J1 : +1300 m (~4 h). J2 : +950 m, 10–12 h de course AR.", "Barre des Écrins — one push (1 j)": "~2250 m D+, 12–16 h AR depuis Pré de Mme Carle.", "Mont Blanc — voie normale (Goûter)": "J1 : +1500 m (~5 h). J2 : +1000 m sommet (5–6 h), longue descente.", "Mont Blanc — traversée des 3 Monts": "J1 : accès Cosmiques. J2 : +1300 m cumulés, 7–9 h sommet, descente Goûter ou 3 Monts.", "Mont Blanc — one push (1 j)": "~2450–3500 m D+ selon voie, 12–18 h AR.", "Piz Bernina — Biancograt": "J1 : +900 m (~3 h). J2 : +1500 m cumulés, 9–12 h jusqu'au Marco e Rosa. J3 : descente.", "Cervin — voie normale (Hörnli)": "J2 : +1220 m, 4–6 h montée + 4–5 h descente — 9–11 h d'arête.", "Jungfrau": "+500 m depuis la cabane, ~4 h sommet, 3 h retour.", "Mönch": "+460 m depuis la cabane, 3–4 h AR.", "Traversée des Lyskamm": "~2 km d'arête faîtière, 6–8 h de traversée + approche/retour glaciaires.", "Breithorn occidental — voie normale": "+280 m depuis le Klein Matterhorn, 2–3 h AR.", "Breithorn — demi-traversée (occidental → central)": "+350 m cumulés, 4–5 h AR.", "Breithorn — traversée complète (Roccia Nera → occidental)": "~700 m cumulés, 6–9 h de course + retour glacier.", "Spaghetti Tour technique (5 j)": "5 j à 3000–4563 m, +600 à +900 m/jour, étapes de 5–8 h.", "Traversée des Aiguilles Dorées — 2 j (refuge)": "J1 : +1100 m (~4 h). J2 : ~9 h de traversée.", "Arête des Cinéastes — traversée": "J1 : +700 m (2–3 h). J2 : ~1 h d'approche + 5–7 h d'arête + descente.", "Pointe des Cinéastes — voie du Vieux Piton": "+700 m d'approche J1 ; 6–7 h d'escalade + 1h30–3 h de descente.", "Eiger — arête Mittellegi": "J2 : +610 m d'arête, 4–6 h sommet + 3–4 h de descente.", "Aiguille du Midi — éperon Frendo": "~1200 m de face, 8–12 h — sortie à la benne.", "Traversée Rochefort–Jorasses": "2–3 j, arêtes soutenues 8–12 h/jour — endurance majeure.", "Intégrale de Peuterey": "~4500 m d'escalade cumulée sur 3–4 j, bivouacs — l'effort d'une vie.", "Pointe Dufour — arête Ouest": "J2 : +1750 m depuis la Monte Rosa Hütte, 9–12 h AR, rocher III au-dessus de 4400 m.", "Gran Paradiso — one push (1 j)": "~2100 m D+, 10–13 h AR depuis Pont.", "Tour de la Meije à ski (4 j)": "+900 à +1300 m/jour, cols raides à 45°+, 6–8 h/jour.", "Haute Route Chamonix–Zermatt — express (4 j)": "1500–1800 m D+/jour, 7–10 h/jour — rythme soutenu.", "Tour du Ciel (5 j)": "+800 à +1400 m/jour, étapes de 5–8 h."};
+COURSES.forEach(c=>c.effort=EFFORT[c.nom]||'');
+/* ===== Le prix comprend / ne comprend pas ===== */
+function inclusHTML(c){
+  const inc=['Encadrement par guide UIAGM','Matériel technique collectif (corde, kit de sécurité)','Organisation de la course et réservations','Prêt de matériel technique personnel si besoin (à convenir)'];
+  const exc=['Refuges et ½ pension — y compris la part du guide','Remontées mécaniques et transferts','Repas et boissons','Matériel personnel (location possible en magasin)','Assurances annulation et secours-rapatriement (recommandées)'];
+  const li=a=>a.map(x=>'<li>'+x+'</li>').join('');
+  return '<div class="mat" style="margin-top:11px"><div class="matcol"><b>Le prix comprend</b><ul>'+li(inc)+'</ul></div>'
+   +'<div class="matcol"><b>Le prix ne comprend pas</b><ul>'+li(exc)+'</ul></div></div>';
+}
 
 /* Tick-list matériel — event delegation */
 document.getElementById('cards').addEventListener('click',function(e){
