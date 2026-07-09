@@ -221,6 +221,15 @@
   .fab.show{opacity:1;pointer-events:auto}
   .fab button{width:46px;height:46px;border-radius:50%;border:none;background:var(--rock);color:#dfe9ea;font-size:18px;box-shadow:0 3px 14px rgba(0,0,0,.3);cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center}
   .fab button:active{transform:scale(.94)}
+  /* carte */
+  #map{display:none;height:68vh;min-height:380px;border-radius:14px;margin-bottom:14px;box-shadow:0 2px 14px rgba(0,0,0,.12);z-index:1}
+  body.map-on #map{display:block}
+  body.map-on #cards{display:none}
+  .map-note{display:none;font-size:11.5px;color:var(--muted);margin:-8px 0 12px 4px}
+  body.map-on .map-note{display:block}
+  .map-popup b{font-size:13px}
+  .map-popup .mp-meta{font-size:11.5px;color:#555;margin:3px 0}
+  .map-popup .mp-btn{display:inline-block;margin-top:5px;padding:4px 10px;background:#2c6e7c;color:#fff;border:none;border-radius:7px;font-size:11.5px;cursor:pointer}
   /* recap filtres actifs */
   .afbar{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;align-items:center}
   .afbar:empty{display:none}
@@ -251,7 +260,7 @@
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v53</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v54</span></span>
     </div>
   </div>
 </header>
@@ -310,7 +319,6 @@
               <option value="hono">Honoraires</option>
               <option value="tc">Tout compris ~</option>
               <option value="inter">Intermédiaire −10%</option>
-              <option value="local">Local +30% (hors CH)</option>
               <option value="amis">⭐ Fidèle −20%</option>
             </select>
           </div>
@@ -371,6 +379,7 @@
       <div class="resbar">
         <div class="count"><b id="cnt">0</b> course<span id="cntS">s</span></div>
         <button class="viewtoggle" id="viewToggle" aria-pressed="false" title="Basculer vue compacte">≡ Compact</button>
+        <button class="viewtoggle" id="mapToggle" aria-pressed="false" title="Vue carte">🗺 Carte</button>
         <select class="sortsel" id="sortSel" aria-label="Trier">
           <option value="alt">Altitude ↓</option>
           <option value="cotA">Cotation ↑</option>
@@ -378,6 +387,8 @@
           <option value="prix">Prix ↑</option>
         </select>
       </div>
+      <div id="map"></div>
+      <div class="map-note">Positions de repérage approximatives · fond de carte : réseau requis · ● position au centre du massif quand le point exact n'est pas référencé</div>
       <div class="cards" id="cards"></div>
     </main>
   </div>
@@ -832,6 +843,7 @@ function saveState(){try{const o={...state,massifs:[...state.massifs],pays:[...s
 function loadState(){try{
   const o=JSON.parse(localStorage.getItem('app-state')||'null'); if(!o) return;
   Object.assign(state,o);
+  if(state.mode==='local') state.mode='hono';
   state.massifs=new Set(o.massifs||[]); state.pays=new Set(o.pays||[]);
   state.q='';
 }catch(e){}}
@@ -886,14 +898,10 @@ const CHF_PER_EUR=0.95; // taux de change : 1 EUR = 0.95 CHF. Modifier ici.
 function money(x){ return state.cur==='EUR' ? fmt(Math.round(x/CHF_PER_EUR/5)*5)+' €' : 'CHF '+fmt(x); }
 const AMIS_DISC=0.80;  // -20% tarif fidèle. Modifier ici.
 const INTER_DISC=0.90; // -10% tarif intermédiaire (entre premium et niveau bureaux locaux). Modifier ici.
-const LOCAL_RATIO=0.70;  // niveau bureaux locaux FR/IT estimé ≈ 70% du tarif premium (repères Meije, Écrins).
-const LOCAL_MARKUP=1.30; // majoration +30% sur la base bureaux locaux. Effectif hors Suisse : 0.70×1.30 = 0.91.
 function priceFor(c){
   const eff=Math.min(state.size,c.maxP);
   const amis=state.mode==='amis', tc=state.mode==='tc', inter=state.mode==='inter';
-  const local=state.mode==='local' && c.pays!=='Suisse';
-  const localCH=state.mode==='local' && c.pays==='Suisse';
-  const disc=amis?AMIS_DISC:(inter?INTER_DISC:(local?LOCAL_RATIO*LOCAL_MARKUP:1));
+  const disc=amis?AMIS_DISC:(inter?INTER_DISC:1);
   const pct=amis?Math.round((1-AMIS_DISC)*100):Math.round((1-INTER_DISC)*100);
   let base=ppAt(c.eng,eff)*(1+state.season/100)*disc;
   const shown=tc?base+c.frais:base;
@@ -903,9 +911,9 @@ function priceFor(c){
     txt:'dès '+money(shown),
     per:eff>1?('/ pers. ('+eff+' pers.)'):'engagement (1 pers.)',
     solo:eff>1?'solo '+money(soloAll):null,
-    sub:tc?'dont ~'+money(c.frais)+' frais':(amis?'−'+pct+'% tarif préférentiel':(inter?'−'+pct+'% tarif intermédiaire':(local?'base bureaux locaux +30%':(localCH?'tarif CH plein — mode local sans effet':null)))),
+    sub:tc?'dont ~'+money(c.frais)+' frais':(amis?'−'+pct+'% tarif préférentiel':(inter?'−'+pct+'% tarif intermédiaire':null)),
     subCls:amis?'sub-amis':null,
-    badge:capped?'max '+c.maxP+' pers.':(tc?'tout compris est.':(amis?'⭐ −'+pct+'%':(inter?'−'+pct+'%':(local?'local +30%':(c.est?'à valider':null))))),
+    badge:capped?'max '+c.maxP+' pers.':(tc?'tout compris est.':(amis?'⭐ −'+pct+'%':(inter?'−'+pct+'%':(c.est?'à valider':null)))),
     badgeCls:amis?'badge-amis':null
   };
 }
@@ -930,11 +938,11 @@ function passes(c){
 function gaugePct(alt){ const lo=2000, hi=4900; return Math.max(2,Math.min(98,(hi-alt)/(hi-lo)*100)); }
 
 function devisText(c){
-  const s=(1+state.season/100)*(state.mode==='amis'?AMIS_DISC:(state.mode==='inter'?INTER_DISC:(state.mode==='local'&&c.pays!=='Suisse'?LOCAL_RATIO*LOCAL_MARKUP:1)));
+  const s=(1+state.season/100)*(state.mode==='amis'?AMIS_DISC:(state.mode==='inter'?INTER_DISC:1));
   const solo=money(c.eng*s);
   const grp = c.maxP>1 ? '\nPrix/pers selon taille : '+Array.from({length:c.maxP},(_,i)=>money(ppAt(c.eng,i+1)*s)).join(' · ')+' (1→'+c.maxP+' pers.)' : '\nGuidé en 1:1 (1 personne).';
   const sNote=state.season>0?'\nTarif haute saison appliqué (+'+state.season+'%).':'';
-  const amisNote=state.mode==='amis'?'\n⭐ Tarif préférentiel fidèle appliqué (−'+Math.round((1-AMIS_DISC)*100)+'%). Document à usage strictement privé.':(state.mode==='inter'?'\nTarif intermédiaire appliqué (−'+Math.round((1-INTER_DISC)*100)+'%).':(state.mode==='local'&&c.pays!=='Suisse'?'\nTarif calé sur les bureaux locaux +30% (course hors Suisse).':''));
+  const amisNote=state.mode==='amis'?'\n⭐ Tarif préférentiel fidèle appliqué (−'+Math.round((1-AMIS_DISC)*100)+'%). Document à usage strictement privé.':(state.mode==='inter'?'\nTarif intermédiaire appliqué (−'+Math.round((1-INTER_DISC)*100)+'%).':'');
   const tcLine = '\nFrais en sus estimés : ~'+money(c.frais)+' / pers. (refuge, remontées, transferts — approximatif).';
   return c.nom+' — '+c.massif+' ('+c.alt+' m)\n'
     +'Discipline : '+DISC_LABEL[c.disc]+' · Cotation '+c.cot+' · '+(c.dMin===c.dMax?c.dMin+' j':c.dMin+'-'+c.dMax+' j')+' · max '+c.maxP+' pers.\n'
@@ -961,7 +969,7 @@ function renderAF(){
   if(state.dangerMax<3) add('danger ≤ '+state.dangerMax,'danger');
   if(state.only82) add('82 × 4000','only82');
   if(state.season>0) add('haute saison','season');
-  if(state.mode!=='hono') add({tc:'tout compris',inter:'inter. −10%',amis:'⭐ fidèle',local:'local +30%'}[state.mode]||state.mode,'mode');
+  if(state.mode!=='hono') add({tc:'tout compris',inter:'inter. −10%',amis:'⭐ fidèle'}[state.mode]||state.mode,'mode');
   if(state.size>1) add(state.size+' pers.','size');
   bar.innerHTML = chips.length
     ? chips.map((c,i)=>'<button class="afchip" data-a="'+c.action+'">'+c.label+' <span class="x">×</span></button>').join('')
@@ -989,6 +997,7 @@ $('#afbar').addEventListener('click',function(e){
 function render(){
   saveState();
   renderAF();
+  if(document.body.classList.contains('map-on') && window.L && MAP){ renderMap(); }
   const list = COURSES.filter(passes);
   list.sort((a,b)=>{
     if(state.sort==='alt') return b.alt-a.alt;
@@ -1119,6 +1128,76 @@ $('#viewToggle').setAttribute('aria-pressed', !!state.compact);
 render();
 
 
+
+
+/* ===== Carte interactive (Leaflet, lazy) ===== */
+const COORDS = {"Bishorn": [46.1183, 7.7156], "Weisshorn": [46.1017, 7.7158], "Zinalrothorn": [46.065, 7.6897], "Obergabelhorn": [46.0386, 7.6675], "Ober Gabelhorn": [46.0386, 7.6675], "Dent Blanche": [46.0342, 7.6119], "Dent d'Hérens": [45.9703, 7.6047], "Cervin": [45.9764, 7.6586], "Dom": [46.0939, 7.8586], "Täschhorn": [46.0844, 7.8508], "Nadelhorn": [46.1092, 7.8639], "Nadelgrat": [46.1128, 7.8608], "Lenzspitze": [46.1039, 7.8672], "Stecknadelhorn": [46.1128, 7.8608], "Hohberghorn": [46.1178, 7.8569], "Dürrenhorn": [46.1233, 7.8531], "Alphubel": [46.0631, 7.8639], "Allalinhorn": [46.0461, 7.8969], "Rimpfischhorn": [46.0233, 7.8836], "Strahlhorn": [46.0125, 7.9017], "Weissmies": [46.1278, 8.0117], "Lagginhorn": [46.1569, 8.0033], "Grand Combin": [45.9375, 7.2992], "Combin de Grafeneire": [45.9375, 7.2992], "Combin de Valsorey": [45.9358, 7.2872], "Combin de la Tsessette": [45.9414, 7.3131], "Breithorn": [45.9414, 7.748], "Castor": [45.9203, 7.7994], "Pollux": [45.9264, 7.7906], "Roccia Nera": [45.92, 7.7739], "Lyskamm": [45.9219, 7.8353], "Triftjigrat": [45.944, 7.742], "Naso": [45.9256, 7.8206], "Arolla": [46.0264, 7.4839], "Anzère": [46.2989, 7.3983], "Anniviers": [46.135, 7.625], "Dufour": [45.9369, 7.8672], "Nordend": [45.9439, 7.8714], "Zumsteinspitze": [45.9317, 7.8722], "Signalkuppe": [45.9269, 7.8769], "Margherita": [45.9269, 7.8769], "Parrotspitze": [45.9219, 7.8711], "Ludwigshöhe": [45.9169, 7.8664], "Corno Nero": [45.9147, 7.8683], "Pyramide Vincent": [45.9075, 7.8681], "Punta Giordani": [45.9036, 7.8792], "Spaghetti": [45.927, 7.83], "Cresta Rey": [45.935, 7.865], "Mont Blanc du Tacul": [45.8564, 6.8878], "Mont Blanc de Courmayeur": [45.8283, 6.8683], "Mont Blanc": [45.8326, 6.8652], "Goûter": [45.8508, 6.83], "Grands Mulets": [45.8681, 6.8478], "3 Monts": [45.86, 6.88], "Maudit": [45.8478, 6.8753], "Kuffner": [45.8478, 6.8753], "Chéré": [45.8583, 6.8931], "Modica": [45.8583, 6.8931], "Gabarrou-Albinoni": [45.8583, 6.8931], "Aiguille du Midi": [45.8792, 6.8875], "Cosmiques": [45.8756, 6.8858], "Frendo": [45.8828, 6.8858], "Lachenal": [45.865, 6.8964], "Vent du Dragon": [45.8767, 6.8867], "Pellissier": [45.865, 6.8964], "Aiguille Verte": [45.935, 6.97], "Couturier": [45.9364, 6.9711], "Grande Rocheuse": [45.9333, 6.975], "Aiguille du Jardin": [45.9317, 6.98], "Droites": [45.9364, 6.9847], "Courtes": [45.9436, 7.0044], "Chardonnet": [45.9614, 7.0136], "Couloir en Y": [45.9553, 7.0028], "Argentière": [45.9483, 6.9917], "Grandes Jorasses": [45.8686, 6.9861], "Walker": [45.8686, 6.9861], "Rochefort": [45.8656, 6.9622], "Dent du Géant": [45.8622, 6.9519], "Diable": [45.859, 6.893], "Tour Ronde": [45.8447, 6.9333], "Entrèves": [45.85, 6.9417], "Marbrées": [45.8514, 6.9494], "Peuterey": [45.8386, 6.8892], "Aiguille Blanche": [45.8386, 6.8892], "Grand Pilier d'Angle": [45.8433, 6.8794], "Brouillard": [45.8283, 6.8592], "Baretti": [45.8236, 6.8556], "Luigi Amedeo": [45.8306, 6.8617], "Bionnassay": [45.8281, 6.8194], "Dôme du Goûter": [45.8425, 6.8433], "Dolent": [45.9236, 7.0453], "Dorées": [46.0, 7.0389], "Trient": [46.0011, 7.0272], "Petit Dru": [45.9325, 6.9556], "Rébuffat": [45.878, 6.889], "Vallée Blanche": [45.87, 6.91], "Crémerie": [45.98, 6.928], "Bérard": [46.008, 6.902], "Purtscheller": [45.97, 7.008], "Aiguille du Tour": [45.9714, 7.0092], "Miage": [45.818, 6.809], "Conscrits": [45.806, 6.788], "Jungfrau": [46.5367, 7.9625], "Mönch": [46.5583, 7.9975], "Finsteraarhorn": [46.5372, 8.1261], "Aletschhorn": [46.465, 7.9939], "Schreckhorn": [46.59, 8.1189], "Lauteraarhorn": [46.5814, 8.1264], "Fiescherhorn": [46.5519, 8.0653], "Grünhorn": [46.5389, 8.0958], "Wildstrubel": [46.3956, 7.5314], "Kandersteg": [46.4944, 7.6739], "Berner Haute Route": [46.5, 8.0], "Eiger": [46.5775, 8.0058], "Mittellegi": [46.58, 8.013], "Biancograt": [46.3856, 9.9036], "Spallagrat": [46.3789, 9.9111], "Bernina": [46.3822, 9.9081], "Palü": [46.3783, 9.9583], "Zupò": [46.3672, 9.9297], "Roseg": [46.3831, 9.8747], "Scerscen": [46.3767, 9.8933], "Cambrena": [46.3872, 9.9767], "Morteratsch": [46.3944, 9.8969], "Tschierva": [46.4103, 9.8747], "Badile": [46.2942, 9.5847], "Cengalo": [46.2933, 9.6008], "Barre des Écrins": [44.9217, 6.3597], "Écrins": [44.9217, 6.3597], "Meije": [45.0044, 6.3081], "Pelvoux": [44.9053, 6.3792], "Ailefroide": [44.8867, 6.3369], "Coste Rouge": [44.8867, 6.3369], "Pic Sans Nom": [44.8967, 6.3583], "Grande Ruine": [44.9578, 6.3436], "Roche Faurio": [44.9403, 6.3717], "Pic Coolidge": [44.9083, 6.3639], "Les Bans": [44.8578, 6.3319], "Dibona": [44.9989, 6.2761], "Cinéastes": [44.9247, 6.3903], "Vieux Piton": [44.9247, 6.3903], "Fournel": [44.77, 6.5], "Freissinières": [44.75, 6.54], "La Grave": [45.0458, 6.3067], "Sélé": [44.8767, 6.3547], "Coolidge": [44.91, 6.372], "Gran Paradiso": [45.5164, 7.2669], "Grand Paradis": [45.5164, 7.2669], "Grivola": [45.5947, 7.2603], "Ciarforon": [45.5064, 7.2544], "Herbétet": [45.5533, 7.2358], "Tresenta": [45.51, 7.2617], "Monciair": [45.4989, 7.2483], "Gran Serra": [45.5314, 7.2417], "Monviso": [44.6672, 7.0906], "Cogne": [45.6083, 7.3567], "Ruitor": [45.6444, 6.948], "Sella Ronda": [46.51, 11.84], "Tödi": [46.8114, 8.9153], "Dammastock": [46.6444, 8.4211], "Galenstock": [46.6142, 8.4147], "Sustenhorn": [46.7217, 8.4344], "Titlis": [46.7717, 8.4375], "Spannort": [46.8547, 8.4886], "Salbit": [46.6669, 8.5539], "Wendenstöcke": [46.7331, 8.3417], "Bristen": [46.7239, 8.6733], "Göschenen": [46.6672, 8.5869], "Urner": [46.67, 8.45], "Gastlosen": [46.545, 7.26], "Vanil Noir": [46.5347, 7.1436], "Dent de Broc": [46.5936, 7.1147], "Moléson": [46.5464, 7.0181], "Jaun": [46.6108, 7.2789], "Miroir d'Argentine": [46.2731, 7.1281], "Tour d'Aï": [46.358, 7.028], "Dent de Morcles": [46.2036, 7.0644], "Dent du Midi": [46.1633, 6.9236], "Brenleire": [46.528, 7.152], "Haute Route Chamonix": [46.03, 7.35], "Tour du Ciel": [46.12, 7.63], "Tour des Combins": [45.97, 7.28], "Tour du Mont Blanc": [45.83, 6.87]};
+const MASSIF_CENTER = {"Valais": [46.02, 7.65], "Mont Rose": [45.93, 7.87], "Alpes bernoises": [46.52, 7.95], "Bernina": [46.38, 9.92], "Mont-Blanc": [45.87, 6.92], "Écrins": [44.93, 6.36], "Préalpes": [46.55, 7.15], "Italie": [45.55, 7.3], "Suisse centrale": [46.72, 8.45]};
+const COORD_KEYS = Object.keys(COORDS).sort((a,b)=>b.length-a.length);
+function coordFor(c,i){
+  for(const k of COORD_KEYS){ if(c.nom.includes(k)) return {ll:COORDS[k],approx:false}; }
+  const ctr=MASSIF_CENTER[c.massif]||[46.2,7.5];
+  const ang=(i*2.399963); const r=0.012+0.004*(i%5);
+  return {ll:[ctr[0]+r*Math.cos(ang), ctr[1]+r*Math.sin(ang)],approx:true};
+}
+const DISC_COLOR={alpinisme:'#2c6e7c',escalade:'#b8720e','cascade':'#4a7fd9','ski-rando':'#7a5fa0','hors-piste':'#4f9e7a','via-ferrata':'#c05a7a'};
+let MAP=null, MAP_LAYER=null, LEAFLET_LOADING=false;
+function ensureLeaflet(cb){
+  if(window.L){ cb(); return; }
+  if(LEAFLET_LOADING) return;
+  LEAFLET_LOADING=true;
+  const css=document.createElement('link'); css.rel='stylesheet';
+  css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  document.head.appendChild(css);
+  const js=document.createElement('script');
+  js.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  js.onload=()=>{ LEAFLET_LOADING=false; cb(); };
+  js.onerror=()=>{ LEAFLET_LOADING=false;
+    document.getElementById('map').innerHTML='<div style="padding:30px;text-align:center;color:#888;font-size:13px">Carte indisponible (connexion réseau requise pour le fond de carte).</div>'; };
+  document.head.appendChild(js);
+}
+function initMap(){
+  if(MAP) return;
+  MAP=L.map('map',{zoomControl:true,attributionControl:true}).setView([45.95,7.4],8);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {maxZoom:17,attribution:'© OpenStreetMap'}).addTo(MAP);
+  MAP_LAYER=L.layerGroup().addTo(MAP);
+}
+function renderMap(){
+  if(!window.L||!MAP) return;
+  MAP_LAYER.clearLayers();
+  const list=COURSES.filter(passes);
+  const bounds=[];
+  list.forEach((c,i)=>{
+    const {ll,approx}=coordFor(c,i);
+    bounds.push(ll);
+    const col=DISC_COLOR[c.disc]||'#2c6e7c';
+    const p=priceFor(c);
+    const mk=L.circleMarker(ll,{radius:approx?5:7,color:col,weight:2,
+      fillColor:col,fillOpacity:approx?0.35:0.8,opacity:approx?0.55:1});
+    mk.bindPopup('<div class="map-popup"><b>'+c.nom.replace(/</g,'&lt;')+'</b>'
+      +'<div class="mp-meta">'+c.massif+' · '+c.cot+' · '+c.alt+' m'+(approx?' · <i>position approximative</i>':'')+'</div>'
+      +'<div class="mp-meta">'+p.txt+' '+p.per+'</div>'
+      +'<button class="mp-btn" onclick="mapGoto(\''+c.nom.replace(/'/g,"\\'").replace(/"/g,'&quot;')+'\')">Voir la fiche</button></div>');
+    mk.addTo(MAP_LAYER);
+  });
+  if(bounds.length) MAP.fitBounds(bounds,{padding:[28,28],maxZoom:11});
+}
+window.mapGoto=function(nom){
+  document.body.classList.remove('map-on');
+  document.getElementById('mapToggle').setAttribute('aria-pressed','false');
+  state.q=nom;
+  const si=document.getElementById('searchInp');
+  if(si){ si.value=nom; document.getElementById('searchClear').style.display='block'; }
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+document.getElementById('mapToggle').onclick=function(){
+  const on=!document.body.classList.contains('map-on');
+  document.body.classList.toggle('map-on',on);
+  this.setAttribute('aria-pressed',on);
+  if(on){ ensureLeaflet(()=>{ initMap(); setTimeout(()=>{MAP.invalidateSize(); renderMap();},60); }); }
+};
 
 /* Tick-list matériel — event delegation */
 document.getElementById('cards').addEventListener('click',function(e){
