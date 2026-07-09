@@ -322,7 +322,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v59</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v60</span></span>
     </div>
   </div>
 </header>
@@ -1036,10 +1036,10 @@ function buildSelects(){
   $('#dureeSel').onchange=e=>{ state.duree=+e.target.value; syncSelects(); render(); };
   $('#dangerSel').onchange=e=>{ state.dangerMax=+e.target.value; render(); };
   /* miroirs bandeau sticky */
-  fillSel('#sbDisc',DISC_STEPS.map(x=>({l:x.l,v:x.v})),state.disc);
-  fillSel('#sbMassif',[{l:'Tous les massifs',v:''}].concat(MASSIFS.map(m=>({l:m,v:m}))),[...state.massifs][0]||'');
-  fillSel('#sbDuree',[{l:'1 jour',v:1},{l:'≤ 2 jours',v:2},{l:'≤ 3 jours',v:3},{l:'≤ 4 jours',v:4},{l:'Toutes durées',v:99}],state.duree);
-  fillSel('#sbSize',[1,2,3,4,5,6].map(n=>({l:n+' pers.',v:n})),state.size);
+  fillSel('#sbDisc',DISC_STEPS.map(x=>({l:'⛏ '+x.l,v:x.v})),state.disc);
+  fillSel('#sbMassif',[{l:'📍 Tous les massifs',v:''}].concat(MASSIFS.map(m=>({l:'📍 '+m,v:m}))),[...state.massifs][0]||'');
+  fillSel('#sbDuree',[{l:'📅 1 jour',v:1},{l:'📅 ≤ 2 jours',v:2},{l:'📅 ≤ 3 jours',v:3},{l:'📅 ≤ 4 jours',v:4},{l:'📅 Toutes durées',v:99}],state.duree);
+  fillSel('#sbSize',[1,2,3,4,5,6].map(n=>({l:'👥 '+n+' pers.',v:n})),state.size);
   $('#sbDisc').onchange=e=>{ state.disc=e.target.value; syncSelects(); render(); };
   $('#sbMassif').onchange=e=>{ state.massifs=new Set(e.target.value?[e.target.value]:[]); syncSelects(); render(); };
   $('#sbDuree').onchange=e=>{ state.duree=+e.target.value; syncSelects(); render(); };
