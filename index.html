@@ -68,6 +68,26 @@
   #searchInp::placeholder{color:rgba(0,0,0,.35)}
   #searchInp:focus{border-color:var(--ice-deep);background:#fff}
   .search-clear{position:absolute;right:9px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(0,0,0,.35);font-size:18px;cursor:pointer;padding:2px 5px;line-height:1;display:none}
+  /* bandeau sticky */
+  .stickybar{position:sticky;top:0;z-index:55;background:var(--bg);padding:9px 14px 8px;
+box-shadow:0 3px 14px rgba(0,0,0,.09);border-bottom:1px solid rgba(0,0,0,.06)}
+  .sb-row1{display:flex;gap:8px;align-items:center;max-width:1060px;margin:0 auto}
+  .sb-row1 .search-wrap{flex:1;margin:0}
+  .sb-gear{position:relative;width:40px;height:40px;border-radius:10px;border:1.5px solid rgba(0,0,0,.15);
+background:#fff;font-size:17px;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+  .sb-gear[aria-pressed='true']{background:var(--ice-deep);color:#fff;border-color:var(--ice-deep)}
+  .sb-gear .fcount{position:absolute;top:-6px;right:-6px;background:#b8720e;color:#fff;font-size:10px;
+font-weight:800;min-width:17px;height:17px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 3px}
+  .sb-gear .fcount.on{display:flex}
+  .sb-row2{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px auto 0;max-width:1060px}
+  .sb-sel{width:100%;box-sizing:border-box;padding:7px 22px 7px 9px;font-size:12px;font-family:inherit;
+border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='6'%3E%3Cpath d='M1 1l3.5 3.5L8 1' stroke='%23555' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 7px center;
+-webkit-appearance:none;appearance:none;color:var(--rock);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sb-sel:focus{outline:none;border-color:var(--ice-deep)}
+  /* panneau en tiroir */
+  .panel{display:none}
+  body.panel-open .panel{display:block}
+  .panel-close{background:none;border:none;font-size:19px;color:var(--muted);cursor:pointer;padding:2px 6px;line-height:1}
   /* accordéons */
   .accord{border:1px solid rgba(0,0,0,.10);border-radius:10px;margin-bottom:10px;overflow:hidden}
   .accord-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;cursor:pointer;user-select:none;font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ice-deep);background:rgba(0,0,0,.03)}
@@ -302,20 +322,13 @@
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v58</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v59</span></span>
     </div>
   </div>
 </header>
 
-<div class="wrap">
-  <div class="board">
-    <aside class="panel" aria-label="Filtres">
-      <div class="panel-h">
-        <h2>Réglages &amp; filtres</h2>
-        <button class="reset" id="resetBtn">réinitialiser</button>
-      </div>
-
-      <!-- RECHERCHE -->
+<div class="stickybar" id="stickybar">
+  <div class="sb-row1">
       <div class="search-wrap">
         <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
           <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="2"/>
@@ -323,6 +336,23 @@
         </svg>
         <input id="searchInp" type="text" placeholder="Rechercher une course…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <button class="search-clear" id="searchClear" aria-label="Effacer">×</button>
+      </div>
+    <button class="sb-gear" id="sbGear" aria-pressed="false" title="Tous les filtres & réglages">⚙<span class="fcount" id="fcount"></span></button>
+  </div>
+  <div class="sb-row2">
+    <select class="sb-sel" id="sbDisc" aria-label="Activité"></select>
+    <select class="sb-sel" id="sbMassif" aria-label="Massif"></select>
+    <select class="sb-sel" id="sbDuree" aria-label="Jours"></select>
+    <select class="sb-sel" id="sbSize" aria-label="Personnes"></select>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="board">
+    <aside class="panel" aria-label="Filtres">
+      <div class="panel-h">
+        <h2>Réglages &amp; filtres</h2>
+        <div style="display:flex;gap:4px;align-items:center"><button class="reset" id="resetBtn">réinitialiser</button><button class="panel-close" id="panelClose" aria-label="Fermer">✕</button></div>
       </div>
 
       <!-- ACCORDÉON 1 : Prix & groupe -->
@@ -999,12 +1029,21 @@ function buildSelects(){
   fillSel('#cotSel',[{l:'PD max',v:2},{l:'AD− max',v:3},{l:'AD max',v:3.5},{l:'AD+ max',v:4},{l:'Toutes cotations',v:5}],state.cotMax);
   fillSel('#dureeSel',[{l:'1 jour',v:1},{l:'≤ 2 jours',v:2},{l:'≤ 3 jours',v:3},{l:'≤ 4 jours',v:4},{l:'Toutes durées',v:99}],state.duree);
   fillSel('#dangerSel',[{l:'Danger faible',v:1},{l:'Faible + modéré',v:2},{l:'Tous dangers',v:3}],state.dangerMax);
-  $('#discSel').onchange=e=>{ state.disc=e.target.value; render(); };
-  $('#massifSel').onchange=e=>{ state.massifs=new Set(e.target.value?[e.target.value]:[]); render(); };
+  $('#discSel').onchange=e=>{ state.disc=e.target.value; syncSelects(); render(); };
+  $('#massifSel').onchange=e=>{ state.massifs=new Set(e.target.value?[e.target.value]:[]); syncSelects(); render(); };
   $('#paysSel').onchange=e=>{ state.pays=new Set(e.target.value?[e.target.value]:[]); render(); };
   $('#cotSel').onchange=e=>{ state.cotMax=+e.target.value; render(); };
-  $('#dureeSel').onchange=e=>{ state.duree=+e.target.value; render(); };
+  $('#dureeSel').onchange=e=>{ state.duree=+e.target.value; syncSelects(); render(); };
   $('#dangerSel').onchange=e=>{ state.dangerMax=+e.target.value; render(); };
+  /* miroirs bandeau sticky */
+  fillSel('#sbDisc',DISC_STEPS.map(x=>({l:x.l,v:x.v})),state.disc);
+  fillSel('#sbMassif',[{l:'Tous les massifs',v:''}].concat(MASSIFS.map(m=>({l:m,v:m}))),[...state.massifs][0]||'');
+  fillSel('#sbDuree',[{l:'1 jour',v:1},{l:'≤ 2 jours',v:2},{l:'≤ 3 jours',v:3},{l:'≤ 4 jours',v:4},{l:'Toutes durées',v:99}],state.duree);
+  fillSel('#sbSize',[1,2,3,4,5,6].map(n=>({l:n+' pers.',v:n})),state.size);
+  $('#sbDisc').onchange=e=>{ state.disc=e.target.value; syncSelects(); render(); };
+  $('#sbMassif').onchange=e=>{ state.massifs=new Set(e.target.value?[e.target.value]:[]); syncSelects(); render(); };
+  $('#sbDuree').onchange=e=>{ state.duree=+e.target.value; syncSelects(); render(); };
+  $('#sbSize').onchange=e=>{ state.size=+e.target.value; syncSelects(); render(); };
 }
 function buildMois(){
   const sel=$('#moisSel');
@@ -1091,6 +1130,8 @@ function renderAF(){
   if(state.season>0) add('haute saison','season');
   if(state.mode!=='hono') add({tc:'tout compris',inter:'inter. −10%',amis:'⭐ fidèle'}[state.mode]||state.mode,'mode');
   if(state.size>1) add(state.size+' pers.','size');
+  const fc=$('#fcount');
+  if(fc){ fc.textContent=chips.length; fc.classList.toggle('on',chips.length>0); }
   bar.innerHTML = chips.length
     ? chips.map((c,i)=>'<button class="afchip" data-a="'+c.action+'">'+c.label+' <span class="x">×</span></button>').join('')
       +'<button class="afclear" data-a="__all">tout effacer</button>'
@@ -1218,10 +1259,18 @@ function render(){
 }
 
 /* top controls */
-$('#sizeSel').onchange=e=>{ state.size=+e.target.value; render(); };
+$('#sizeSel').onchange=e=>{ state.size=+e.target.value; syncSelects(); render(); };
 $('#seasonSel').onchange=e=>{ state.season=+e.target.value; render(); };
 $('#modeSel').onchange=e=>{ state.mode=e.target.value; render(); };
 $('#curSel').onchange=e=>{ state.cur=e.target.value; render(); };
+function togglePanel(force){
+  const on=force!==undefined?force:!document.body.classList.contains('panel-open');
+  document.body.classList.toggle('panel-open',on);
+  $('#sbGear').setAttribute('aria-pressed',on);
+  if(on) window.scrollTo({top:0,behavior:'smooth'});
+}
+$('#sbGear').onclick=()=>togglePanel();
+$('#panelClose').onclick=()=>togglePanel(false);
 $('#sortSel').onchange=e=>{ state.sort=e.target.value; render(); };
 $('#viewToggle').onclick=function(){ state.compact=!state.compact; this.setAttribute('aria-pressed',state.compact); render(); };
 /* FAB */
@@ -1234,10 +1283,7 @@ $('#viewToggle').onclick=function(){ state.compact=!state.compact; this.setAttri
     last=y;
   },{passive:true});
   $('#fabTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
-  $('#fabFilters').onclick=()=>{
-    document.querySelectorAll('.accord').forEach(d=>d.open=true);
-    window.scrollTo({top:0,behavior:'smooth'});
-  };
+  $('#fabFilters').onclick=()=>{ togglePanel(true); document.querySelectorAll('.accord').forEach(d=>d.open=true); };
 })();
 $('#only82Sel').onchange=e=>{ state.only82=e.target.value==='1'; render(); };
 $('#resetBtn').onclick=()=>{
@@ -1249,6 +1295,7 @@ function syncSelects(){
   $('#discSel').value=state.disc; $('#massifSel').value=[...state.massifs][0]||''; $('#paysSel').value=[...state.pays][0]||'';
   $('#cotSel').value=String(state.cotMax); $('#dureeSel').value=String(state.duree); $('#dangerSel').value=String(state.dangerMax);
   $('#moisSel').value=String(state.mois); $('#only82Sel').value=state.only82?'1':'0'; $('#sortSel').value=state.sort; $('#curSel').value=state.cur||'CHF';
+  $('#sbDisc').value=state.disc; $('#sbMassif').value=[...state.massifs][0]||''; $('#sbDuree').value=String(state.duree); $('#sbSize').value=String(state.size);
 }
 
 (function(){
