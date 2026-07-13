@@ -322,7 +322,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v77</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v78</span></span>
     </div>
   </div>
 </header>
@@ -1132,6 +1132,50 @@ function devisText(c){
 }
 
 
+
+/* ===== Liste matériel PDF (client) ===== */
+function matPDF(c){
+  const esc2=x=>String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const today=new Date().toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'});
+  const kit=matFor(c)||{client:[],guide:[]};
+  const av=activeVar(c);
+  const li=a=>(a&&a.length?a:['—']).map(x=>'<li>'+esc2(x)+'</li>').join('');
+  const html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Matériel — '+esc2(c.nom)+'</title><style>'
+  +'@page{size:A4;margin:16mm}'
+  +'body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1c2830;font-size:12.5px;line-height:1.5;margin:0}'
+  +'.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #2c6e7c;padding-bottom:10px;margin-bottom:16px}'
+  +'.head h1{font-size:17px;margin:0;color:#19424c}.head .sub{font-size:11.5px;color:#555;margin-top:2px}'
+  +'.head .co{text-align:right;font-size:11px;color:#444;line-height:1.5}'
+  +'.dev{font-size:11px;color:#777;letter-spacing:.12em;text-transform:uppercase;margin:0 0 3px}'
+  +'h2{font-size:15.5px;margin:0 0 2px;color:#19424c}'
+  +'.meta{font-size:11.5px;color:#555;margin:2px 0 14px}'
+  +'h3{font-size:12.5px;color:#19424c;margin:16px 0 4px;padding-bottom:3px;border-bottom:1px solid #ddd;letter-spacing:.03em}'
+  +'ul{margin:6px 0 0;padding-left:2px;list-style:none;columns:2;column-gap:22px}'
+  +'li{margin:3px 0;font-size:12px;padding-left:20px;position:relative;break-inside:avoid}'
+  +'li:before{content:"";position:absolute;left:0;top:2px;width:11px;height:11px;border:1.4px solid #7a9aa2;border-radius:3px}'
+  +'.guide-note{font-size:11px;color:#666;background:#f4f7ee;border-radius:6px;padding:8px 11px;margin:6px 0 0;color:#4a5a2e}'
+  +'.tip{font-size:11px;color:#555;border-left:3px solid #b8720e;padding:6px 10px;background:#fdf8ef;margin:14px 0 0}'
+  +'.foot{margin-top:18px;padding-top:9px;border-top:1px solid #ddd;font-size:10.5px;color:#888}'
+  +'</style></head><body>'
+  +'<div class="head"><div><h1>🏔 '+esc2(GUIDE_INFO.nom)+'</h1><div class="sub">'+esc2(GUIDE_INFO.titre)+' · '+esc2(GUIDE_INFO.lieu)+'</div></div>'
+  +'<div class="co">'+esc2(GUIDE_INFO.tel)+'<br>'+esc2(GUIDE_INFO.email)+'</div></div>'
+  +'<p class="dev">Liste de matériel · '+today+'</p>'
+  +'<h2>'+esc2(c.nom)+'</h2>'
+  +'<div class="meta">'+esc2(c.massif)+' · '+c.alt+' m · Cotation '+esc2(c.cot)+' · '+esc2(dShow(c))
+  +(av?' · Formule : '+esc2(av.l):'')+'</div>'
+  +'<h3>🎒 À prévoir / apporter par vos soins</h3><ul>'+li(kit.client)+'</ul>'
+  +'<div class="guide-note"><b>Fourni par le guide (à titre indicatif) :</b> '+(kit.guide&&kit.guide.length?esc2(kit.guide.join(' · ')):'matériel technique collectif')+'</div>'
+  +'<div class="tip"><b>Conseils :</b> privilégiez des vêtements testés et confortables, prévoyez une marge de chaud pour l\'altitude, et n\'hésitez pas à me contacter pour toute question sur le matériel — location possible pour la plupart des équipements techniques.</div>'
+  +'<div class="foot">'+esc2(GUIDE_INFO.nom)+' · '+esc2(GUIDE_INFO.titre)+' · '+esc2(GUIDE_INFO.tel)+' · '+esc2(GUIDE_INFO.email)+'</div>'
+  +'</body></html>';
+  const f=document.createElement('iframe');
+  f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  document.body.appendChild(f);
+  f.contentDocument.open(); f.contentDocument.write(html); f.contentDocument.close();
+  setTimeout(()=>{ try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){}
+    setTimeout(()=>f.remove(), 3000); }, 300);
+}
+
 /* ===== Devis PDF (impression navigateur → Enregistrer en PDF) ===== */
 function devisPDF(c){
   const sF=(1+state.season/100)*(state.mode==='amis'?AMIS_DISC:(state.mode==='inter'?INTER_DISC:1));
@@ -1324,6 +1368,7 @@ function render(){
           <button class="copybtn">Copier le devis</button>
           <button class="addlog-btn" data-nom="${esc(c.nom)}">+ Sortie</button>
           <button class="addlog-btn pdfbtn" data-nom="${esc(c.nom)}">📄 Devis PDF</button>
+          <button class="addlog-btn matpdfbtn" data-nom="${esc(c.nom)}">🎒 Liste matériel PDF</button>
           <span class="copied" hidden>Devis copié ✓</span>
         </div>
       </div>
@@ -1577,6 +1622,8 @@ document.getElementById('cards').addEventListener('change',function(e){
 document.getElementById('cards').addEventListener('click',function(e){
   const pb=e.target.closest('.pdfbtn');
   if(pb){ const c=COURSES.find(x=>x.nom===pb.dataset.nom); if(c) devisPDF(c); return; }
+  const mb=e.target.closest('.matpdfbtn');
+  if(mb){ const c=COURSES.find(x=>x.nom===mb.dataset.nom); if(c) matPDF(c); return; }
   const al=e.target.closest('.addlog-btn');
   if(al){ openLog(al.dataset.nom); return; }
   const vr=e.target.closest('.vt-row');
