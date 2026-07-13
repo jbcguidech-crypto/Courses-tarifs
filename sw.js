@@ -1,5 +1,5 @@
 /* Courses & Tarifs — service worker (réseau d'abord pour les pages) */
-const CACHE = 'courses-tarifs-v74';
+const CACHE = 'courses-tarifs-v77';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
