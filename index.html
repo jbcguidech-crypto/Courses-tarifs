@@ -316,6 +316,21 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   .med-cancel{background:none;border:1px solid rgba(0,0,0,.2);border-radius:8px;padding:8px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;color:var(--rock2)}
   .med-reset{background:none;border:none;color:#b5533f;font-size:11.5px;text-decoration:underline;cursor:pointer;font-family:inherit;margin-left:auto}
   .mat-custom{font-size:10px;font-weight:700;background:rgba(44,110,124,.14);color:var(--ice-deep);border:1px solid rgba(44,110,124,.3);padding:1px 7px;border-radius:9px;margin-left:6px;vertical-align:middle}
+  .frais-edit-btn{background:none;border:1px solid rgba(0,0,0,.18);border-radius:7px;font-size:11.5px;padding:2px 8px;cursor:pointer;color:var(--rock2);margin-left:8px;font-family:inherit}
+  .frais-editor{margin-top:9px;background:rgba(0,0,0,.02);border:1px solid rgba(0,0,0,.09);border-radius:10px;padding:11px 12px}
+  .fe-line{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:12.5px}
+  .fe-line label{flex:1;color:var(--rock2)}
+  .fe-line input{width:82px;padding:6px 8px;border:1.5px solid rgba(0,0,0,.14);border-radius:7px;font-size:12.5px;font-family:inherit;text-align:right;background:#fff}
+  .fe-line input:focus{outline:none;border-color:var(--ice-deep)}
+  .fe-line input.lbl{flex:1;width:auto;text-align:left}
+  .fe-sel{padding:5px 7px;border:1.5px solid rgba(0,0,0,.14);border-radius:7px;font-size:11.5px;font-family:inherit;background:#fff}
+  .fe-h{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-family:'JetBrains Mono';margin:10px 0 3px}
+  .fe-del{background:none;border:none;color:#b5533f;font-size:15px;cursor:pointer;padding:0 3px;line-height:1}
+  .fe-add{background:none;border:1px dashed rgba(0,0,0,.3);border-radius:7px;color:var(--ice-deep);font-size:11.5px;padding:5px 9px;cursor:pointer;font-family:inherit;margin-top:5px}
+  .fe-preview{font-size:12px;color:var(--ice-deep);font-weight:700;margin-top:9px}
+  .fe-actions{display:flex;gap:8px;margin-top:10px;align-items:center}
+  .fe-note{font-size:10.5px;color:var(--muted);margin-top:7px;line-height:1.4}
+  .frais-custom{font-size:10px;font-weight:700;background:rgba(184,114,14,.14);color:#8a5410;border:1px solid rgba(184,114,14,.3);padding:1px 7px;border-radius:9px;margin-left:6px}
   .expbox{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
   .expbox.on{display:flex}
   .expbox .inner{background:#fff;border-radius:14px;padding:18px;max-width:560px;width:100%;max-height:80vh;overflow:auto;box-shadow:0 8px 40px rgba(0,0,0,.3)}
@@ -344,7 +359,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v84</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v85</span></span>
     </div>
   </div>
 </header>
@@ -1135,13 +1150,43 @@ function usesRemontee(c){
 }
 function nuitsFor(c){ const d=activeVar(c)? (parseInt(dShow(c))||c.dMin) : c.dMin; return Math.max(0, (d||1)-1); }
 // Frais estimés par personne selon le nombre de clients n
-function fraisPP(c, n){
+function getFraisEdit(key){ try{ const r=localStorage.getItem('fraisedit:'+key); return r?JSON.parse(r):null; }catch(e){ return null; } }
+function setFraisEdit(key,v){ try{ localStorage.setItem('fraisedit:'+key, JSON.stringify(v)); }catch(e){} }
+function clearFraisEdit(key){ try{ localStorage.removeItem('fraisedit:'+key); }catch(e){} }
+function fraisKey(c){ const v=activeVar(c); return (v&&v.ref)? v.ref : c.nom; }
+// Valeurs par défaut (barème pays) pour une course, avant édition
+function fraisDefaults(c){
   const pays = c.pays in FRAIS_BAREME.dpClient ? c.pays : 'Suisse';
-  const nuits = nuitsFor(c);
-  const remont = usesRemontee(c) ? FRAIS_BAREME.benne[pays] : 0;
-  const clientOwn = FRAIS_BAREME.dpClient[pays]*nuits + remont;              // dépenses propres au client
-  const guidePart = (FRAIS_BAREME.dpGuide[pays]*nuits + remont) / Math.max(1,n); // part guide (DP + sa benne) répartie
-  return Math.round((clientOwn + guidePart)/5)*5;
+  return {
+    dpClient: FRAIS_BAREME.dpClient[pays],
+    dpGuide:  FRAIS_BAREME.dpGuide[pays],
+    benne:    usesRemontee(c) ? FRAIS_BAREME.benne[pays] : 0,
+    nuits:    nuitsFor(c),
+    autres:   []   // [{label, montant, part:'client'|'guide'}]
+  };
+}
+// Paramètres effectifs (défauts fusionnés avec l'édition éventuelle)
+function fraisParams(c){
+  const d=fraisDefaults(c);
+  const e=getFraisEdit(fraisKey(c));
+  if(!e) return d;
+  return {
+    dpClient: e.dpClient!=null? e.dpClient : d.dpClient,
+    dpGuide:  e.dpGuide!=null?  e.dpGuide  : d.dpGuide,
+    benne:    e.benne!=null?    e.benne    : d.benne,
+    nuits:    e.nuits!=null?    e.nuits    : d.nuits,
+    autres:   Array.isArray(e.autres)? e.autres : d.autres
+  };
+}
+function fraisPP(c, n){
+  // FRAIS_OVERRIDE (valeur fixe imposée) reste prioritaire
+  const P=fraisParams(c);
+  const clientOwn = P.dpClient*P.nuits + P.benne;
+  let guideOwn    = P.dpGuide*P.nuits + P.benne;
+  let autresClient=0, autresGuide=0;
+  (P.autres||[]).forEach(a=>{ const m=+a.montant||0; if(a.part==='guide') autresGuide+=m; else autresClient+=m; });
+  const perClient = clientOwn + autresClient + (guideOwn + autresGuide)/Math.max(1,n);
+  return Math.round(perClient/5)*5;
 } // taux de change : 1 EUR = 0.95 CHF. Modifier ici.
 function money(x){ return state.cur==='EUR' ? fmt(Math.round(x/CHF_PER_EUR/5)*5)+' €' : 'CHF '+fmt(x); }
 const AMIS_DISC=0.80;  // -20% tarif fidèle. Modifier ici.
@@ -1343,6 +1388,95 @@ $('#expCopy').onclick=async function(){
   catch(e){ ta.select(); document.execCommand('copy'); this.textContent='Copié ✓'; setTimeout(()=>this.textContent='Copier',1500); }
 };
 
+
+/* ===== Édition des frais par course ===== */
+function renderFraisEditor(c){
+  const P=fraisParams(c);
+  const n=Math.min(state.size, mpFor(c))||1;
+  const autres=(P.autres||[]).map((a,i)=>
+    '<div class="fe-line"><input class="lbl fa-lbl" data-i="'+i+'" value="'+esc(a.label||'').replace(/"/g,'&quot;')+'" placeholder="Libellé (ex. transfert taxi)">'
+    +'<input type="number" class="fa-mnt" data-i="'+i+'" value="'+(+a.montant||0)+'" inputmode="numeric">'
+    +'<select class="fe-sel fa-part" data-i="'+i+'"><option value="client"'+(a.part!=='guide'?' selected':'')+'>/ client</option><option value="guide"'+(a.part==='guide'?' selected':'')+'>part guide</option></select>'
+    +'<button class="fe-del" data-i="'+i+'" title="Supprimer">✕</button></div>').join('');
+  return '<div class="frais-editor">'
+    +'<div class="fe-h">Par nuit</div>'
+    +'<div class="fe-line"><label>Demi-pension + nuitée · client</label><input type="number" id="fe-dpc" value="'+P.dpClient+'" inputmode="numeric"></div>'
+    +'<div class="fe-line"><label>Demi-pension + nuitée · guide (réparti)</label><input type="number" id="fe-dpg" value="'+P.dpGuide+'" inputmode="numeric"></div>'
+    +'<div class="fe-line"><label>Nombre de nuits</label><input type="number" id="fe-nuits" value="'+P.nuits+'" inputmode="numeric"></div>'
+    +'<div class="fe-h">Par course</div>'
+    +'<div class="fe-line"><label>Remontées mécaniques / pers. (AR)</label><input type="number" id="fe-benne" value="'+P.benne+'" inputmode="numeric"></div>'
+    +'<div class="fe-h">Autres frais</div><div id="fe-autres">'+autres+'</div>'
+    +'<button class="fe-add">+ Ajouter un frais</button>'
+    +'<div class="fe-preview" id="fe-preview"></div>'
+    +'<div class="fe-note">« part guide » = dépense du guide, répartie entre les participants (baisse quand le groupe grandit). Ces valeurs alimentent le devis et le total affiché.</div>'
+    +'<div class="fe-actions"><button class="med-save fe-save" data-nom="'+esc(c.nom)+'">Enregistrer</button>'
+    +'<button class="med-cancel fe-cancel">Annuler</button>'
+    +(getFraisEdit(fraisKey(c))?'<button class="med-reset fe-reset" data-key="'+esc(fraisKey(c)).replace(/"/g,'&quot;')+'">réinitialiser</button>':'')
+    +'</div></div>';
+}
+function feCollect(box){
+  const g=sel=>box.querySelector(sel);
+  const num=(sel)=>{ const el=g(sel); return el? (+el.value||0) : 0; };
+  const autres=[];
+  const cont=g('#fe-autres');
+  if(cont) cont.querySelectorAll('.fe-line').forEach(row=>{
+    const lblEl=row.querySelector('.fa-lbl'), mntEl=row.querySelector('.fa-mnt'), partEl=row.querySelector('.fa-part');
+    if(!lblEl||!mntEl||!partEl) return;
+    const label=(lblEl.value||'').trim(); const montant=+mntEl.value||0; const part=partEl.value;
+    if(label||montant) autres.push({label,montant,part});
+  });
+  return { dpClient:num('#fe-dpc'), dpGuide:num('#fe-dpg'), benne:num('#fe-benne'), nuits:num('#fe-nuits'), autres };
+}
+function feLivePreview(box, c){
+  const data=feCollect(box);
+  const n=Math.min(state.size, mpFor(c))||1;
+  const clientOwn=data.dpClient*data.nuits + data.benne;
+  let guideOwn=data.dpGuide*data.nuits + data.benne, ac=0, ag=0;
+  data.autres.forEach(a=>{ const m=+a.montant||0; if(a.part==='guide') ag+=m; else ac+=m; });
+  const pp=Math.round((clientOwn+ac + (guideOwn+ag)/Math.max(1,n))/5)*5;
+  const el=box.querySelector('#fe-preview');
+  if(el) el.textContent='≈ '+money(pp)+' / pers. (pour '+n+' participant'+(n>1?'s':'')+')';
+}
+document.getElementById('cards').addEventListener('click',function(e){
+  const fb=e.target.closest('.frais-edit-btn');
+  if(fb){
+    const c=COURSES.find(x=>x.nom===fb.dataset.nom); if(!c) return;
+    const slot=fb.parentElement.querySelector('.frais-editor-slot');
+    if(slot.querySelector('.frais-editor')){ slot.innerHTML=''; }
+    else{ slot.innerHTML=renderFraisEditor(c); feLivePreview(slot, c); }
+    return;
+  }
+  const fadd=e.target.closest('.fe-add');
+  if(fadd){
+    const box=fadd.closest('.frais-editor');
+    box.querySelector('#fe-autres').insertAdjacentHTML('beforeend',
+      '<div class="fe-line"><input class="lbl fa-lbl" value="" placeholder="Libellé (ex. transfert taxi)">'
+      +'<input type="number" class="fa-mnt" value="0" inputmode="numeric">'
+      +'<select class="fe-sel fa-part"><option value="client" selected>/ client</option><option value="guide">part guide</option></select>'
+      +'<button class="fe-del" title="Supprimer">✕</button></div>');
+    return;
+  }
+  const fdel=e.target.closest('.frais-editor .fe-del');
+  if(fdel){ const box=fdel.closest('.frais-editor'); fdel.closest('.fe-line').remove();
+    const btn=box.closest('.card')?.querySelector('.frais-edit-btn'); const c=btn?COURSES.find(x=>x.nom===btn.dataset.nom):null; if(c) feLivePreview(box,c); return; }
+  const fsv=e.target.closest('.fe-save');
+  if(fsv){
+    const c=COURSES.find(x=>x.nom===fsv.dataset.nom); if(!c) return;
+    const box=fsv.closest('.frais-editor');
+    setFraisEdit(fraisKey(c), feCollect(box));
+    render(); return;
+  }
+  const fcx=e.target.closest('.fe-cancel');
+  if(fcx){ render(); return; }
+  const frs=e.target.closest('.fe-reset');
+  if(frs){ if(confirm('Réinitialiser les frais au barème par défaut ?')){ clearFraisEdit(frs.dataset.key); render(); } return; }
+});
+document.getElementById('cards').addEventListener('input',function(e){
+  const box=e.target.closest('.frais-editor'); if(!box) return;
+  const btn=box.closest('.card').querySelector('.frais-edit-btn'); if(!btn) return;
+  const c=COURSES.find(x=>x.nom===btn.dataset.nom); if(c) feLivePreview(box,c);
+});
+
 /* ===== Édition de la liste matériel ===== */
 let MAT_EDITING=null;
 function renderMatEditor(c){
@@ -1523,7 +1657,7 @@ function render(){
         ${topoLinks(c)}
         ${materielHTML(c)}
         ${variantesHTML(c)}
-        <div class="frais"><b>Frais en sus estimés</b> ~${money(fraisFor(c))} / pers. (client + part guide) : refuge ${c.refuge}, remontées, repas, transferts, location matériel. Approximatif, à confirmer.</div>
+        <div class="frais"><b>Frais en sus estimés</b> ~${money(fraisFor(c))} / pers. (client + part guide) : refuge ${c.refuge}, remontées, repas, transferts, location matériel. Approximatif, à confirmer.${getFraisEdit(fraisKey(c))?'<span class="frais-custom">personnalisés</span>':''}<button class="frais-edit-btn" data-nom="${esc(c.nom)}">✎ Frais</button><div class="frais-editor-slot"></div></div>
         ${inclusHTML(c)}
         <div class="devis">
           <button class="copybtn">Copier le devis</button>
