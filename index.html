@@ -322,7 +322,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v76</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v77</span></span>
     </div>
   </div>
 </header>
@@ -1063,11 +1063,11 @@ function buildMois(){
 function ppAt(eng,n){ return Math.round(eng*(1+0.15*(n-1))/n/5)*5; }
 /* À COMPLÉTER : tes coordonnées pour l'en-tête des devis PDF */
 const GUIDE_INFO = {
-  nom: 'Ton nom',                          // ex. 'Jean-Baptiste ...'
-  titre: 'Guide de montagne UIAGM',
+  nom: 'Jean-Baptiste Chandesris',
+  titre: 'Guide de haute montagne UIAGM',
   lieu: 'Les Paccots (FR) · Suisse',
-  tel: '+41 ...',
-  email: 'contact@...',
+  tel: '+41 77 426 01 79',
+  email: 'jbc.guide.ch@gmail.com',
 };
 const CHF_PER_EUR=0.95; // taux de change : 1 EUR = 0.95 CHF. Modifier ici.
 function money(x){ return state.cur==='EUR' ? fmt(Math.round(x/CHF_PER_EUR/5)*5)+' €' : 'CHF '+fmt(x); }
@@ -1139,10 +1139,13 @@ function devisPDF(c){
   const esc2=x=>String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;');
   const today=new Date().toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'});
   const num='D'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+Math.floor(Math.random()*90+10);
+  const nSel=Math.min(state.size,vMp);
+  const ppSel=ppAt(vEng,nSel)*sF;
   let rows='';
   for(let i=1;i<=vMp;i++){
     const pp=ppAt(vEng,i)*sF;
-    rows+='<tr><td>'+i+' personne'+(i>1?'s':'')+'</td><td>'+money(pp)+'</td><td>'+money(pp*i)+'</td></tr>';
+    const cur=i===nSel;
+    rows+='<tr'+(cur?' class="cur"':'')+'><td>'+i+' personne'+(i>1?'s':'')+(cur?' ◀':'')+'</td><td>'+money(pp)+'</td><td>'+money(pp*i)+'</td></tr>';
   }
   const inc=['Encadrement par guide UIAGM','Matériel technique collectif (corde, kit de sécurité)','Organisation de la course et réservations','Prêt de matériel technique personnel si besoin (à convenir)'];
   const exc=['Refuges et ½ pension — y compris la part du guide','Remontées mécaniques et transferts','Repas et boissons','Matériel personnel (location possible)','Assurances annulation et secours-rapatriement (recommandées)'];
@@ -1161,7 +1164,7 @@ function devisPDF(c){
   +'table{width:100%;border-collapse:collapse;margin:8px 0 4px;font-size:12px}'
   +'th{text-align:left;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#666;border-bottom:1.5px solid #ccc;padding:5px 8px}'
   +'td{padding:6px 8px;border-bottom:1px solid #eee}td:nth-child(2),td:nth-child(3),th:nth-child(2),th:nth-child(3){text-align:right}'
-  +'.frais{font-size:11.5px;color:#684;background:#f4f7ee;border-radius:6px;padding:8px 11px;margin:8px 0;color:#4a5a2e}'
+  +'.frais{font-size:11.5px;background:#f4f7ee;border-radius:6px;padding:8px 11px;margin:8px 0;color:#4a5a2e}'+'.totalbox{background:#e8f1f3;border-left:4px solid #2c6e7c;border-radius:6px;padding:10px 13px;margin:11px 0 3px;font-size:13.5px;color:#19424c}'+'tr.cur td{background:#eef5f6;font-weight:700}'
   +'.cols{display:flex;gap:18px;margin:12px 0}'
   +'.cols>div{flex:1}.cols b{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:#19424c}'
   +'ul{margin:5px 0 0;padding-left:16px}li{margin:2.5px 0;font-size:11.5px}'
@@ -1171,11 +1174,11 @@ function devisPDF(c){
   +'</style></head><body>'
   +'<div class="head"><div><h1>🏔 '+esc2(GUIDE_INFO.nom)+'</h1><div class="sub">'+esc2(GUIDE_INFO.titre)+' · '+esc2(GUIDE_INFO.lieu)+'</div></div>'
   +'<div class="co">'+esc2(GUIDE_INFO.tel)+'<br>'+esc2(GUIDE_INFO.email)+'</div></div>'
-  +'<p class="dev">Devis n° '+num+' · '+today+'</p>'
+  +'<p class="dev">Devis n° '+num+' · '+today+' · établi pour '+nSel+' personne'+(nSel>1?'s':'')+'</p>'
   +'<h2>'+esc2(c.nom)+'</h2>'
   +'<div class="meta">'+esc2(c.massif)+' · '+c.alt+' m · Cotation '+esc2(c.cot)+' · '+esc2(dShow(c))+' · encadrement max '+vMp+' pers.'
   +(av?'<br><b>Formule : '+esc2(av.l)+'</b>':'')+'</div>'
-  +'<table><tr><th>Taille du groupe</th><th>Honoraires / pers.</th><th>Total course</th></tr>'+rows+'</table>'
+  +'<div class="totalbox">Honoraires guide pour '+nSel+' personne'+(nSel>1?'s':'')+' : <b>'+money(ppSel*nSel)+'</b>'+(nSel>1?' — soit '+money(ppSel)+' par personne':'')+'</div>'+'<table><tr><th>Taille du groupe</th><th>Honoraires / pers.</th><th>Total course</th></tr>'+rows+'</table>'+(vMp>1?'<p class="note">Autres tailles de groupe indiquées à titre informatif — la ligne ◀ correspond à votre demande.</p>':'')
   +seasonNote+modeNote
   +'<div class="frais"><b>Frais en sus estimés :</b> ~'+money(vFrais)+' / personne (refuges y c. part du guide, remontées mécaniques, transferts, repas — montant approximatif, réglé sur place).</div>'
   +'<div class="cols"><div><b>Le prix comprend</b><ul>'+li(inc)+'</ul></div>'
