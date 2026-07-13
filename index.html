@@ -322,7 +322,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v74</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v75</span></span>
     </div>
   </div>
 </header>
@@ -1061,6 +1061,14 @@ function buildMois(){
 
 /* prix/pers à la taille n : engagement progressif +15%/pers, arrondi à 5 */
 function ppAt(eng,n){ return Math.round(eng*(1+0.15*(n-1))/n/5)*5; }
+/* À COMPLÉTER : tes coordonnées pour l'en-tête des devis PDF */
+const GUIDE_INFO = {
+  nom: 'Ton nom',                          // ex. 'Jean-Baptiste ...'
+  titre: 'Guide de montagne UIAGM',
+  lieu: 'Les Paccots (FR) · Suisse',
+  tel: '+41 ...',
+  email: 'contact@...',
+};
 const CHF_PER_EUR=0.95; // taux de change : 1 EUR = 0.95 CHF. Modifier ici.
 function money(x){ return state.cur==='EUR' ? fmt(Math.round(x/CHF_PER_EUR/5)*5)+' €' : 'CHF '+fmt(x); }
 const AMIS_DISC=0.80;  // -20% tarif fidèle. Modifier ici.
@@ -1121,6 +1129,69 @@ function devisText(c){
     +'Assurances annulation et secours-rapatriement recommandées (non incluses).\n'
     +(c.dMax>=2?'Programme type : l\'itinéraire et les sommets sont des objectifs, adaptés chaque jour par le guide selon les conditions — la sécurité prime sur le programme.\n':'')
     +(c.est?'Honoraires indicatifs à confirmer.':'Honoraires indicatifs.')+amisNote;
+}
+
+
+/* ===== Devis PDF (impression navigateur → Enregistrer en PDF) ===== */
+function devisPDF(c){
+  const sF=(1+state.season/100)*(state.mode==='amis'?AMIS_DISC:(state.mode==='inter'?INTER_DISC:1));
+  const vEng=engFor(c), vMp=mpFor(c), vFrais=fraisFor(c), av=activeVar(c);
+  const esc2=x=>String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const today=new Date().toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'});
+  const num='D'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+Math.floor(Math.random()*90+10);
+  let rows='';
+  for(let i=1;i<=vMp;i++){
+    const pp=ppAt(vEng,i)*sF;
+    rows+='<tr><td>'+i+' personne'+(i>1?'s':'')+'</td><td>'+money(pp)+'</td><td>'+money(pp*i)+'</td></tr>';
+  }
+  const inc=['Encadrement par guide UIAGM','Matériel technique collectif (corde, kit de sécurité)','Organisation de la course et réservations','Prêt de matériel technique personnel si besoin (à convenir)'];
+  const exc=['Refuges et ½ pension — y compris la part du guide','Remontées mécaniques et transferts','Repas et boissons','Matériel personnel (location possible)','Assurances annulation et secours-rapatriement (recommandées)'];
+  const li=a=>a.map(x=>'<li>'+esc2(x)+'</li>').join('');
+  const modeNote=state.mode==='amis'?'<p class="note">⭐ Tarif préférentiel fidèle appliqué (−'+Math.round((1-AMIS_DISC)*100)+'%) — document à usage privé.</p>':(state.mode==='inter'?'<p class="note">Tarif intermédiaire appliqué (−'+Math.round((1-INTER_DISC)*100)+'%).</p>':'');
+  const seasonNote=state.season>0?'<p class="note">Tarif haute saison appliqué (+'+state.season+'%).</p>':'';
+  const html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Devis '+esc2(c.nom)+'</title><style>'
+  +'@page{size:A4;margin:16mm}'
+  +'body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1c2830;font-size:12.5px;line-height:1.45;margin:0}'
+  +'.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #2c6e7c;padding-bottom:10px;margin-bottom:16px}'
+  +'.head h1{font-size:17px;margin:0;color:#19424c}.head .sub{font-size:11.5px;color:#555;margin-top:2px}'
+  +'.head .co{text-align:right;font-size:11px;color:#444;line-height:1.5}'
+  +'.dev{font-size:11px;color:#777;letter-spacing:.12em;text-transform:uppercase;margin:0 0 3px}'
+  +'h2{font-size:15.5px;margin:0 0 2px;color:#19424c}'
+  +'.meta{font-size:11.5px;color:#555;margin:2px 0 14px}'
+  +'table{width:100%;border-collapse:collapse;margin:8px 0 4px;font-size:12px}'
+  +'th{text-align:left;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#666;border-bottom:1.5px solid #ccc;padding:5px 8px}'
+  +'td{padding:6px 8px;border-bottom:1px solid #eee}td:nth-child(2),td:nth-child(3),th:nth-child(2),th:nth-child(3){text-align:right}'
+  +'.frais{font-size:11.5px;color:#684;background:#f4f7ee;border-radius:6px;padding:8px 11px;margin:8px 0;color:#4a5a2e}'
+  +'.cols{display:flex;gap:18px;margin:12px 0}'
+  +'.cols>div{flex:1}.cols b{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:#19424c}'
+  +'ul{margin:5px 0 0;padding-left:16px}li{margin:2.5px 0;font-size:11.5px}'
+  +'.note{font-size:11px;color:#666;margin:5px 0}'
+  +'.clause{font-size:11px;color:#555;border-left:3px solid #b8720e;padding:6px 10px;background:#fdf8ef;margin:11px 0}'
+  +'.foot{margin-top:16px;padding-top:9px;border-top:1px solid #ddd;font-size:10.5px;color:#888}'
+  +'</style></head><body>'
+  +'<div class="head"><div><h1>🏔 '+esc2(GUIDE_INFO.nom)+'</h1><div class="sub">'+esc2(GUIDE_INFO.titre)+' · '+esc2(GUIDE_INFO.lieu)+'</div></div>'
+  +'<div class="co">'+esc2(GUIDE_INFO.tel)+'<br>'+esc2(GUIDE_INFO.email)+'</div></div>'
+  +'<p class="dev">Devis n° '+num+' · '+today+'</p>'
+  +'<h2>'+esc2(c.nom)+'</h2>'
+  +'<div class="meta">'+esc2(c.massif)+' · '+c.alt+' m · Cotation '+esc2(c.cot)+' · '+esc2(dShow(c))+' · encadrement max '+vMp+' pers.'
+  +(av?'<br><b>Formule : '+esc2(av.l)+'</b>':'')+'</div>'
+  +'<table><tr><th>Taille du groupe</th><th>Honoraires / pers.</th><th>Total course</th></tr>'+rows+'</table>'
+  +seasonNote+modeNote
+  +'<div class="frais"><b>Frais en sus estimés :</b> ~'+money(vFrais)+' / personne (refuges y c. part du guide, remontées mécaniques, transferts, repas — montant approximatif, réglé sur place).</div>'
+  +'<div class="cols"><div><b>Le prix comprend</b><ul>'+li(inc)+'</ul></div>'
+  +'<div><b>Le prix ne comprend pas</b><ul>'+li(exc)+'</ul></div></div>'
+  +(c.dMax>=2?'<div class="clause"><b>Programme type</b> — l\'itinéraire et les sommets sont des objectifs, adaptés chaque jour par le guide selon les conditions : la sécurité prime sur le programme.</div>':'')
+  +'<p class="note">Assurances annulation et secours-rapatriement vivement recommandées (non incluses). '
+  +(c.est?'Honoraires indicatifs, à confirmer à la réservation. ':'')
+  +'Devis valable 30 jours.</p>'
+  +'<div class="foot">'+esc2(GUIDE_INFO.nom)+' · '+esc2(GUIDE_INFO.titre)+' · '+esc2(GUIDE_INFO.tel)+' · '+esc2(GUIDE_INFO.email)+'</div>'
+  +'</body></html>';
+  const f=document.createElement('iframe');
+  f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  document.body.appendChild(f);
+  f.contentDocument.open(); f.contentDocument.write(html); f.contentDocument.close();
+  setTimeout(()=>{ try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){}
+    setTimeout(()=>f.remove(), 3000); }, 300);
 }
 
 const OPEN_CARDS = new Set();
@@ -1249,6 +1320,7 @@ function render(){
         <div class="devis">
           <button class="copybtn">Copier le devis</button>
           <button class="addlog-btn" data-nom="${esc(c.nom)}">+ Sortie</button>
+          <button class="addlog-btn pdfbtn" data-nom="${esc(c.nom)}">📄 Devis PDF</button>
           <span class="copied" hidden>Devis copié ✓</span>
         </div>
       </div>
@@ -1500,6 +1572,8 @@ document.getElementById('cards').addEventListener('change',function(e){
   render();
 });
 document.getElementById('cards').addEventListener('click',function(e){
+  const pb=e.target.closest('.pdfbtn');
+  if(pb){ const c=COURSES.find(x=>x.nom===pb.dataset.nom); if(c) devisPDF(c); return; }
   const al=e.target.closest('.addlog-btn');
   if(al){ openLog(al.dataset.nom); return; }
   const vr=e.target.closest('.vt-row');
