@@ -344,7 +344,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Courses&nbsp;&amp;&nbsp;Tarifs</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v80</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v81</span></span>
     </div>
   </div>
 </header>
@@ -1226,12 +1226,7 @@ function devisPDF(c){
   const num='D'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+Math.floor(Math.random()*90+10);
   const nSel=Math.min(state.size,vMp);
   const ppSel=ppAt(vEng,nSel)*sF;
-  let rows='';
-  for(let i=1;i<=vMp;i++){
-    const pp=ppAt(vEng,i)*sF;
-    const cur=i===nSel;
-    rows+='<tr'+(cur?' class="cur"':'')+'><td>'+i+' personne'+(i>1?'s':'')+(cur?' ◀':'')+'</td><td>'+money(pp)+'</td><td>'+money(pp*i)+'</td></tr>';
-  }
+  const rows='<tr class="cur"><td>'+nSel+' personne'+(nSel>1?'s':'')+'</td><td>'+money(ppSel)+'</td><td>'+money(ppSel*nSel)+'</td></tr>';
   const inc=['Encadrement par guide UIAGM','Matériel technique collectif (corde, kit de sécurité)','Organisation de la course et réservations','Prêt de matériel technique personnel si besoin (à convenir)'];
   const exc=['Refuges et ½ pension — y compris la part du guide','Remontées mécaniques et transferts','Repas et boissons','Matériel personnel (location possible)','Assurances annulation et secours-rapatriement (recommandées)'];
   const li=a=>a.map(x=>'<li>'+esc2(x)+'</li>').join('');
@@ -1263,7 +1258,7 @@ function devisPDF(c){
   +'<h2>'+esc2(c.nom)+'</h2>'
   +'<div class="meta">'+esc2(c.massif)+' · '+c.alt+' m · Cotation '+esc2(c.cot)+' · '+esc2(dShow(c))+' · encadrement max '+vMp+' pers.'
   +(av?'<br><b>Formule : '+esc2(av.l)+'</b>':'')+'</div>'
-  +'<div class="totalbox">Honoraires guide pour '+nSel+' personne'+(nSel>1?'s':'')+' : <b>'+money(ppSel*nSel)+'</b>'+(nSel>1?' — soit '+money(ppSel)+' par personne':'')+'</div>'+'<table><tr><th>Taille du groupe</th><th>Honoraires / pers.</th><th>Total course</th></tr>'+rows+'</table>'+(vMp>1?'<p class="note">Autres tailles de groupe indiquées à titre informatif — la ligne ◀ correspond à votre demande.</p>':'')
+  +'<div class="totalbox">Honoraires guide pour '+nSel+' personne'+(nSel>1?'s':'')+' : <b>'+money(ppSel*nSel)+'</b>'+(nSel>1?' — soit '+money(ppSel)+' par personne':'')+'</div>'+'<table><tr><th>Taille du groupe</th><th>Honoraires / pers.</th><th>Total course</th></tr>'+rows+'</table>'
   +seasonNote+modeNote
   +'<div class="frais"><b>Frais en sus estimés :</b> ~'+money(vFrais)+' / personne (refuges y c. part du guide, remontées mécaniques, transferts, repas — montant approximatif, réglé sur place).</div>'
   +'<div class="cols"><div><b>Le prix comprend</b><ul>'+li(inc)+'</ul></div>'
