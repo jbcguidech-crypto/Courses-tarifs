@@ -1286,12 +1286,31 @@ function matPDF(c){
   +'<div class="tip"><b>Conseils :</b> privilégiez des vêtements testés et confortables, prévoyez une marge de chaud pour l\'altitude, et n\'hésitez pas à me contacter pour toute question sur le matériel — location possible pour la plupart des équipements techniques.</div>'
   +'<div class="foot">'+esc2(GUIDE_INFO.nom)+' · '+esc2(GUIDE_INFO.titre)+' · '+esc2(GUIDE_INFO.tel)+' · '+esc2(GUIDE_INFO.email)+'</div>'
   +'</body></html>';
+  printDoc(html);
+}
+
+
+/* ===== Impression PDF robuste (nouvel onglet, fallback iframe) ===== */
+function printDoc(html, filename){
+  // 1) Tentative : nouvel onglet dédié (le PDF ne contient QUE ce document)
+  let w=null;
+  try{ w=window.open('', '_blank'); }catch(e){ w=null; }
+  if(w && w.document){
+    w.document.open(); w.document.write(html); w.document.close();
+    const go=()=>{ try{ w.focus(); w.print(); }catch(e){} };
+    // laisser le temps aux polices/rendu
+    if(w.document.readyState==='complete') setTimeout(go, 350);
+    else w.onload=()=>setTimeout(go, 350);
+    return;
+  }
+  // 2) Fallback : iframe caché (si les popups sont bloqués)
   const f=document.createElement('iframe');
   f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
   document.body.appendChild(f);
-  f.contentDocument.open(); f.contentDocument.write(html); f.contentDocument.close();
+  const doc=f.contentWindow.document;
+  doc.open(); doc.write(html); doc.close();
   setTimeout(()=>{ try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){}
-    setTimeout(()=>f.remove(), 3000); }, 300);
+    setTimeout(()=>f.remove(), 3000); }, 400);
 }
 
 /* ===== Devis PDF (impression navigateur → Enregistrer en PDF) ===== */
@@ -1346,12 +1365,7 @@ function devisPDF(c){
   +'Devis valable 30 jours.</p>'
   +'<div class="foot">'+esc2(GUIDE_INFO.nom)+' · '+esc2(GUIDE_INFO.titre)+' · '+esc2(GUIDE_INFO.tel)+' · '+esc2(GUIDE_INFO.email)+'</div>'
   +'</body></html>';
-  const f=document.createElement('iframe');
-  f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
-  document.body.appendChild(f);
-  f.contentDocument.open(); f.contentDocument.write(html); f.contentDocument.close();
-  setTimeout(()=>{ try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){}
-    setTimeout(()=>f.remove(), 3000); }, 300);
+  printDoc(html);
 }
 
 
