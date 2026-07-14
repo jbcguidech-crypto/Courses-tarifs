@@ -1,7 +1,7 @@
 {
-  "name": "Courses & Tarifs — Guide UIAGM",
-  "short_name": "Courses & Tarifs",
-  "description": "Catalogue de courses, grille tarifaire et aide à la décision pour le guidage en montagne.",
+  "name": "Guide 2.0",
+  "short_name": "Guide 2.0",
+  "description": "Catalogue de courses, tarifs, devis et matériel — guide de haute montagne UIAGM.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
