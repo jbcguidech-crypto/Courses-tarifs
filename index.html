@@ -347,6 +347,54 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   .inv-acts{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
   .inv-acts button{font-size:11px;font-family:'JetBrains Mono';background:none;border:1px solid rgba(0,0,0,.18);border-radius:7px;padding:5px 9px;cursor:pointer;color:var(--rock2);white-space:nowrap}
   .invbtn{font-family:'Inter';font-weight:600;font-size:13px;background:none;color:#8a5410;border:1.5px solid rgba(184,114,14,.5);padding:8px 13px;border-radius:8px;cursor:pointer;margin-left:8px}
+  /* calendrier */
+  #calView{display:none}
+  body.cal-on #calView{display:block}
+  body.cal-on #cards,body.cal-on #map,body.cal-on .map-note,body.cal-on #logView,body.cal-on #invView{display:none}
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px}
+  .cal-nav{display:flex;align-items:center;gap:10px}
+  .cal-nav button{background:#fff;border:1px solid rgba(0,0,0,.15);border-radius:8px;width:38px;height:38px;font-size:16px;cursor:pointer;color:var(--rock)}
+  .cal-title{font-size:15px;font-weight:700;color:var(--ice-deep);min-width:150px;text-align:center;text-transform:capitalize}
+  .cal-switch{display:flex;gap:4px;background:rgba(0,0,0,.05);border-radius:9px;padding:3px}
+  .cal-switch button{background:none;border:none;font-size:12px;padding:6px 12px;border-radius:7px;cursor:pointer;color:var(--rock2);font-family:inherit}
+  .cal-switch button.on{background:#fff;font-weight:600;color:var(--ice-deep);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .cal-dow{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:center;padding:4px 0;font-family:'JetBrains Mono'}
+  .cal-cell{aspect-ratio:1;background:#fff;border-radius:8px;padding:4px 5px;font-size:12px;cursor:pointer;position:relative;border:1px solid transparent;overflow:hidden;min-height:44px}
+  .cal-cell.empty{background:transparent;cursor:default}
+  .cal-cell.today{border-color:var(--ice)}
+  .cal-cell .dnum{font-weight:600;color:var(--rock2);font-size:11px}
+  .cal-cell.has .dnum{color:var(--ice-deep)}
+  .cal-ev{font-size:8.5px;line-height:1.15;margin-top:2px;padding:1px 3px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cal-ev.done{background:rgba(45,138,94,.16);color:#22694a}
+  .cal-ev.plan{background:rgba(44,110,124,.15);color:var(--ice-deep)}
+  .cal-more{font-size:8px;color:var(--muted);margin-top:1px}
+  .cal-list-item{background:#fff;border-radius:11px;padding:11px 13px;box-shadow:0 1px 7px rgba(0,0,0,.06);margin-bottom:8px;display:flex;gap:11px;align-items:flex-start;cursor:pointer}
+  .cal-li-date{text-align:center;min-width:44px;flex-shrink:0}
+  .cal-li-date .d{font-size:19px;font-weight:800;color:var(--ice-deep);line-height:1}
+  .cal-li-date .m{font-size:9.5px;text-transform:uppercase;color:var(--muted);font-family:'JetBrains Mono'}
+  .cal-li-main{flex:1;min-width:0}
+  .cal-li-nom{font-weight:700;font-size:13.5px}
+  .cal-li-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .cal-badge{display:inline-block;font-size:9px;font-weight:700;padding:1px 7px;border-radius:8px;margin-top:4px}
+  .cal-badge.done{background:rgba(45,138,94,.15);color:#22694a}
+  .cal-badge.plan{background:rgba(44,110,124,.14);color:var(--ice-deep)}
+  .cal-sub{font-size:11px;color:var(--muted);margin:14px 0 6px;font-family:'JetBrains Mono';letter-spacing:.05em;text-transform:uppercase}
+  .cal-editor{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:250;display:none;align-items:flex-end;justify-content:center}
+  .cal-editor.on{display:flex}
+  .cal-ed-inner{background:var(--bg);border-radius:16px 16px 0 0;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:16px 16px 30px}
+  .cal-ed-inner h3{font-size:15px;color:var(--ice-deep);margin:2px 0 12px}
+  .ce-f{display:flex;flex-direction:column;gap:3px;margin-bottom:9px}
+  .ce-f label{font-size:11px;color:var(--muted)}
+  .ce-f input,.ce-f textarea{padding:8px 10px;border:1.5px solid rgba(0,0,0,.14);border-radius:8px;font-size:13.5px;font-family:inherit;background:#fff}
+  .ce-f input:focus,.ce-f textarea:focus{outline:none;border-color:var(--ice-deep)}
+  .ce-row{display:flex;gap:9px}.ce-row>*{flex:1}
+  .ce-seg{display:flex;gap:4px;background:rgba(0,0,0,.05);border-radius:9px;padding:3px}
+  .ce-seg button{flex:1;background:none;border:none;padding:8px;border-radius:7px;font-size:12.5px;cursor:pointer;color:var(--rock2);font-family:inherit}
+  .ce-seg button.on{background:#fff;font-weight:600;color:var(--ice-deep);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+  .ce-acts{display:flex;gap:9px;margin-top:14px}
+  .ce-save{flex:1;background:var(--ice);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+  .ce-del{background:none;border:1px solid rgba(181,83,63,.4);color:#b5533f;border-radius:10px;padding:12px 16px;font-size:13px;cursor:pointer;font-family:inherit}
   /* éditeur facture (modal plein écran) */
   .inv-editor{position:fixed;inset:0;background:var(--bg);z-index:250;display:none;overflow-y:auto}
   .inv-editor.on{display:block}
@@ -401,7 +449,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;2.0</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v89</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v90</span></span>
     </div>
   </div>
 </header>
@@ -534,6 +582,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
         <button class="viewtoggle" id="mapToggle" aria-pressed="false" title="Vue carte">🗺 Carte</button>
         <button class="viewtoggle" id="logToggle" aria-pressed="false" title="Journal des sorties">📒 Journal</button>
         <button class="viewtoggle" id="invToggle" aria-pressed="false" title="Factures">🧾 Factures</button>
+        <button class="viewtoggle" id="calToggle" aria-pressed="false" title="Calendrier">📅 Calendrier</button>
         <select class="sortsel" id="sortSel" aria-label="Trier">
           <option value="alt">Altitude ↓</option>
           <option value="cotA">Cotation ↑</option>
@@ -607,6 +656,28 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
           <button class="ie-save" id="ie-save">Enregistrer</button>
           <button class="ie-pdf" id="ie-pdf">📄 PDF</button>
         </div>
+      </div></div>
+      <div id="calView">
+        <div class="cal-head">
+          <div class="cal-nav"><button id="calPrev">‹</button><div class="cal-title" id="calTitle"></div><button id="calNext">›</button></div>
+          <div class="cal-switch"><button id="calMonthBtn" class="on">Mois</button><button id="calListBtn">Liste</button></div>
+        </div>
+        <button class="log-add" id="calAdd" style="margin-bottom:14px">+ Ajouter une date</button>
+        <div id="calMonth"></div>
+        <div id="calList"></div>
+      </div>
+      <div class="cal-editor" id="calEditor"><div class="cal-ed-inner">
+        <h3 id="ceTitle">Sortie</h3>
+        <div class="ce-row"><div class="ce-f"><label>Date</label><input id="ce-date" type="date"></div>
+          <div class="ce-f"><label>Jours</label><input id="ce-jours" type="number" min="0.5" step="0.5" value="1"></div></div>
+        <div class="ce-f"><label>Course</label><input id="ce-nom" list="courseList" placeholder="Course…"></div>
+        <div class="ce-f"><label>Statut</label><div class="ce-seg"><button id="ce-plan" class="on">🗓 Prévue</button><button id="ce-done">✓ Réalisée</button></div></div>
+        <div class="ce-row"><div class="ce-f"><label>Client(s)</label><input id="ce-client" placeholder="Nom"></div>
+          <div class="ce-f"><label>Nb pers.</label><input id="ce-n" type="number" min="1" value="1"></div></div>
+        <div class="ce-f" id="ce-prix-wrap"><label>Prix facturé (CHF)</label><input id="ce-prix" type="number" min="0" step="10"></div>
+        <div class="ce-f"><label>Notes</label><textarea id="ce-com" rows="2" placeholder="Conditions, remarques…"></textarea></div>
+        <div class="ce-acts"><button class="ce-save" id="ce-save">Enregistrer</button><button class="ce-del" id="ce-del">Supprimer</button></div>
+        <button class="med-cancel" id="ce-cancel" style="width:100%;margin-top:9px;padding:10px;border-radius:10px">Annuler</button>
       </div></div>
       <div id="map"></div>
       <div class="expbox" id="expBox"><div class="inner">
@@ -1725,7 +1796,8 @@ function renderInvoices(){
 }
 function openInvoices(){
   document.body.classList.add('inv-on');
-  document.body.classList.remove('log-on','map-on');
+  document.body.classList.remove('log-on','map-on','cal-on');
+  if($('#calToggle'))$('#calToggle').setAttribute('aria-pressed','false');
   $('#invToggle').setAttribute('aria-pressed','true');
   $('#logToggle').setAttribute('aria-pressed','false'); $('#mapToggle').setAttribute('aria-pressed','false');
   renderInvoices();
@@ -1788,6 +1860,129 @@ $('#invList').addEventListener('click',e=>{
 });
 $('#invExport').onclick=()=>{ const a=document.createElement('a'); a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(getInvoices(),null,1)); a.download='factures.json'; a.click(); };
 $('#invImp').addEventListener('change',function(){ const f=this.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const arr=JSON.parse(r.result); if(!Array.isArray(arr))throw 0; const cur=getInvoices(); const ids=new Set(cur.map(x=>String(x.id))); arr.forEach(x=>{ if(x&&!ids.has(String(x.id))) cur.push(x); }); setInvoices(cur); renderInvoices(); alert('Import : '+cur.length+' factures.'); }catch(e){ alert('JSON invalide.'); } }; r.readAsText(f); this.value=''; });
+
+
+/* ===== Calendrier des sorties ===== */
+let CAL_CUR=new Date(); CAL_CUR.setDate(1);
+let CAL_MODE='month';
+let CE_STATE=null;
+const MOIS_CAL=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const MOIS_C=['JAN','FÉV','MAR','AVR','MAI','JUIN','JUIL','AOÛ','SEP','OCT','NOV','DÉC'];
+const DOW_CAL=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+function evClass(x){ return x.statut==='done' ? 'done' : 'plan'; }
+function autoStatut(x){ // si pas de statut explicite : passé=done, futur=plan
+  if(x.statut) return x.statut;
+  return (x.date||'') < new Date().toISOString().slice(0,10) ? 'done' : 'plan';
+}
+function renderCalMonth(){
+  const y=CAL_CUR.getFullYear(), mo=CAL_CUR.getMonth();
+  $('#calTitle').textContent=MOIS_CAL[mo]+' '+y;
+  const first=new Date(y,mo,1); let start=(first.getDay()+6)%7; // lundi=0
+  const days=new Date(y,mo+1,0).getDate();
+  const todayStr=new Date().toISOString().slice(0,10);
+  const byDate={};
+  getLog().forEach(x=>{ (byDate[x.date]=byDate[x.date]||[]).push(x); });
+  let html='<div class="cal-grid">'+DOW_CAL.map(d=>'<div class="cal-dow">'+d+'</div>').join('');
+  for(let i=0;i<start;i++) html+='<div class="cal-cell empty"></div>';
+  for(let d=1;d<=days;d++){
+    const ds=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const evs=byDate[ds]||[];
+    const cls='cal-cell'+(evs.length?' has':'')+(ds===todayStr?' today':'');
+    let inner='<div class="dnum">'+d+'</div>';
+    evs.slice(0,2).forEach(x=>{ inner+='<div class="cal-ev '+autoStatut(x)+'">'+(x.nom||'').replace(/</g,'&lt;')+'</div>'; });
+    if(evs.length>2) inner+='<div class="cal-more">+'+(evs.length-2)+'</div>';
+    html+='<div class="'+cls+'" data-date="'+ds+'">'+inner+'</div>';
+  }
+  html+='</div>';
+  $('#calMonth').innerHTML=html;
+}
+function renderCalList(){
+  const today=new Date().toISOString().slice(0,10);
+  const all=getLog().slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const future=all.filter(x=>(x.date||'')>=today).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const past=all.filter(x=>(x.date||'')<today).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const item=x=>{
+    const dt=x.date?x.date.split('-'):['','',''];
+    const st=autoStatut(x);
+    return '<div class="cal-list-item" data-id="'+x.id+'">'
+      +'<div class="cal-li-date"><div class="d">'+(dt[2]||'?')+'</div><div class="m">'+(MOIS_C[(+dt[1]-1)]||'')+'</div></div>'
+      +'<div class="cal-li-main"><div class="cal-li-nom">'+(x.nom||'—').replace(/</g,'&lt;')+'</div>'
+      +'<div class="cal-li-meta">'+(x.jours||'?')+' j'+(x.n?' · '+x.n+' pers.':'')+(x.client?' · '+String(x.client).replace(/</g,'&lt;'):'')+(x.prix?' · '+money(+x.prix):'')+'</div>'
+      +'<span class="cal-badge '+st+'">'+(st==='done'?'✓ Réalisée':'🗓 Prévue')+'</span></div></div>';
+  };
+  let html='';
+  if(future.length){ html+='<div class="cal-sub">À venir</div>'+future.map(item).join(''); }
+  if(past.length){ html+='<div class="cal-sub">Passées</div>'+past.map(item).join(''); }
+  if(!all.length) html='<div class="log-empty">Aucune date. Ajoute une sortie prévue ou passée avec « + Ajouter une date ».</div>';
+  $('#calList').innerHTML=html;
+}
+function renderCal(){ if(CAL_MODE==='month'){ $('#calMonth').style.display=''; $('#calList').style.display='none'; $('#calTitle').style.visibility='visible'; renderCalMonth(); } else { $('#calMonth').style.display='none'; $('#calList').style.display=''; $('#calTitle').style.visibility='hidden'; renderCalList(); } }
+function openCal(){
+  document.body.classList.add('cal-on');
+  document.body.classList.remove('log-on','map-on','inv-on');
+  ['#logToggle','#mapToggle','#invToggle'].forEach(id=>$(id)&&$(id).setAttribute('aria-pressed','false'));
+  $('#calToggle').setAttribute('aria-pressed','true');
+  renderCal();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function openEventEditor(ev){
+  CE_STATE=ev?JSON.parse(JSON.stringify(ev)):{id:Date.now(),date:new Date().toISOString().slice(0,10),nom:'',jours:1,n:1,prix:'',client:'',com:'',statut:''};
+  if(!CE_STATE.statut) CE_STATE.statut=autoStatut(CE_STATE);
+  $('#ceTitle').textContent=ev?'Modifier la date':'Nouvelle date';
+  $('#ce-date').value=CE_STATE.date||''; $('#ce-jours').value=CE_STATE.jours||1;
+  $('#ce-nom').value=CE_STATE.nom||''; $('#ce-client').value=CE_STATE.client||'';
+  $('#ce-n').value=CE_STATE.n||1; $('#ce-prix').value=CE_STATE.prix||''; $('#ce-com').value=CE_STATE.com||'';
+  setCeStatut(CE_STATE.statut);
+  $('#ce-del').style.display=ev?'block':'none';
+  $('#calEditor').classList.add('on');
+}
+function setCeStatut(st){
+  CE_STATE.statut=st;
+  $('#ce-plan').classList.toggle('on',st!=='done');
+  $('#ce-done').classList.toggle('on',st==='done');
+  $('#ce-prix-wrap').style.opacity = st==='done'?'1':'.55';
+}
+$('#calToggle').onclick=function(){
+  const on=!document.body.classList.contains('cal-on');
+  if(on) openCal();
+  else{ document.body.classList.remove('cal-on'); this.setAttribute('aria-pressed','false'); }
+};
+$('#calPrev').onclick=()=>{ CAL_CUR.setMonth(CAL_CUR.getMonth()-1); renderCal(); };
+$('#calNext').onclick=()=>{ CAL_CUR.setMonth(CAL_CUR.getMonth()+1); renderCal(); };
+$('#calMonthBtn').onclick=function(){ CAL_MODE='month'; this.classList.add('on'); $('#calListBtn').classList.remove('on'); renderCal(); };
+$('#calListBtn').onclick=function(){ CAL_MODE='list'; this.classList.add('on'); $('#calMonthBtn').classList.remove('on'); renderCal(); };
+$('#calAdd').onclick=()=>openEventEditor(null);
+$('#calMonth').addEventListener('click',e=>{
+  const cell=e.target.closest('.cal-cell:not(.empty)'); if(!cell) return;
+  const ds=cell.dataset.date;
+  const evs=getLog().filter(x=>x.date===ds);
+  if(evs.length===1) openEventEditor(evs[0]);
+  else if(evs.length>1){ CAL_MODE='list'; $('#calListBtn').classList.add('on'); $('#calMonthBtn').classList.remove('on'); renderCal(); }
+  else openEventEditor({id:Date.now(),date:ds,nom:'',jours:1,n:1,prix:'',client:'',com:'',statut:''});
+});
+$('#calList').addEventListener('click',e=>{
+  const it=e.target.closest('.cal-list-item'); if(!it) return;
+  const ev=getLog().find(x=>String(x.id)===it.dataset.id); if(ev) openEventEditor(ev);
+});
+$('#ce-plan').onclick=()=>setCeStatut('plan');
+$('#ce-done').onclick=()=>setCeStatut('done');
+$('#ce-cancel').onclick=()=>$('#calEditor').classList.remove('on');
+$('#ce-save').onclick=function(){
+  const nom=$('#ce-nom').value.trim(); if(!nom){ $('#ce-nom').focus(); return; }
+  CE_STATE.date=$('#ce-date').value; CE_STATE.jours=parseFloat($('#ce-jours').value)||1;
+  CE_STATE.nom=nom; CE_STATE.client=$('#ce-client').value.trim();
+  CE_STATE.n=parseInt($('#ce-n').value)||1; CE_STATE.prix=parseFloat($('#ce-prix').value)||0;
+  CE_STATE.com=$('#ce-com').value.trim();
+  const list=getLog(); const idx=list.findIndex(x=>x.id===CE_STATE.id);
+  if(idx>=0) list[idx]=CE_STATE; else list.push(CE_STATE);
+  setLog(list); refreshLogCount();
+  $('#calEditor').classList.remove('on'); renderCal();
+};
+$('#ce-del').onclick=function(){
+  if(!confirm('Supprimer cette date ?')) return;
+  setLog(getLog().filter(x=>x.id!==CE_STATE.id)); refreshLogCount();
+  $('#calEditor').classList.remove('on'); renderCal();
+};
 
 const OPEN_CARDS = new Set();
 function renderAF(){
@@ -2094,7 +2289,8 @@ function renderLog(){
 }
 function openLog(prefillNom){
   document.body.classList.add('log-on');
-  document.body.classList.remove('map-on');
+  document.body.classList.remove('map-on','cal-on');
+  if($('#calToggle'))$('#calToggle').setAttribute('aria-pressed','false');
   $('#logToggle').setAttribute('aria-pressed','true');
   $('#mapToggle').setAttribute('aria-pressed','false');
   if(!$('#lfDate').value){ $('#lfDate').value=new Date().toISOString().slice(0,10); }
