@@ -331,6 +331,48 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   .fe-actions{display:flex;gap:8px;margin-top:10px;align-items:center}
   .fe-note{font-size:10.5px;color:var(--muted);margin-top:7px;line-height:1.4}
   .frais-custom{font-size:10px;font-weight:700;background:rgba(184,114,14,.14);color:#8a5410;border:1px solid rgba(184,114,14,.3);padding:1px 7px;border-radius:9px;margin-left:6px}
+  /* factures */
+  #invView{display:none}
+  body.inv-on #invView{display:block}
+  body.inv-on #cards,body.inv-on #map,body.inv-on .map-note,body.inv-on #logView{display:none}
+  .inv-item{background:#fff;border-radius:11px;padding:12px 14px;box-shadow:0 1px 7px rgba(0,0,0,.06);margin-bottom:9px;display:flex;gap:12px;align-items:flex-start}
+  .inv-item .ii-main{flex:1;min-width:0}
+  .inv-item .ii-num{font-family:'JetBrains Mono';font-size:11px;color:var(--muted);letter-spacing:.04em}
+  .inv-item .ii-nom{font-weight:700;font-size:13.5px;margin-top:1px}
+  .inv-item .ii-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .inv-item .ii-tot{font-weight:800;color:var(--ice-deep);font-size:14px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .inv-status{display:inline-block;font-size:10px;font-weight:700;padding:2px 9px;border-radius:9px;margin-top:5px;cursor:pointer;border:1px solid}
+  .inv-status.paid{background:rgba(45,138,94,.14);color:#22694a;border-color:rgba(45,138,94,.35)}
+  .inv-status.unpaid{background:rgba(184,114,14,.13);color:#8a5410;border-color:rgba(184,114,14,.35)}
+  .inv-acts{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+  .inv-acts button{font-size:11px;font-family:'JetBrains Mono';background:none;border:1px solid rgba(0,0,0,.18);border-radius:7px;padding:5px 9px;cursor:pointer;color:var(--rock2);white-space:nowrap}
+  .invbtn{font-family:'Inter';font-weight:600;font-size:13px;background:none;color:#8a5410;border:1.5px solid rgba(184,114,14,.5);padding:8px 13px;border-radius:8px;cursor:pointer;margin-left:8px}
+  /* éditeur facture (modal plein écran) */
+  .inv-editor{position:fixed;inset:0;background:var(--bg);z-index:250;display:none;overflow-y:auto}
+  .inv-editor.on{display:block}
+  .ie-wrap{max-width:720px;margin:0 auto;padding:16px 16px 60px}
+  .ie-top{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:2;border-bottom:1px solid rgba(0,0,0,.08)}
+  .ie-top h2{font-size:16px;color:var(--ice-deep);margin:0}
+  .ie-sec{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 8px rgba(0,0,0,.06);margin:12px 0}
+  .ie-sec h4{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ice-deep);font-family:'JetBrains Mono';margin:0 0 9px}
+  .ie-f{display:flex;flex-direction:column;gap:3px;margin-bottom:9px}
+  .ie-f label{font-size:11px;color:var(--muted)}
+  .ie-f input,.ie-f textarea{padding:8px 10px;border:1.5px solid rgba(0,0,0,.14);border-radius:8px;font-size:13.5px;font-family:inherit;background:rgba(0,0,0,.02)}
+  .ie-f input:focus,.ie-f textarea:focus{outline:none;border-color:var(--ice-deep);background:#fff}
+  .ie-row{display:flex;gap:9px}.ie-row>*{flex:1}
+  .ie-lines table{width:100%;border-collapse:collapse}
+  .ie-lines th{font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;padding:4px 6px;font-family:'JetBrains Mono'}
+  .ie-lines td{padding:3px 4px}
+  .ie-lines input{width:100%;box-sizing:border-box;padding:7px 8px;border:1.5px solid rgba(0,0,0,.13);border-radius:7px;font-size:12.5px;font-family:inherit}
+  .ie-lines .il-q,.ie-lines .il-pu{text-align:right}
+  .ie-lines .il-del{background:none;border:none;color:#b5533f;font-size:15px;cursor:pointer;padding:0 3px}
+  .ie-addline{background:none;border:1px dashed rgba(0,0,0,.3);border-radius:7px;color:var(--ice-deep);font-size:12px;padding:6px 10px;cursor:pointer;font-family:inherit;margin-top:6px}
+  .ie-tot{text-align:right;font-size:15px;font-weight:800;color:var(--ice-deep);margin-top:10px}
+  .ie-actions{display:flex;gap:9px;margin-top:16px}
+  .ie-save{flex:1;background:var(--ice);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+  .ie-pdf{background:#8a5410;color:#fff;border:none;border-radius:10px;padding:12px 16px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+  .ie-close{background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;padding:2px 8px}
+  .ie-toggle{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--rock2)}
   .expbox{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
   .expbox.on{display:flex}
   .expbox .inner{background:#fff;border-radius:14px;padding:18px;max-width:560px;width:100%;max-height:80vh;overflow:auto;box-shadow:0 8px 40px rgba(0,0,0,.3)}
@@ -359,7 +401,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;2.0</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v88</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v89</span></span>
     </div>
   </div>
 </header>
@@ -491,6 +533,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
         <button class="viewtoggle" id="viewToggle" aria-pressed="false" title="Basculer vue compacte">≡ Compact</button>
         <button class="viewtoggle" id="mapToggle" aria-pressed="false" title="Vue carte">🗺 Carte</button>
         <button class="viewtoggle" id="logToggle" aria-pressed="false" title="Journal des sorties">📒 Journal</button>
+        <button class="viewtoggle" id="invToggle" aria-pressed="false" title="Factures">🧾 Factures</button>
         <select class="sortsel" id="sortSel" aria-label="Trier">
           <option value="alt">Altitude ↓</option>
           <option value="cotA">Cotation ↑</option>
@@ -527,6 +570,44 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
         </div>
         <div id="logList"></div>
       </div>
+      <div id="invView">
+        <div class="log-stats" id="invStats"></div>
+        <div class="log-tools">
+          <button id="invNew">+ Facture vierge</button>
+          <button id="invExport">⬇ Export JSON</button>
+          <label for="invImp" style="display:inline-block">⬆ Import JSON<input id="invImp" type="file" accept=".json" style="display:none"></label>
+        </div>
+        <div id="invList"></div>
+      </div>
+      <div class="inv-editor" id="invEditor"><div class="ie-wrap">
+        <div class="ie-top"><h2 id="ieTitle">Facture</h2><button class="ie-close" id="ieClose">✕</button></div>
+        <div class="ie-sec"><h4>Facture</h4>
+          <div class="ie-row"><div class="ie-f"><label>Numéro</label><input id="ie-num"></div>
+            <div class="ie-f"><label>Date</label><input id="ie-date" type="date"></div></div>
+          <div class="ie-toggle"><input type="checkbox" id="ie-paid"><label for="ie-paid">Payée</label></div>
+        </div>
+        <div class="ie-sec"><h4>Client</h4>
+          <div class="ie-f"><label>Nom du client</label><input id="ie-client" placeholder="Prénom Nom"></div>
+          <div class="ie-f"><label>Adresse / email (optionnel)</label><textarea id="ie-caddr" rows="2"></textarea></div>
+        </div>
+        <div class="ie-sec"><h4>Prestation</h4>
+          <div class="ie-f"><label>Intitulé</label><input id="ie-title"></div>
+          <div class="ie-f"><label>Détail (massif, formule, dates…)</label><textarea id="ie-detail" rows="2"></textarea></div>
+        </div>
+        <div class="ie-sec ie-lines"><h4>Lignes</h4>
+          <table><thead><tr><th>Description</th><th style="width:52px">Qté</th><th style="width:88px">P.U.</th><th style="width:88px">Total</th><th style="width:24px"></th></tr></thead>
+          <tbody id="ie-lines-body"></tbody></table>
+          <button class="ie-addline" id="ie-addline">+ Ligne</button>
+          <div class="ie-tot" id="ie-total"></div>
+        </div>
+        <div class="ie-sec"><h4>Notes / conditions</h4>
+          <div class="ie-f"><textarea id="ie-notes" rows="3"></textarea></div>
+        </div>
+        <div class="ie-actions">
+          <button class="ie-save" id="ie-save">Enregistrer</button>
+          <button class="ie-pdf" id="ie-pdf">📄 PDF</button>
+        </div>
+      </div></div>
       <div id="map"></div>
       <div class="expbox" id="expBox"><div class="inner">
         <h3>Exporter mes modifications de matériel</h3>
@@ -988,6 +1069,15 @@ function fraisFor(c, nOverride){
 function topoFor(c){ const v=activeVar(c); return (v&&v.ref&&TOPO[v.ref])? TOPO[v.ref] : c.topo; }
 function effortShow(c){ const v=activeVar(c); return (v&&v.ref&&EFFORT[v.ref])? EFFORT[v.ref] : c.effort; }
 function dShow(c){ const v=activeVar(c); return v? v.d : (c.dMin===c.dMax? c.dMin+' j' : c.dMin+'–'+c.dMax+' j'); }
+/* ===== Factures — données ===== */
+function getInvoices(){ try{return JSON.parse(localStorage.getItem('factures-v1')||'[]')}catch(e){return[]} }
+function setInvoices(a){ try{localStorage.setItem('factures-v1',JSON.stringify(a))}catch(e){} }
+function nextInvNum(){
+  const y=new Date().getFullYear();
+  const list=getInvoices().filter(f=>(f.num||'').indexOf('F'+y+'-')===0);
+  let max=0; list.forEach(f=>{ const n=parseInt((f.num||'').split('-')[1]||'0'); if(n>max)max=n; });
+  return 'F'+y+'-'+String(max+1).padStart(3,'0');
+}
 /* ===== Journal des sorties — données ===== */
 function getLog(){ try{return JSON.parse(localStorage.getItem('sorties-v1')||'[]')}catch(e){return[]} }
 function setLog(a){ try{localStorage.setItem('sorties-v1',JSON.stringify(a))}catch(e){} }
@@ -1550,6 +1640,155 @@ document.getElementById('cards').addEventListener('click',function(e){
   if(rs){ if(confirm('Réinitialiser au matériel d\'origine ? Vos modifications seront perdues.')){ clearMatEdit(rs.dataset.key); MAT_EDITING=null; render(); } return; }
 });
 
+
+/* ===== Factures — logique ===== */
+let IE_STATE=null; // facture en cours d'édition
+function invFromCourse(c){
+  const sF=(1+state.season/100)*(state.mode==='amis'?AMIS_DISC:(state.mode==='inter'?INTER_DISC:1));
+  const vEng=engFor(c), vMp=mpFor(c), av=activeVar(c);
+  const n=Math.min(state.size,vMp)||1;
+  const pp=ppAt(vEng,n)*sF;
+  const lines=[{desc:'Honoraires de guidage'+(av?' — '+av.l:''), qte:n, pu:Math.round(pp)}];
+  const frais=fraisFor(c,n);
+  if(frais>0) lines.push({desc:'Frais estimés (refuges, remontées — réglés sur place)', qte:n, pu:frais});
+  return {
+    id:Date.now(), num:nextInvNum(), date:new Date().toISOString().slice(0,10), paid:false,
+    client:'', caddr:'',
+    title:c.nom, detail:c.massif+' · '+c.cot+' · '+dShow(c)+(av?' · '+av.l:''),
+    lines, notes:'Assurances annulation et secours-rapatriement recommandées (non incluses). Merci de votre confiance.',
+    cur:state.cur
+  };
+}
+function invTotal(f){ return (f.lines||[]).reduce((s,l)=>s+(+l.qte||0)*(+l.pu||0),0); }
+function openInvEditor(f){
+  IE_STATE=JSON.parse(JSON.stringify(f));
+  $('#ieTitle').textContent=IE_STATE.num||'Facture';
+  $('#ie-num').value=IE_STATE.num||''; $('#ie-date').value=IE_STATE.date||'';
+  $('#ie-paid').checked=!!IE_STATE.paid;
+  $('#ie-client').value=IE_STATE.client||''; $('#ie-caddr').value=IE_STATE.caddr||'';
+  $('#ie-title').value=IE_STATE.title||''; $('#ie-detail').value=IE_STATE.detail||'';
+  $('#ie-notes').value=IE_STATE.notes||'';
+  renderInvLines();
+  $('#invEditor').classList.add('on');
+}
+function renderInvLines(){
+  const body=$('#ie-lines-body');
+  body.innerHTML=(IE_STATE.lines||[]).map((l,i)=>
+    '<tr><td><input class="il-desc" data-i="'+i+'" value="'+esc(l.desc||'').replace(/"/g,'&quot;')+'"></td>'
+    +'<td><input class="il-q" data-i="'+i+'" type="number" inputmode="numeric" value="'+(+l.qte||0)+'"></td>'
+    +'<td><input class="il-pu" data-i="'+i+'" type="number" inputmode="numeric" value="'+(+l.pu||0)+'"></td>'
+    +'<td class="il-tot">'+money((+l.qte||0)*(+l.pu||0))+'</td>'
+    +'<td><button class="il-del" data-i="'+i+'">✕</button></td></tr>').join('');
+  $('#ie-total').textContent='Total : '+money(invTotal(IE_STATE));
+}
+function ieCollect(){
+  IE_STATE.num=$('#ie-num').value.trim(); IE_STATE.date=$('#ie-date').value; IE_STATE.paid=$('#ie-paid').checked;
+  IE_STATE.client=$('#ie-client').value.trim(); IE_STATE.caddr=$('#ie-caddr').value.trim();
+  IE_STATE.title=$('#ie-title').value.trim(); IE_STATE.detail=$('#ie-detail').value.trim();
+  IE_STATE.notes=$('#ie-notes').value.trim();
+  const lines=[];
+  $('#ie-lines-body').querySelectorAll('tr').forEach(tr=>{
+    const d=tr.querySelector('.il-desc').value.trim();
+    const q=+tr.querySelector('.il-q').value||0;
+    const pu=+tr.querySelector('.il-pu').value||0;
+    if(d||q||pu) lines.push({desc:d,qte:q,pu:pu});
+  });
+  IE_STATE.lines=lines;
+}
+function saveInv(){
+  ieCollect();
+  const list=getInvoices();
+  const idx=list.findIndex(x=>x.id===IE_STATE.id);
+  if(idx>=0) list[idx]=IE_STATE; else list.push(IE_STATE);
+  setInvoices(list);
+}
+function renderInvoices(){
+  const list=getInvoices().slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const y=new Date().getFullYear();
+  let caY=0,unpaid=0;
+  list.forEach(f=>{ const t=invTotal(f); if((f.date||'').startsWith(String(y)))caY+=t; if(!f.paid)unpaid+=t; });
+  $('#invStats').innerHTML=
+    '<div class="log-stat"><div class="v">'+money(caY)+'</div><div class="l">facturé '+y+'</div></div>'
+   +'<div class="log-stat"><div class="v">'+list.length+'</div><div class="l">factures</div></div>'
+   +'<div class="log-stat"><div class="v">'+money(unpaid)+'</div><div class="l">en attente</div></div>';
+  $('#invList').innerHTML = list.length ? list.map(f=>
+    '<div class="inv-item"><div class="ii-main">'
+    +'<div class="ii-num">'+(f.num||'—')+'</div>'
+    +'<div class="ii-nom">'+(f.title||'—').replace(/</g,'&lt;')+(f.client?' · '+f.client.replace(/</g,'&lt;'):'')+'</div>'
+    +'<div class="ii-meta">'+fmtDate(f.date)+'</div>'
+    +'<span class="inv-status '+(f.paid?'paid':'unpaid')+'" data-id="'+f.id+'">'+(f.paid?'✓ Payée':'En attente')+'</span>'
+    +'</div><div class="inv-acts"><div class="ii-tot">'+money(invTotal(f))+'</div>'
+    +'<button class="inv-edit" data-id="'+f.id+'">Modifier</button>'
+    +'<button class="inv-pdf" data-id="'+f.id+'">PDF</button>'
+    +'<button class="inv-del" data-id="'+f.id+'">Suppr.</button></div></div>').join('')
+    : '<div class="log-empty">Aucune facture. Crée-en une depuis une fiche de course (« 🧾 Créer une facture ») ou avec « + Facture vierge ».</div>';
+}
+function openInvoices(){
+  document.body.classList.add('inv-on');
+  document.body.classList.remove('log-on','map-on');
+  $('#invToggle').setAttribute('aria-pressed','true');
+  $('#logToggle').setAttribute('aria-pressed','false'); $('#mapToggle').setAttribute('aria-pressed','false');
+  renderInvoices();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function invoicePDF(f){
+  const esc2=x=>String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  const cur=f.cur||'CHF';
+  const m=x=>{ const v=cur==='EUR'?Math.round(x/CHF_PER_EUR/5)*5+' €':'CHF '+fmt(x); return v; };
+  const dt=f.date?new Date(f.date).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'}):'';
+  const rows=(f.lines||[]).map(l=>'<tr><td>'+esc2(l.desc)+'</td><td>'+(+l.qte||0)+'</td><td>'+m(+l.pu||0)+'</td><td>'+m((+l.qte||0)*(+l.pu||0))+'</td></tr>').join('');
+  const tot=invTotal(f);
+  const html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Facture '+esc2(f.num)+'</title><style>'
+  +'@page{size:A4;margin:16mm}body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1c2830;font-size:12.5px;line-height:1.45;margin:0}'
+  +'.head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2.5px solid #2c6e7c;padding-bottom:10px;margin-bottom:16px}'
+  +'.head h1{font-size:17px;margin:0;color:#19424c}.head .sub{font-size:11.5px;color:#555;margin-top:2px}.head .co{text-align:right;font-size:11px;color:#444;line-height:1.5}'
+  +'.dev{font-size:11px;color:#777;letter-spacing:.12em;text-transform:uppercase;margin:0 0 3px}h2{font-size:15.5px;margin:0 0 2px;color:#19424c}'
+  +'.two{display:flex;justify-content:space-between;gap:20px;margin:6px 0 16px}.two .b{font-size:11px}.two .t{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:2px}'
+  +'table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#666;border-bottom:1.5px solid #ccc;padding:6px 8px}'
+  +'td{padding:7px 8px;border-bottom:1px solid #eee}td:nth-child(2),td:nth-child(3),td:nth-child(4),th:nth-child(2),th:nth-child(3),th:nth-child(4){text-align:right}'
+  +'.tot{text-align:right;font-size:15px;font-weight:800;color:#19424c;margin:12px 0}.paid{display:inline-block;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;margin-left:10px}'
+  +'.paid.y{background:#e3f1e9;color:#22694a}.paid.n{background:#fdf0dd;color:#8a5410}'
+  +'.notes{font-size:11px;color:#555;border-top:1px solid #ddd;padding-top:9px;margin-top:16px;white-space:pre-wrap}'
+  +'.foot{margin-top:14px;font-size:10.5px;color:#888}</style></head><body>'
+  +'<div class="head"><div><h1>🏔 '+esc2(GUIDE_INFO.nom)+'</h1><div class="sub">'+esc2(GUIDE_INFO.titre)+' · '+esc2(GUIDE_INFO.lieu)+'</div></div>'
+  +'<div class="co">'+esc2(GUIDE_INFO.tel)+'<br>'+esc2(GUIDE_INFO.email)+'</div></div>'
+  +'<p class="dev">Facture '+esc2(f.num||'')+' · '+dt+'</p>'
+  +'<div class="two"><div class="b"><div class="t">Facturé à</div>'+esc2(f.client||'—').replace(/\n/g,'<br>')+(f.caddr?'<br>'+esc2(f.caddr).replace(/\n/g,'<br>'):'')+'</div>'
+  +'<div class="b" style="text-align:right"><div class="t">Statut</div><span class="paid '+(f.paid?'y':'n')+'">'+(f.paid?'PAYÉE':'EN ATTENTE')+'</span></div></div>'
+  +'<h2>'+esc2(f.title||'')+'</h2>'+(f.detail?'<div style="font-size:11.5px;color:#555;margin-bottom:10px">'+esc2(f.detail)+'</div>':'')
+  +'<table><thead><tr><th>Description</th><th>Qté</th><th>P.U.</th><th>Total</th></tr></thead><tbody>'+rows+'</tbody></table>'
+  +'<div class="tot">Total : '+m(tot)+'</div>'
+  +(f.notes?'<div class="notes">'+esc2(f.notes)+'</div>':'')
+  +'<div class="foot">'+esc2(GUIDE_INFO.nom)+' · '+esc2(GUIDE_INFO.titre)+' · '+esc2(GUIDE_INFO.tel)+' · '+esc2(GUIDE_INFO.email)+'</div>'
+  +'</body></html>';
+  printDoc(html);
+}
+
+$('#invToggle').onclick=function(){
+  const on=!document.body.classList.contains('inv-on');
+  if(on) openInvoices();
+  else{ document.body.classList.remove('inv-on'); this.setAttribute('aria-pressed','false'); }
+};
+$('#invNew').onclick=()=>openInvEditor({id:Date.now(),num:nextInvNum(),date:new Date().toISOString().slice(0,10),paid:false,client:'',caddr:'',title:'',detail:'',lines:[{desc:'Honoraires de guidage',qte:1,pu:0}],notes:'',cur:state.cur});
+$('#ieClose').onclick=()=>$('#invEditor').classList.remove('on');
+$('#ie-save').onclick=()=>{ saveInv(); $('#invEditor').classList.remove('on'); renderInvoices(); };
+$('#ie-pdf').onclick=()=>{ saveInv(); invoicePDF(IE_STATE); renderInvoices(); };
+$('#ie-addline').onclick=()=>{ ieCollect(); IE_STATE.lines.push({desc:'',qte:1,pu:0}); renderInvLines(); };
+$('#ie-lines-body').addEventListener('click',e=>{ const b=e.target.closest('.il-del'); if(!b)return; ieCollect(); IE_STATE.lines.splice(+b.dataset.i,1); renderInvLines(); });
+$('#ie-lines-body').addEventListener('input',e=>{ if(e.target.matches('.il-q,.il-pu')){ ieCollect(); renderInvLines(); } });
+$('#invList').addEventListener('click',e=>{
+  const st=e.target.closest('.inv-status');
+  if(st){ const list=getInvoices(); const f=list.find(x=>String(x.id)===st.dataset.id); if(f){ f.paid=!f.paid; setInvoices(list); renderInvoices(); } return; }
+  const ed=e.target.closest('.inv-edit');
+  if(ed){ const f=getInvoices().find(x=>String(x.id)===ed.dataset.id); if(f) openInvEditor(f); return; }
+  const pd=e.target.closest('.inv-pdf');
+  if(pd){ const f=getInvoices().find(x=>String(x.id)===pd.dataset.id); if(f) invoicePDF(f); return; }
+  const dl=e.target.closest('.inv-del');
+  if(dl){ if(confirm('Supprimer cette facture ?')){ setInvoices(getInvoices().filter(x=>String(x.id)!==dl.dataset.id)); renderInvoices(); } return; }
+});
+$('#invExport').onclick=()=>{ const a=document.createElement('a'); a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(getInvoices(),null,1)); a.download='factures.json'; a.click(); };
+$('#invImp').addEventListener('change',function(){ const f=this.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const arr=JSON.parse(r.result); if(!Array.isArray(arr))throw 0; const cur=getInvoices(); const ids=new Set(cur.map(x=>String(x.id))); arr.forEach(x=>{ if(x&&!ids.has(String(x.id))) cur.push(x); }); setInvoices(cur); renderInvoices(); alert('Import : '+cur.length+' factures.'); }catch(e){ alert('JSON invalide.'); } }; r.readAsText(f); this.value=''; });
+
 const OPEN_CARDS = new Set();
 function renderAF(){
   const bar=$('#afbar'); const chips=[];
@@ -1678,6 +1917,7 @@ function render(){
           <button class="addlog-btn" data-nom="${esc(c.nom)}">+ Sortie</button>
           <button class="addlog-btn pdfbtn" data-nom="${esc(c.nom)}">📄 Devis PDF</button>
           <button class="addlog-btn matpdfbtn" data-nom="${esc(c.nom)}">🎒 Liste matériel PDF</button>
+          <button class="invbtn" data-nom="${esc(c.nom)}">🧾 Créer une facture</button>
           <span class="copied" hidden>Devis copié ✓</span>
         </div>
       </div>
@@ -1869,7 +2109,7 @@ function openLog(prefillNom){
 }
 $('#logToggle').onclick=function(){
   const on=!document.body.classList.contains('log-on');
-  if(on) openLog();
+  if(on){ document.body.classList.remove('inv-on'); $('#invToggle').setAttribute('aria-pressed','false'); openLog(); }
   else { document.body.classList.remove('log-on'); this.setAttribute('aria-pressed','false'); }
 };
 $('#lfAdd').onclick=function(){
@@ -1933,6 +2173,8 @@ document.getElementById('cards').addEventListener('click',function(e){
   if(pb){ const c=COURSES.find(x=>x.nom===pb.dataset.nom); if(c) devisPDF(c); return; }
   const mb=e.target.closest('.matpdfbtn');
   if(mb){ const c=COURSES.find(x=>x.nom===mb.dataset.nom); if(c) matPDF(c); return; }
+  const ib=e.target.closest('.invbtn');
+  if(ib){ const c=COURSES.find(x=>x.nom===ib.dataset.nom); if(c) openInvEditor(invFromCourse(c)); return; }
   const al=e.target.closest('.addlog-btn');
   if(al){ openLog(al.dataset.nom); return; }
   const vr=e.target.closest('.vt-row');
