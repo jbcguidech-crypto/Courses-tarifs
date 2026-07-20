@@ -331,6 +331,33 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   .fe-actions{display:flex;gap:8px;margin-top:10px;align-items:center}
   .fe-note{font-size:10.5px;color:var(--muted);margin-top:7px;line-height:1.4}
   .frais-custom{font-size:10px;font-weight:700;background:rgba(184,114,14,.14);color:#8a5410;border:1px solid rgba(184,114,14,.3);padding:1px 7px;border-radius:9px;margin-left:6px}
+  /* ── bottom bar ── */
+  body{padding-bottom:calc(70px + env(safe-area-inset-bottom))}
+  .bottombar{position:fixed;left:0;right:0;bottom:0;z-index:150;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(0,0,0,.08);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+  .bottombar button{flex:1;background:none;border:none;padding:8px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:inherit;color:var(--muted);font-size:9.5px;letter-spacing:.02em;-webkit-tap-highlight-color:transparent}
+  .bottombar button .bi{font-size:20px;line-height:1}
+  .bottombar button.on{color:var(--ice-deep);font-weight:700}
+  .bottombar button.on .bi{transform:translateY(-1px)}
+  .viewtoggle{display:none !important}
+  @media print{.bottombar{display:none}}
+  /* ── accordéons de fiche ── */
+  details.acc{border:1px solid rgba(0,0,0,.09);border-radius:10px;margin:8px 0;background:rgba(255,255,255,.6);overflow:hidden}
+  details.acc>summary{list-style:none;cursor:pointer;padding:10px 13px;font-size:12px;font-weight:700;color:var(--ice-deep);display:flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;user-select:none}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary:after{content:'▸';margin-left:auto;color:var(--muted);transition:transform .18s;font-size:13px}
+  details.acc[open]>summary:after{transform:rotate(90deg)}
+  details.acc>.acc-body{padding:2px 13px 12px}
+  details.acc>.acc-body>.rinfo{margin:0;border:none;background:none;padding:0}
+  details.acc>.acc-body>.mat{margin-top:4px}
+  /* ── barre d'actions de fiche ── */
+  .actionbar{display:flex;gap:8px;margin-top:12px;position:relative}
+  .actionbar .ab-main{flex:1;background:var(--ice);color:#fff;border:none;border-radius:10px;padding:11px 8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+  .actionbar .ab-sec{flex:1;background:none;color:var(--ice-deep);border:1.5px solid rgba(44,110,124,.4);border-radius:10px;padding:11px 8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+  .actionbar .ab-more{width:46px;background:none;border:1.5px solid rgba(0,0,0,.18);border-radius:10px;font-size:17px;cursor:pointer;color:var(--rock2)}
+  .more-menu{position:absolute;right:0;bottom:calc(100% + 6px);background:#fff;border-radius:12px;box-shadow:0 6px 28px rgba(0,0,0,.18);padding:6px;display:none;z-index:60;min-width:210px}
+  .actionbar.open .more-menu{display:block}
+  .more-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:11px 13px;font-size:13.5px;font-family:inherit;color:var(--rock);cursor:pointer;border-radius:8px}
+  .more-menu button:hover{background:rgba(44,110,124,.07)}
   /* factures */
   #invView{display:none}
   body.inv-on #invView{display:block}
@@ -449,7 +476,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;2.0</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v100</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v101</span></span>
     </div>
   </div>
 </header>
@@ -1984,6 +2011,27 @@ $('#ce-del').onclick=function(){
   $('#calEditor').classList.remove('on'); renderCal();
 };
 
+/* ===== Accordéons : état persistant pendant la session ===== */
+const ACC_OPEN=new Set();
+function acc(nom, key, title, inner, defOpen){
+  if(!inner) return '';
+  const id=nom+'|'+key;
+  const open=ACC_OPEN.has(id)||(defOpen&&!ACC_OPEN.has('!'+id));
+  return '<details class="acc" data-acc="'+esc(id).replace(/"/g,'&quot;')+'"'+(open?' open':'')
+    +'><summary>'+title+'</summary><div class="acc-body">'+inner+'</div></details>';
+}
+document.getElementById('cards').addEventListener('click',function(e){
+  const mb=e.target.closest('.ab-more');
+  document.querySelectorAll('.actionbar.open').forEach(a=>{ if(!mb||!a.contains(mb)) a.classList.remove('open'); });
+  if(mb){ mb.closest('.actionbar').classList.toggle('open'); }
+});
+document.getElementById('cards').addEventListener('toggle',function(e){
+  const d=e.target.closest('details.acc'); if(!d) return;
+  const id=d.dataset.acc;
+  if(d.open){ ACC_OPEN.add(id); ACC_OPEN.delete('!'+id); }
+  else{ ACC_OPEN.delete(id); ACC_OPEN.add('!'+id); }
+},true);
+
 const OPEN_CARDS = new Set();
 function renderAF(){
   const bar=$('#afbar'); const chips=[];
@@ -2100,19 +2148,23 @@ function render(){
       <div class="expand">
         ${c.vars?`<div class="fgroup" style="margin:2px 0 12px"><div class="lbl">Formule</div><select class="sortsel varsel" data-nom="${esc(c.nom)}" style="width:100%">${c.vars.map((v,i)=>`<option value="${i}" ${(VARSEL[c.nom]||0)===i?'selected':''}>${v.l} — ${v.d}</option>`).join('')}</select></div>`:''}
         <p>${c.note}</p>
-        <div class="rinfo"><b>Niveau requis</b> Physique : ${PHY_LABEL[c.phy]}<br>Technique : ${c.tech}${effortShow(c)?'<br><span style="opacity:.85">Effort : '+effortShow(c)+'</span>':''}</div>
-        ${topoFor(c)?`<div class="rinfo"><b>Aperçu ${statusBadge(c.status)}</b> ${topoFor(c)}</div>`:''}
-        ${topoLinks(c)}
-        ${materielHTML(c)}
         ${variantesHTML(c)}
-        <div class="frais"><b>Frais en sus estimés</b> ~${money(fraisFor(c))} / pers. (client + part guide) : refuge ${c.refuge}, remontées, repas, transferts, location matériel. Approximatif, à confirmer.${getFraisEdit(fraisKey(c))?'<span class="frais-custom">personnalisés</span>':''}<button class="frais-edit-btn" data-nom="${esc(c.nom)}">✎ Frais</button><div class="frais-editor-slot"></div></div>
-        ${inclusHTML(c)}
-        <div class="devis">
-          <button class="copybtn">Copier le devis</button>
-          <button class="addlog-btn" data-nom="${esc(c.nom)}">+ Sortie</button>
-          <button class="addlog-btn pdfbtn" data-nom="${esc(c.nom)}">📄 Devis PDF</button>
-          <button class="addlog-btn matpdfbtn" data-nom="${esc(c.nom)}">🎒 Liste matériel PDF</button>
-          <button class="invbtn" data-nom="${esc(c.nom)}">🧾 Créer une facture</button>
+        ${acc(c.nom,'niveau','💪 Niveau requis',
+          `<b>Physique :</b> ${PHY_LABEL[c.phy]}<br><b>Technique :</b> ${c.tech}${effortShow(c)?'<br><span style="opacity:.85">Effort : '+effortShow(c)+'</span>':''}`)}
+        ${acc(c.nom,'topo','🧭 Topo & aperçu '+statusBadge(c.status), (topoFor(c)||'')+topoLinks(c))}
+        ${acc(c.nom,'mat','🎒 Matériel'+(getMatEdit(matBaseKey(c))?' <span class="mat-custom">modifiée</span>':''), materielHTML(c))}
+        ${acc(c.nom,'frais','💰 Frais en sus · ~'+money(fraisFor(c))+' / pers.'+(getFraisEdit(fraisKey(c))?' <span class="frais-custom">personnalisés</span>':''),
+          `<div class="frais" style="margin-top:4px"><b>Frais en sus estimés</b> ~${money(fraisFor(c))} / pers. (client + part guide) : refuge ${c.refuge}, remontées, repas, transferts, location matériel. Approximatif, à confirmer.<button class="frais-edit-btn" data-nom="${esc(c.nom)}">✎ Frais</button><div class="frais-editor-slot"></div></div>`)}
+        ${acc(c.nom,'inclus','✅ Le prix comprend / ne comprend pas', inclusHTML(c))}
+        <div class="devis actionbar">
+          <button class="ab-main pdfbtn" data-nom="${esc(c.nom)}">📄 Devis PDF</button>
+          <button class="ab-sec matpdfbtn" data-nom="${esc(c.nom)}">🎒 Matériel PDF</button>
+          <button class="ab-more" data-nom="${esc(c.nom)}" aria-label="Plus d'actions">⋯</button>
+          <div class="more-menu">
+            <button class="copybtn">📋 Copier le devis (texte)</button>
+            <button class="invbtn" data-nom="${esc(c.nom)}">🧾 Créer une facture</button>
+            <button class="addlog-btn" data-nom="${esc(c.nom)}">📒 + Sortie au journal</button>
+          </div>
           <span class="copied" hidden>Devis copié ✓</span>
         </div>
       </div>
@@ -2262,6 +2314,48 @@ document.getElementById('mapToggle').onclick=function(){
   this.setAttribute('aria-pressed',on);
   if(on){ ensureLeaflet(()=>{ initMap(); setTimeout(()=>{MAP.invalidateSize(); renderMap();},60); }); }
 };
+
+/* ===== Bottom bar : navigation entre vues ===== */
+function currentView(){
+  const b=document.body.classList;
+  if(b.contains('log-on'))return 'log';
+  if(b.contains('inv-on'))return 'inv';
+  if(b.contains('cal-on'))return 'cal';
+  if(b.contains('map-on'))return 'map';
+  return 'cards';
+}
+function updateBottomBar(){
+  const v=currentView();
+  document.querySelectorAll('#bottombar button').forEach(btn=>btn.classList.toggle('on',btn.dataset.view===v));
+}
+function showView(v){
+  const b=document.body;
+  if(v==='cards'){
+    b.classList.remove('log-on','inv-on','cal-on');
+    if(b.classList.contains('map-on')) $('#mapToggle').click();
+    ['#logToggle','#invToggle','#calToggle'].forEach(id=>{const e=$(id); if(e)e.setAttribute('aria-pressed','false');});
+  }else if(v==='map'){
+    b.classList.remove('log-on','inv-on','cal-on');
+    ['#logToggle','#invToggle','#calToggle'].forEach(id=>{const e=$(id); if(e)e.setAttribute('aria-pressed','false');});
+    if(!b.classList.contains('map-on')) $('#mapToggle').click();
+  }else if(v==='log'){ if(b.classList.contains('map-on')) $('#mapToggle').click(); openLog(); }
+  else if(v==='inv'){ if(b.classList.contains('map-on')) $('#mapToggle').click(); openInvoices(); }
+  else if(v==='cal'){ if(b.classList.contains('map-on')) $('#mapToggle').click(); openCal(); }
+  updateBottomBar();
+  window.scrollTo({top:0});
+}
+function bindBottombar(){
+  const el=document.getElementById('bottombar');
+  if(!el){ setTimeout(bindBottombar,50); return; }
+  el.addEventListener('click',e=>{
+    const btn=e.target.closest('button[data-view]'); if(!btn) return;
+    showView(btn.dataset.view);
+  });
+  new MutationObserver(()=>updateBottomBar()).observe(document.body,{attributes:true,attributeFilter:['class']});
+  updateBottomBar();
+}
+bindBottombar();
+
 
 
 /* ===== Journal des sorties ===== */
@@ -2439,5 +2533,12 @@ window.addEventListener('beforeinstallprompt', e=>{
 window.addEventListener('appinstalled', ()=>{ const b=$('#installBtn'); if(b) b.hidden=true; });
 
 </script>
+<nav class="bottombar" id="bottombar">
+  <button data-view="cards"><span class="bi">🏔</span>Courses</button>
+  <button data-view="map"><span class="bi">🗺</span>Carte</button>
+  <button data-view="cal"><span class="bi">📅</span>Agenda</button>
+  <button data-view="log"><span class="bi">📒</span>Journal</button>
+  <button data-view="inv"><span class="bi">🧾</span>Factures</button>
+</nav>
 </body>
 </html>
