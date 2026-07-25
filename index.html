@@ -99,6 +99,14 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   .fgroup{margin-bottom:18px}
   .fgroup > .lbl{font-family:'JetBrains Mono'; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); margin-bottom:9px}
   .chips{display:flex; flex-wrap:wrap; gap:6px}
+  /* ── classiques ── */
+  .classics{margin:0 0 12px}
+  .classics .cl-title{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-family:'JetBrains Mono';margin:0 0 6px}
+  .cl-rail{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .cl-rail::-webkit-scrollbar{display:none}
+  .cl-chip{flex-shrink:0;background:#fff;border:1.5px solid rgba(44,110,124,.35);color:var(--ice-deep);border-radius:20px;padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+  .cl-chip:active{background:var(--ice);color:#fff}
+  body.log-on .classics,body.inv-on .classics,body.cal-on .classics,body.knots-on .classics,body.map-on .classics{display:none}
   .chip{font-size:12.5px; font-weight:500; padding:5px 10px; border-radius:7px; border:1px solid var(--line); background:#fbfcfb; color:var(--ink); cursor:pointer; transition:.13s}
   .chip[aria-pressed="true"]{background:var(--rock); color:#fff; border-color:var(--rock)}
   .chip:focus-visible{outline:2px solid var(--ice); outline-offset:2px}
@@ -493,7 +501,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;2.0</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v112</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v113</span></span>
     </div>
   </div>
 </header>
@@ -743,6 +751,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
         <div class="row"><button class="cp" id="expCopy">Copier</button><button class="cl" id="expClose">Fermer</button></div>
       </div></div>
       <div class="map-note">Positions de repérage approximatives · fond de carte : réseau requis · ● position au centre du massif quand le point exact n'est pas référencé</div>
+      <div class="classics"><div class="cl-title">⭐ Courses classiques</div><div class="cl-rail" id="clRail"></div></div>
       <div class="cards" id="cards"></div>
     </main>
   </div>
@@ -2043,6 +2052,35 @@ $('#ce-del').onclick=function(){
   setLog(getLog().filter(x=>x.id!==CE_STATE.id)); refreshLogCount();
   $('#calEditor').classList.remove('on'); renderCal();
 };
+
+
+/* ===== Courses classiques (best-sellers) ===== */
+const CLASSIQUES=[
+ {n:'Cervin — voie normale (Hörnli)', l:'Cervin'},
+ {n:'Zinalrothorn', l:'Zinalrothorn'},
+ {n:'Pointe Dufour — arête Ouest', l:'Dufourspitze'},
+ {n:'Breithorn occidental — voie normale', l:'Breithorn'},
+ {n:'Breithorn — demi-traversée (central → occidental)', l:'Breithorn ½-trav.'},
+ {n:'Pollux', l:'Pollux'},
+ {n:'Spaghetti Tour — 4000 du Mont Rose', l:'Spaghetti Tour'},
+ {n:"Miroir d'Argentine", l:"Miroir d'Argentine"},
+ {n:'Mont Blanc — voie normale (Goûter)', l:'Mont Blanc'},
+ {n:'Traversée de la Meije', l:'Meije'},
+];
+function renderClassics(){
+  const rail=document.getElementById('clRail'); if(!rail) return;
+  rail.innerHTML=CLASSIQUES.map(c=>'<button class="cl-chip" data-nom="'+esc(c.n).replace(/"/g,'&quot;')+'">'+esc(c.l)+'</button>').join('');
+}
+document.getElementById('clRail').addEventListener('click',e=>{
+  const ch=e.target.closest('.cl-chip'); if(!ch) return;
+  const nom=ch.dataset.nom;
+  state.q=nom;
+  const inp=$('#q'); if(inp) inp.value=nom;
+  OPEN_CARDS.add(nom);
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+renderClassics();
 
 /* ===== Accordéons : état persistant pendant la session ===== */
 const ACC_OPEN=new Set();
