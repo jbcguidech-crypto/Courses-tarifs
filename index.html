@@ -501,7 +501,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;2.0</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v114</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v116</span></span>
     </div>
   </div>
 </header>
@@ -887,7 +887,7 @@ const COURSES = [
   {nom:`Piz Cambrena`, disc:`alpinisme`, massif:`Bernina`, pays:`Suisse`, alt:3861, cotN:3.5, cot:`PD/AD`, dMin:1,dMax:2, maxP:2, eng:1800, danger:2, est:true, m1:7,m2:9, refuge:`Diavolezza (1 j) ou nuit au berghaus`, note:`Arête de neige accessible depuis Diavolezza.`},
   {nom:`Piz Morteratsch`, disc:`alpinisme`, massif:`Bernina`, pays:`Suisse`, alt:3751, cotN:2, cot:`PD`, dMin:2,dMax:2, maxP:2, eng:1600, danger:2, est:true, m1:7,m2:9, refuge:`Bovalhütte`, note:`Voie normale glaciaire, belle vue sur le Bernina.`},
   {nom:`Piz Tschierva`, disc:`alpinisme`, massif:`Bernina`, pays:`Suisse`, alt:3546, cotN:2, cot:`PD`, dMin:2,dMax:2, maxP:2, eng:1500, danger:1, est:true, m1:7,m2:9, refuge:`Tschiervahütte`, note:`Belle course d'initiation du val Roseg.`},
-  {nom:`Piz Badile — arête N`, disc:`escalade`, massif:`Bernina`, pays:`Suisse`, alt:3308, cotN:6, cot:`D/TD`, dMin:2,dMax:2, maxP:1, eng:2400, danger:2, est:true, m1:6,m2:9, refuge:`Cap. Sasc Furä / Sciora`, note:`Granite mythique du Bregaglia, arête N (escalade).`},
+  {nom:`Piz Badile — arête N`, disc:`escalade`, massif:`Bernina`, pays:`Suisse`, alt:3308, cotN:6, cot:`D/TD`, dMin:2,dMax:2, maxP:1, eng:2400, danger:2, est:true, m1:6,m2:9, refuge:`Cap. Sasc Furä / Sciora`, note:`Granite mythique du Bregaglia, arête N (escalade).`, vars:[{"l": "Arête N (la classique, AD+/D)", "d": "1-2 j", "eng": 1600}, {"l": "Voie Cassin — face NE (TD+, 800 m)", "d": "2 j", "eng": 3000}]},
   {nom:`Piz Cengalo`, disc:`alpinisme`, massif:`Bernina`, pays:`Suisse`, alt:3369, cotN:3.5, cot:`AD/D`, dMin:2,dMax:2, maxP:2, eng:2000, danger:2, est:true, m1:6,m2:9, refuge:`Cap. Sciora`, note:`Granite du Bregaglia, course de rocher sérieuse.`},
   {nom:`Grivola`, disc:`alpinisme`, massif:`Italie`, pays:`Italie`, alt:3969, cotN:3.5, cot:`AD`, dMin:2,dMax:2, maxP:2, eng:1900, danger:2, est:true, m1:7,m2:9, refuge:`Rifugio Vittorio Sella`, note:`Belle pyramide du Grand Paradis, arête (AD).`},
   {nom:`Ciarforon`, disc:`alpinisme`, massif:`Italie`, pays:`Italie`, alt:3642, cotN:3.5, cot:`PD/AD`, dMin:2,dMax:2, maxP:2, eng:1700, danger:2, est:true, m1:7,m2:9, refuge:`Rifugio Vittorio Emanuele`, note:`Face N de neige, course esthétique.`},
@@ -915,7 +915,7 @@ const COURSES = [
   {nom:`Bristen`, disc:`alpinisme`, massif:`Suisse centrale`, pays:`Suisse`, alt:3073, cotN:3.5, cot:`PD/AD`, dMin:1,dMax:2, maxP:2, eng:1500, danger:2, est:true, m1:6,m2:9, refuge:`—`, note:`Sommet sauvage au-dessus d'Amsteg.`},
   {nom:`Traversée Rochefort–Jorasses`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4208, cotN:6, cot:`TD`, dMin:2,dMax:3, maxP:1, eng:3400, danger:3, est:true, m1:7,m2:9, refuge:`Refuge Torino / bivouac`, note:`Grande traversée intégrale Dent du Géant → arêtes de Rochefort → Grandes Jorasses. Course d'arête majeure (TD).`},
   {nom:`Grandes Jorasses — Pointe Walker (voie normale)`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4208, cotN:3.5, cot:`AD/D`, dMin:2,dMax:3, maxP:1, eng:2800, danger:3, est:true, m1:7,m2:9, refuge:`Refuge Boccalatte`, note:`Voie normale au point culminant des Jorasses (4208 m), versant S depuis le refuge Boccalatte (AD, mixte).`},
-  {nom:`Grandes Jorasses — Éperon Walker (face N)`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4208, cotN:7, cot:`ED`, dMin:2,dMax:3, maxP:1, eng:4800, danger:3, est:true, m1:7,m2:9, refuge:`Bivouac / refuge de Leschaux`, note:`L'Éperon Walker, face N des Grandes Jorasses — l'une des grandes faces nord des Alpes. Objectif d'extrême (ED).`, vars:[{"l": "Éperon Walker (ED−, 1200 m — la voie mythique)", "d": "2-3 j", "eng": 5000}, {"l": "Voie Slovène (ED, mixte moderne)", "d": "2 j", "eng": 5000}, {"l": "Colton-McIntyre (ED, glace/mixte)", "d": "2 j", "eng": 5200}]},
+  {nom:`Grandes Jorasses — Éperon Walker (face N)`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4208, cotN:7, cot:`ED`, dMin:2,dMax:3, maxP:1, eng:4800, danger:3, est:true, m1:7,m2:9, refuge:`Bivouac / refuge de Leschaux`, note:`L'Éperon Walker, face N des Grandes Jorasses — l'une des grandes faces nord des Alpes. Objectif d'extrême (ED).`, vars:[{"l": "Éperon Walker (ED−, 1200 m — la voie mythique)", "d": "2-3 j", "eng": 5000}, {"l": "Voie Slovène (ED, mixte moderne)", "d": "2 j", "eng": 5000}, {"l": "Colton-McIntyre (ED, glace/mixte)", "d": "2 j", "eng": 5200}, {"l": "Le Linceul (TD+, névé suspendu — la plus accessible de la face)", "d": "2 j", "eng": 4200}]},
   {nom:`Arêtes de Rochefort`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4015, cotN:3.5, cot:`AD/D`, dMin:1,dMax:2, maxP:1, eng:2200, danger:3, est:true, m1:7,m2:9, refuge:`Refuge Torino`, note:`Traversée des arêtes de Rochefort (Aiguille puis Dôme de Rochefort), fil de neige aérien et exposé.`, vars:[{"l": "Aiguille de Rochefort AR — 2 j, nuit au refuge Torino", "d": "2 j", "eng": 2200}, {"l": "Traversée complète jusqu'au Dôme de Rochefort", "d": "2 j", "eng": 2300, "ref": "Dôme de Rochefort"}]},
   {nom:`Mont Maudit — arête Kuffner`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4465, cotN:5, cot:`D`, dMin:2,dMax:2, maxP:1, eng:2600, danger:3, est:true, m1:7,m2:9, refuge:`Bivouac au col de la Fourche (tente) ou stratégie Torino`, note:`Arête Kuffner (arête SE) du Mont Maudit, grande classique rocher-neige (D). ⚠ Le bivouac de la Fourche s'est effondré en août 2022 (permafrost) : bivouac sous tente au col ou stratégie depuis le Torino.`},
   {nom:`Mont Blanc — traversée des 3 Monts`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4810, cotN:3.5, cot:`PD+/AD`, dMin:2,dMax:2, maxP:2, eng:1900, danger:3, est:true, m1:6,m2:9, refuge:`Refuge des Cosmiques`, note:`Voie des 3 Monts : Mont Blanc du Tacul, Mont Maudit puis Mont Blanc, depuis l'Aiguille du Midi / Cosmiques.`},
@@ -955,6 +955,12 @@ const COURSES = [
   {nom:`Les Courtes — face NE`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:3856, cotN:4.5, cot:`D / 50–55°`, dMin:1,dMax:2, maxP:1, eng:1900, danger:3, est:true, m1:4,m2:6, refuge:`Refuge d'Argentière (2771 m)`, note:`La face NE des Courtes : la « petite sœur » du Couturier, 700 m à 50–55°. Superbe introduction aux grandes faces N du bassin d'Argentière. 1:1.`},
   {nom:`Mont Dolent — face N`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`Suisse`, alt:3823, cotN:4.5, cot:`AD+/D / 45–50°`, dMin:2,dMax:2, maxP:1, eng:1900, danger:2, est:true, m1:4,m2:7, refuge:`Cabane de la A Neuve (2735 m) / bivouac du Dolent`, note:`La pyramide des trois frontières par sa face N : pente de neige élégante à 45–50°, sommet-balcon unique entre Suisse, France et Italie.`},
   {nom:`Eiger — face N (voie Heckmair)`, disc:`alpinisme`, massif:`Alpes bernoises`, pays:`Suisse`, alt:3967, cotN:7, cot:`ED2`, dMin:2,dMax:3, maxP:1, eng:9000, danger:3, est:true, m1:3,m2:9, refuge:`Bivouac dans la face / hôtel Eigergletscher`, note:`LA face nord : 1800 m de l'itinéraire Heckmair (1938) — Fissure Difficile, Traversée Hinterstoisser, Rampe, Traversée des Dieux, Araignée Blanche. Le monument absolu. Client d'élite exclusivement. 1:1.`},
+ {nom:`Petit Clocher du Portalet — État de choc`, disc:`rocher`, massif:`Valais`, pays:`Suisse`, alt:2823, cotN:5.5, cot:`ED− (6c, 6b obl.)`, dMin:1,dMax:1, maxP:1, eng:1300, danger:2, est:true, m1:6,m2:9, refuge:`— (Champex / Arpette)`, note:`LA voie mythique du granite valaisan : dülfers parfaits et fissures à friends sur la face W du Petit Clocher (~250 m, 6c max, 6b obligatoire). Approche val d'Arpette depuis Champex (~2h30). Client 6b en fissure, très belle journée d'anthologie. 1:1.`},
+ {nom:`Riffelhorn — arêtes d'entraînement`, disc:`alpinisme`, massif:`Valais`, pays:`Suisse`, alt:2928, cotN:3, cot:`AD (III-IV)`, dMin:1,dMax:1, maxP:2, eng:800, danger:1, est:true, m1:6,m2:9, refuge:`—`, note:`LA journée test avant le Cervin : arêtes du Riffelhorn au-dessus du Gornergrat, rocher gneiss, cordées rapides, désescalade, crampons sur rocher. Verdict honnête sur la faisabilité du Hörnli. Accès train.`},
+ {nom:`Éperon de la Brenva (Mont Blanc)`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4810, cotN:5, cot:`D+ (glace/mixte)`, dMin:2,dMax:2, maxP:1, eng:2800, danger:3, est:true, m1:6,m2:9, refuge:`La Fourche (bivouac)`, note:`La grande classique du versant Brenva (1865). Éperon de neige/glace historique, sortie au Mont Blanc. Départ bivouac de la Fourche. Conditions et regel déterminants. 1:1.`},
+ {nom:`Arête de l'Innominata (Mont Blanc)`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4810, cotN:5.5, cot:`TD (IV+/V, mixte)`, dMin:2,dMax:3, maxP:1, eng:4000, danger:3, est:true, m1:7,m2:9, refuge:`Monzino / bivouac Eccles`, note:`L'itinéraire le plus esthétique du versant S du Mont Blanc : granite et mixte depuis Eccles, ambiance Freney sans l'extrême difficulté. Engagement sérieux, retraite complexe. 1:1.`},
+ {nom:`Grand Pilier d'Angle — Cecchinel-Nominé`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4243, cotN:6, cot:`ED− (glace 90°, mixte)`, dMin:2,dMax:2, maxP:1, eng:5000, danger:3, est:true, m1:3,m2:6, refuge:`La Fourche (bivouac)`, note:`La face N du Grand Pilier d'Angle : goulotte mythique glace/mixte, sortie par la Peuterey supérieure au Mont Blanc. Conditions froides indispensables (printemps). Client ED glace. 1:1.`},
+ {nom:`Pilier Gervasutti (Mont Blanc du Tacul)`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4248, cotN:5.5, cot:`TD+ (V+/6a)`, dMin:1,dMax:2, maxP:1, eng:2500, danger:2, est:true, m1:6,m2:9, refuge:`Cosmiques`, note:`Le grand pilier de granite du Tacul (800 m, V+/6a). Accès benne du Midi, escalade soutenue en altitude, descente voie normale du Tacul. Client TD à l'aise en fissures. 1:1.`},
  {nom:`Cervin — face N (voie Schmid)`, disc:`alpinisme`, massif:`Valais`, pays:`Suisse`, alt:4478, cotN:6, cot:`TD+/ED− (mixte)`, dMin:2,dMax:2, maxP:1, eng:5000, danger:3, est:true, m1:7,m2:9, refuge:`Hörnlihütte`, note:`L'une des trois grandes faces N des Alpes (Schmid 1931). Glace/mixte soutenu, 1100 m. Conditions rares — client ED confirmé, préparation spécifique. 1:1.`},
  {nom:`La Meije — face N`, disc:`alpinisme`, massif:`Écrins`, pays:`France`, alt:3983, cotN:5.5, cot:`TD/TD+`, dMin:2,dMax:2, maxP:1, eng:3200, danger:3, est:true, m1:6,m2:9, refuge:`Refuge de l'Aigle`, vars:[{"l":"Voie en Z (la classique de la face)","d":"2 j","eng":3200},{"l":"Directe de la face N","d":"2 j","eng":3400}], note:`La grande face N des Écrins depuis l'Aigle : voie en Z (classique) ou directe. Neige/glace et mixte, conditions déterminantes (regel). 1:1.`},
  {nom:`Traversée Râteau → Meije → Pavé → Pic Gaspard`, disc:`alpinisme`, massif:`Écrins`, pays:`France`, alt:3983, cotN:6, cot:`D+/TD (intégrale)`, dMin:3,dMax:4, maxP:1, eng:5000, danger:3, est:true, m1:7,m2:9, refuge:`Promontoire, Aigle`, note:`L'intégrale des arêtes : Râteau, Meije (Grand Pic, traversée), Le Pavé, Pic Gaspard. Plusieurs jours sur le fil du massif, engagement majeur, réservée aux clients D+ très endurants. 1:1.`},
@@ -2079,6 +2085,14 @@ const CLASSIQUES=[
  {n:'Journée ski de randonnée', l:'Ski de rando'},
  {n:'Obergabelhorn — traversée (Arbengrat → arête N)', l:'Obergabelhorn trav.'},
  {n:'Eiger — arête Mittellegi', l:'Mittellegi'},
+ {n:'Bishorn', l:'Bishorn'},
+ {n:'Castor', l:'Castor'},
+ {n:'Allalinhorn', l:'Allalinhorn'},
+ {n:'Weissmies — arête SE (Südgrat)', l:'Weissmies SE'},
+ {n:'Nadelhorn', l:'Nadelhorn'},
+ {n:"Riffelhorn — arêtes d'entraînement", l:'Riffelhorn (prépa Cervin)'},
+ {n:'Gran Paradiso', l:'Grand Paradis'},
+ {n:'Barre des Écrins', l:'Barre des Écrins'},
 ];
 const GRANDES=[
  {n:'Eiger — face N (voie Heckmair)', l:'Eiger face N'},
@@ -2090,9 +2104,18 @@ const GRANDES=[
  {n:'Traversée Râteau → Meije → Pavé → Pic Gaspard', l:'Râteau–Meije–Gaspard'},
  {n:'Pilier central du Freney (Mont Blanc)', l:'Pilier du Freney'},
  {n:'Pilier rouge du Brouillard (Mont Blanc)', l:'Pilier du Brouillard'},
- {n:'Les Droites — face N (voie Ginat)', l:'Droites face N'},
- {n:'Petit Dru — face N (voie Allain)', l:'Les Drus'},
+ {n:'Les Droites — face N (voie Ginat)', l:'Droites (Ginat)'},
+ {n:'Petit Dru — face N (voie Allain)', l:'Drus (Pierre Allain)'},
  {n:'Grande Rocheuse — couloir N', l:'Grande Rocheuse'},
+ {n:'Piz Badile — arête N', l:'Badile (Cassin)'},
+ {n:'Grandes Jorasses — Éperon Walker (face N)', l:'Jorasses Linceul'},
+ {n:'Mont Maudit — arête Kuffner', l:'Kuffner'},
+ {n:'Éperon de la Brenva (Mont Blanc)', l:'Brenva'},
+ {n:"Arête de l'Innominata (Mont Blanc)", l:'Innominata'},
+ {n:"Grand Pilier d'Angle — Cecchinel-Nominé", l:"Grand Pilier d'Angle"},
+ {n:'Pilier Gervasutti (Mont Blanc du Tacul)', l:'Gervasutti'},
+ {n:'Aiguille du Midi — éperon Frendo', l:'Frendo'},
+ {n:'Petit Clocher du Portalet — État de choc', l:'État de choc (Portalet)'},
 ];
 function renderClassics(){
   const rail=document.getElementById('clRail'); if(!rail) return;
