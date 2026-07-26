@@ -348,6 +348,10 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   .bottombar button.on .bi{transform:translateY(-1px)}
   .viewtoggle{display:none !important}
   @media print{.bottombar{display:none}}
+  .fab-save{position:fixed;right:14px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:149;width:52px;height:52px;border-radius:50%;background:#22694a;color:#fff;border:none;font-size:22px;box-shadow:0 4px 16px rgba(0,0,0,.28);cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+  .fab-save:active{transform:scale(.92)}
+  .fab-save.done{background:#2d8a5e}
+  @media print{.fab-save{display:none}}
   /* ── accordéons de fiche ── */
   details.acc{border:1px solid rgba(0,0,0,.09);border-radius:10px;margin:8px 0;background:rgba(255,255,255,.6);overflow:hidden}
   details.acc>summary{list-style:none;cursor:pointer;padding:10px 13px;font-size:12px;font-weight:700;color:var(--ice-deep);display:flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;user-select:none}
@@ -501,7 +505,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;2.0</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v116</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v119</span></span>
     </div>
   </div>
 </header>
@@ -668,6 +672,8 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
           <button id="logJson">⬇ Export JSON</button>
           <label for="logImp" style="display:inline-block">⬆ Import JSON<input id="logImp" type="file" accept=".json" style="display:none"></label>
           <button id="matExport">🎒 Exporter mes modifs matériel</button>
+          <button id="fullBackup" style="border-color:rgba(45,138,94,.5);color:#22694a;font-weight:700">💾 Sauvegarde complète</button>
+          <label for="fullRestore" style="display:inline-block">♻ Restaurer<input id="fullRestore" type="file" accept=".json" style="display:none"></label>
         </div>
         <div id="logList"></div>
       </div>
@@ -955,6 +961,22 @@ const COURSES = [
   {nom:`Les Courtes — face NE`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:3856, cotN:4.5, cot:`D / 50–55°`, dMin:1,dMax:2, maxP:1, eng:1900, danger:3, est:true, m1:4,m2:6, refuge:`Refuge d'Argentière (2771 m)`, note:`La face NE des Courtes : la « petite sœur » du Couturier, 700 m à 50–55°. Superbe introduction aux grandes faces N du bassin d'Argentière. 1:1.`},
   {nom:`Mont Dolent — face N`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`Suisse`, alt:3823, cotN:4.5, cot:`AD+/D / 45–50°`, dMin:2,dMax:2, maxP:1, eng:1900, danger:2, est:true, m1:4,m2:7, refuge:`Cabane de la A Neuve (2735 m) / bivouac du Dolent`, note:`La pyramide des trois frontières par sa face N : pente de neige élégante à 45–50°, sommet-balcon unique entre Suisse, France et Italie.`},
   {nom:`Eiger — face N (voie Heckmair)`, disc:`alpinisme`, massif:`Alpes bernoises`, pays:`Suisse`, alt:3967, cotN:7, cot:`ED2`, dMin:2,dMax:3, maxP:1, eng:9000, danger:3, est:true, m1:3,m2:9, refuge:`Bivouac dans la face / hôtel Eigergletscher`, note:`LA face nord : 1800 m de l'itinéraire Heckmair (1938) — Fissure Difficile, Traversée Hinterstoisser, Rampe, Traversée des Dieux, Araignée Blanche. Le monument absolu. Client d'élite exclusivement. 1:1.`},
+ {nom:`Cervin — arête de Zmutt`, disc:`alpinisme`, massif:`Valais`, pays:`Suisse`, alt:4478, cotN:5, cot:`D (IV)`, dMin:2,dMax:2, maxP:1, eng:3500, danger:3, est:true, m1:7,m2:9, refuge:`Schönbielhütte / Hörnlihütte`, note:`LA grande course du Cervin pour qui a déjà fait le Hörnli : l'arête NW élégante, doigts de Zmutt, galerie Carrel, sommet par l'épaule italienne. Conditions sèches indispensables. 1:1.`},
+ {nom:`Petite Aiguille Verte`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:3512, cotN:1.5, cot:`F/PD`, dMin:1,dMax:1, maxP:3, eng:600, danger:1, est:true, m1:6,m2:9, refuge:`— (benne Grands Montets)`, note:`L'initiation alpinisme la plus classique de Chamonix : arête de neige et rocher facile dès la benne des Grands Montets, demi-journée possible. Première fois crampons/piolet, familles bienvenues.`},
+ {nom:`Grand Capucin`, disc:`rocher`, massif:`Mont-Blanc`, pays:`France`, alt:3838, cotN:5.5, cot:`TD+/ED− (6a-6b)`, dMin:1,dMax:2, maxP:1, eng:2200, danger:2, est:true, m1:6,m2:9, refuge:`Cosmiques / Torino`, vars:[{"l":"Voie des Suisses (TD+, 6a — la classique)","d":"1-2 j","eng":2200},{"l":"Voie Bonatti (ED−, 6b — historique)","d":"2 j","eng":2500}], note:`Le monolithe de granite rouge du Tacul (400 m). Escalade d'anthologie en altitude, descente en rappels. Client 6a en fissures. 1:1.`},
+ {nom:`Pigne d'Arolla`, disc:`alpinisme`, massif:`Valais`, pays:`Suisse`, alt:3787, cotN:1.5, cot:`F+/PD`, dMin:2,dMax:2, maxP:3, eng:1300, danger:1, est:true, m1:4,m2:9, refuge:`Cabane des Vignettes`, note:`Le belvédère d'Arolla : glacier débonnaire, panorama à 360° (Cervin, Dent Blanche, Mont Blanc). Classique été comme ski, parfait 2e sommet après initiation.`},
+ {nom:`Mont Vélan`, disc:`alpinisme`, massif:`Valais`, pays:`Suisse`, alt:3727, cotN:2, cot:`PD`, dMin:2,dMax:2, maxP:2, eng:1200, danger:2, est:true, m1:4,m2:9, refuge:`Cabane du Vélan`, note:`Le grand sommet du val d'Entremont, face au Grand Combin. Glacier crevassé, finale en neige. Belle course de proximité, été comme ski de printemps.`},
+ {nom:`Wellenkuppe`, disc:`alpinisme`, massif:`Valais`, pays:`Suisse`, alt:3903, cotN:3, cot:`AD−`, dMin:2,dMax:2, maxP:2, eng:1600, danger:2, est:true, m1:7,m2:9, refuge:`Rothornhütte`, note:`Objectif en soi ou premier jour avant l'Obergabelhorn : arête mixte plaisante depuis la Rothornhütte, vue imprenable sur le Gabelhorn. Bon test AD.`},
+ {nom:`Aiguille du Moine — arête S`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:3412, cotN:3.5, cot:`AD+ (IV)`, dMin:2,dMax:2, maxP:2, eng:1500, danger:2, est:true, m1:6,m2:9, refuge:`Refuge du Couvercle`, note:`L'école de granite au-dessus de la Mer de Glace : arête S du Moine, escalade plaisir face aux Drus et à la Verte. Excellente préparation aux grandes arêtes rocheuses.`},
+ {nom:`Wetterhorn`, disc:`alpinisme`, massif:`Alpes bernoises`, pays:`Suisse`, alt:3692, cotN:3, cot:`AD`, dMin:2,dMax:2, maxP:2, eng:1700, danger:2, est:true, m1:6,m2:9, refuge:`Glecksteinhütte`, note:`La montagne de Grindelwald, sommet historique de l'âge d'or (1854). Willsgrätli, neige et rocher facile, vue plongeante sur la vallée. Classique bernoise authentique.`},
+ {nom:`L'Olan — face NW (Devies-Gervasutti)`, disc:`alpinisme`, massif:`Écrins`, pays:`France`, alt:3564, cotN:5.5, cot:`TD+ (V+)`, dMin:2,dMax:2, maxP:1, eng:3000, danger:3, est:true, m1:7,m2:9, refuge:`Refuge de l'Olan`, note:`La grande course sauvage du Valgaudemar : 1100 m de face NW, itinéraire majeur de Devies-Gervasutti (1934). Engagement, solitude, montagne authentique. Client TD endurant. 1:1.`},
+ {nom:`Pic de Bure — pilier E (voie Desmaison)`, disc:`rocher`, massif:`Vercors / Dévoluy`, pays:`France`, alt:2709, cotN:5.5, cot:`TD+ (6a+/6b, artif)`, dMin:2,dMax:2, maxP:1, eng:1400, danger:2, est:true, m1:6,m2:10, refuge:`— (bivouac au pied)`, note:`LA voie mythique du Dévoluy (Desmaison 1961) : 600 m, ~20 longueurs, 5+/6a soutenu, une longueur d'artif au départ. Bivouac la veille, journée complète, sortie lunaire sur le plateau de Bure et son observatoire. 1:1.`},
+ {nom:`Mont Aiguille`, disc:`alpinisme`, massif:`Vercors / Dévoluy`, pays:`France`, alt:2087, cotN:2.5, cot:`AD (3+ à 6a selon voie)`, dMin:1,dMax:1, maxP:4, eng:500, danger:1, est:true, m1:5,m2:10, refuge:`— (La Richardière)`, vars:[{"l":"Voie normale (3+ max, câbles — le berceau de l'alpinisme, 1492)","d":"1 j","eng":500,"mp":4},{"l":"Tour des Gémeaux (grande voie facile — la première grande voie idéale)","d":"1 j","eng":700,"mp":2},{"l":"Pilier Sud (vertical, varié, gazeux)","d":"1 j","eng":800,"mp":2}], note:`Le monolithe du Vercors, « Mont Inaccessible » gravi en 1492. VN accessible à tous avec guide (rappels des Tubulaires en descente), ou grandes voies du versant S. Ambiance unique.`},
+ {nom:`Stage grandes voies — Verdon`, disc:`rocher`, massif:`Vercors / Dévoluy`, pays:`France`, alt:800, cotN:4, cot:`5c-6b selon cordée`, dMin:3,dMax:3, maxP:2, eng:2400, danger:1, est:true, m1:4,m2:10, refuge:`— (La Palud-sur-Verdon)`, note:`3 jours dans les gorges du Verdon : calcaire mythique, rappels d'accès, dalles à gouttes d'eau, gestion des grandes longueurs. Progression vers l'autonomie en grande voie. 2 pers. max.`},
+ {nom:`Stage grandes voies — Calanques`, disc:`rocher`, massif:`Vercors / Dévoluy`, pays:`France`, alt:400, cotN:3.5, cot:`5b-6a selon cordée`, dMin:3,dMax:3, maxP:2, eng:2200, danger:1, est:true, m1:2,m2:5, refuge:`— (Cassis / Marseille)`, note:`3 jours d'escalade au-dessus de la mer : calcaire des Calanques, arêtes et grandes voies (Candelle, En Vau…). Idéal hors saison alpine (automne-printemps). 2 pers. max.`},
+ {nom:`Stage grandes voies — Gastlosen`, disc:`rocher`, massif:`Préalpes`, pays:`Suisse`, alt:2000, cotN:3.5, cot:`5a-6a selon cordée`, dMin:2,dMax:2, maxP:2, eng:1500, danger:1, est:true, m1:6,m2:10, refuge:`— (Jaun / Les Paccots)`, note:`2 jours de grandes voies dans le calcaire des Gastlosen, à 30 min des Paccots : technique de relais, rappels, lecture d'itinéraire. Le terrain d'entraînement local par excellence. 2 pers. max.`},
+ {nom:`Grande traversée Zinalrothorn → Weisshorn → Bishorn`, disc:`alpinisme`, massif:`Valais`, pays:`Suisse`, alt:4506, cotN:6, cot:`TD (Schalligrat, IV+)`, dMin:3,dMax:3, maxP:1, eng:5500, danger:3, est:true, m1:7,m2:9, refuge:`Rothornhütte, bivouac Schalijoch, Tracuit`, note:`La couronne impériale d'Anniviers : Zinalrothorn, puis le Schalligrat (l'arête majeure du Valais, IV+) jusqu'au Weisshorn, descente arête N et Bishorn. 3 jours d'arêtes, bivouac au Schalijoch. Client TD très endurant, conditions parfaites requises. 1:1.`},
+ {nom:`École de cascade de glace (Anzère / La Lécherette)`, disc:`cascade`, massif:`Valais`, pays:`Suisse`, alt:1800, cotN:2, cot:`Initiation (3-4)`, dMin:1,dMax:1, maxP:4, eng:700, danger:1, est:true, m1:12,m2:3, refuge:`—`, note:`Journée d'école de glace sur les structures d'Anzère ou de La Lécherette : ancrages, techniques de piolets et crampons, moulinettes, premières longueurs. Idéal découverte et remise à niveau. Jusqu'à 4 pers.`},
  {nom:`Petit Clocher du Portalet — État de choc`, disc:`rocher`, massif:`Valais`, pays:`Suisse`, alt:2823, cotN:5.5, cot:`ED− (6c, 6b obl.)`, dMin:1,dMax:1, maxP:1, eng:1300, danger:2, est:true, m1:6,m2:9, refuge:`— (Champex / Arpette)`, note:`LA voie mythique du granite valaisan : dülfers parfaits et fissures à friends sur la face W du Petit Clocher (~250 m, 6c max, 6b obligatoire). Approche val d'Arpette depuis Champex (~2h30). Client 6b en fissure, très belle journée d'anthologie. 1:1.`},
  {nom:`Riffelhorn — arêtes d'entraînement`, disc:`alpinisme`, massif:`Valais`, pays:`Suisse`, alt:2928, cotN:3, cot:`AD (III-IV)`, dMin:1,dMax:1, maxP:2, eng:800, danger:1, est:true, m1:6,m2:9, refuge:`—`, note:`LA journée test avant le Cervin : arêtes du Riffelhorn au-dessus du Gornergrat, rocher gneiss, cordées rapides, désescalade, crampons sur rocher. Verdict honnête sur la faisabilité du Hörnli. Accès train.`},
  {nom:`Éperon de la Brenva (Mont Blanc)`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4810, cotN:5, cot:`D+ (glace/mixte)`, dMin:2,dMax:2, maxP:1, eng:2800, danger:3, est:true, m1:6,m2:9, refuge:`La Fourche (bivouac)`, note:`La grande classique du versant Brenva (1865). Éperon de neige/glace historique, sortie au Mont Blanc. Départ bivouac de la Fourche. Conditions et regel déterminants. 1:1.`},
@@ -1011,7 +1033,7 @@ const COURSES = [
   {nom:`Obergabelhorn — traversée (Arbengrat → arête N)`, disc:`alpinisme`, massif:`Valais`, pays:`Suisse`, alt:4063, cotN:4.5, cot:`D− / IV`, dMin:2,dMax:2, maxP:1, eng:2200, danger:2, est:true, m1:7,m2:9, refuge:`Cabane du Mountet (2886 m) ou Arbenbiwak · descente Rothornhütte`, note:`La traversée intégrale de l'Obergabelhorn : montée par l'Arbengrat (belle arête rocheuse SW, IV), descente par l'arête ENE et la Wellenkuppe. L'une des plus élégantes traversées du Valais. 1:1.`},
   {nom:`Traversée des Aiguilles d'Entrèves`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`Italie`, alt:3600, cotN:3.5, cot:`AD / III`, dMin:1,dMax:1, maxP:2, eng:1000, danger:1, est:true, m1:6,m2:9, refuge:`— (1 j depuis Skyway / Aiguille du Midi)`, note:`La traversée d'arête chic de la Vallée Blanche : fil de granite effilé et très aérien au-dessus du glacier du Géant, escalade plaisir (III) avec un gaz superbe. Retour benne.`},
   {nom:`Traversée des Aiguilles Marbrées`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`Italie`, alt:3535, cotN:3, cot:`PD+/AD`, dMin:1,dMax:1, maxP:2, eng:900, danger:1, est:true, m1:6,m2:9, refuge:`— (1 j depuis Skyway / Torino)`, note:`La course d'arête d'initiation du bassin du Géant : traversée courte et variée (neige + rocher facile) à deux pas du refuge Torino. Idéale première arête ou demi-journée d'acclimatation.`},
-  {nom:`Tour Ronde — voie normale`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:3792, cotN:2.5, cot:`PD+`, dMin:1,dMax:1, maxP:2, eng:1000, danger:2, est:true, m1:6,m2:9, refuge:`— (1 j depuis Skyway / Aiguille du Midi)`, note:`Le belvédère du versant Brenva : voie normale par le couloir SE et l'arête (PD+). Sommet emblématique de la Vallée Blanche, vue frontale sur les grandes faces du Mont Blanc.`},
+  {nom:`Tour Ronde — voie normale`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:3792, cotN:2.5, cot:`PD+`, dMin:1,dMax:1, maxP:2, eng:1000, danger:2, est:true, m1:6,m2:9, refuge:`— (1 j depuis Skyway / Aiguille du Midi)`, note:`Le belvédère du versant Brenva : voie normale par le couloir SE et l'arête (PD+). Sommet emblématique de la Vallée Blanche, vue frontale sur les grandes faces du Mont Blanc.`, vars:[{"l": "Voie normale (AD−, la classique)", "d": "1 j", "eng": 900}, {"l": "Face N (D−, 350 m — LA face nord d'initiation)", "d": "1 j", "eng": 1200}]},
   {nom:`Tour Ronde — face Nord`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:3792, cotN:4.5, cot:`AD+/D / 50–55°`, dMin:1,dMax:1, maxP:1, eng:1400, danger:2, est:true, m1:4,m2:7, refuge:`— (1 j depuis Skyway / Aiguille du Midi)`, note:`LA face N d'initiation du massif : ~350 m de pente de neige/glace régulière à 50–55°, sortie sur l'arête sommitale. Le laboratoire idéal avant les grandes faces N. 1:1.`},
   {nom:`Aiguille du Midi — face S, voie Rébuffat`, disc:`escalade`, massif:`Mont-Blanc`, pays:`France`, alt:3842, cotN:6, cot:`TD− / 6a`, dMin:1,dMax:1, maxP:2, eng:1300, danger:1, est:true, m1:6,m2:9, refuge:`— (1 j, benne Aiguille du Midi)`, note:`La grande voie mythique de la face S du Midi : la Rébuffat-Baquet, ~350 m de granite parfait plein sud à 3 700 m, sortie... à la terrasse de la station. L'escalade en altitude dans sa version la plus pure.`},
   {nom:`Arête des Cosmiques`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:3842, cotN:3.5, cot:`AD / III/IV`, dMin:1,dMax:1, maxP:2, eng:950, danger:1, est:true, m1:5,m2:9, refuge:`— (1 j, benne Aiguille du Midi)`, note:`LA classique absolue de Chamonix : l'arête S de l'Aiguille du Midi — mixte varié, rappels, le fameux ressaut final et la sortie sur la passerelle de la station sous les yeux des touristes.`},
@@ -1612,6 +1634,60 @@ function devisPDF(c){
 
 
 
+
+/* ===== Sauvegarde / restauration complète ===== */
+const BK_PREFIXES=['matedit:','fraisedit:','ms:'];
+const BK_KEYS=['sorties-v1','factures-v1'];
+function collectAllData(){
+  const data={_meta:{app:'Guide 2.0', date:new Date().toISOString(), version:(document.getElementById('vtag')||{}).textContent||''}, keys:{}};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(BK_KEYS.includes(k) || BK_PREFIXES.some(p=>k.indexOf(p)===0)){
+      data.keys[k]=localStorage.getItem(k);
+    }
+  }
+  return data;
+}
+function doFullBackup(){
+  const data=collectAllData();
+  const n=Object.keys(data.keys).length;
+  const a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,1));
+  a.download='guide20-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  return n;
+}
+$('#fullBackup').onclick=function(){
+  const n=doFullBackup();
+  this.textContent='💾 Sauvegardé ('+n+' éléments) ✓';
+  setTimeout(()=>this.textContent='💾 Sauvegarde complète',2500);
+};
+(function bindFab(){
+  const b=document.getElementById('fabSave');
+  if(!b){ setTimeout(bindFab,50); return; }
+  b.onclick=function(){
+    const n=doFullBackup();
+    this.classList.add('done'); this.textContent='✓';
+    setTimeout(()=>{ this.classList.remove('done'); this.textContent='💾'; },1800);
+  };
+})();
+$('#fullRestore').addEventListener('change',function(){
+  const f=this.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const data=JSON.parse(r.result);
+      if(!data.keys || typeof data.keys!=='object') throw 0;
+      const n=Object.keys(data.keys).length;
+      if(!confirm('Restaurer '+n+' éléments'+(data._meta&&data._meta.date?' (sauvegarde du '+data._meta.date.slice(0,10)+')':'')+' ?\n\nLes données actuelles de même nom seront remplacées.')) return;
+      Object.entries(data.keys).forEach(([k,v])=>{ try{ localStorage.setItem(k,v); }catch(e){} });
+      refreshLogCount(); render(); if(document.body.classList.contains('log-on')) renderLog();
+      alert('Restauration terminée : '+n+' éléments. Journal, factures, agenda et personnalisations rechargés.');
+    }catch(e){ alert('Fichier de sauvegarde invalide.'); }
+  };
+  r.readAsText(f); this.value='';
+});
+
 /* ===== Export des modifications matériel ===== */
 function collectMatEdits(){
   const out={};
@@ -2081,7 +2157,7 @@ const CLASSIQUES=[
  {n:'Goulotte / mixte', l:'Grande voie mixte'},
  {n:"Grande voie (Salbit, Grimsel, Miroir d'Argentine)", l:'Grande voie escalade'},
  {n:'Journée cascade (Kandersteg / Cogne / Écrins)', l:'Cascade multipitch'},
- {n:'Cascades de glace de Jaun (journée)', l:'École de cascade'},
+ {n:'École de cascade de glace (Anzère / La Lécherette)', l:'École de cascade'},
  {n:'Journée ski de randonnée', l:'Ski de rando'},
  {n:'Obergabelhorn — traversée (Arbengrat → arête N)', l:'Obergabelhorn trav.'},
  {n:'Eiger — arête Mittellegi', l:'Mittellegi'},
@@ -2744,6 +2820,7 @@ window.addEventListener('beforeinstallprompt', e=>{
 window.addEventListener('appinstalled', ()=>{ const b=$('#installBtn'); if(b) b.hidden=true; });
 
 </script>
+<button class="fab-save" id="fabSave" title="Sauvegarde complète" aria-label="Sauvegarde complète">💾</button>
 <nav class="bottombar" id="bottombar">
   <button data-view="cards"><span class="bi">🏔</span>Courses</button>
   <button data-view="map"><span class="bi">🗺</span>Carte</button>
