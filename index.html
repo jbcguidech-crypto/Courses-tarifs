@@ -422,6 +422,14 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   .photo-view.on{display:flex}
   .photo-view img{max-width:100%;max-height:88vh;border-radius:8px}
   .photo-view button{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.9);border:none;border-radius:50%;width:40px;height:40px;font-size:19px;cursor:pointer}
+  /* ── synchro cloud ── */
+  .sy-badge{font-size:11px;padding:2px 9px;border-radius:10px;font-weight:700;margin-left:7px}
+  .sy-on{background:rgba(34,105,74,.14);color:#22694a}
+  .sy-off{background:rgba(0,0,0,.06);color:var(--muted)}
+  #syncPanel .ie-f input{font-family:ui-monospace,Menlo,monospace;font-size:12px}
+  .sy-log{font-size:11.5px;color:var(--rock2);background:rgba(0,0,0,.03);border-radius:9px;padding:9px 11px;margin-top:10px;white-space:pre-wrap;line-height:1.5;max-height:170px;overflow-y:auto}
+  .sy-help{font-size:11.5px;color:var(--muted);line-height:1.6;margin-top:6px}
+  .sy-help code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px;font-size:11px}
   /* factures */
   #invView{display:none}
   body.inv-on #invView{display:block}
@@ -540,7 +548,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;Pro</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v133</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v134</span></span>
     </div>
   </div>
 </header>
@@ -708,6 +716,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
           <label for="logImp" style="display:inline-block">⬆ Import JSON<input id="logImp" type="file" accept=".json" style="display:none"></label>
           <button id="matExport">🎒 Exporter mes modifs matériel</button>
           <button id="fullBackup" style="border-color:rgba(45,138,94,.5);color:#22694a;font-weight:700">💾 Sauvegarde complète</button>
+          <button id="syncOpen">☁️ Synchronisation</button>
           <label for="fullRestore" style="display:inline-block">♻ Restaurer<input id="fullRestore" type="file" accept=".json" style="display:none"></label>
         </div>
         <div id="logList"></div>
@@ -747,6 +756,26 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
         </div>
       </div>
       <div class="photo-view" id="photoView"><button id="pvClose">✕</button><img id="pvImg" alt="Justificatif"></div>
+      <div class="inv-editor" id="syncPanel"><div class="ie-wrap">
+        <div class="ie-top"><h2>☁️ Synchronisation</h2><button class="ie-close" id="syClose">✕</button></div>
+        <div class="ie-sec"><h4>Connexion <span class="sy-badge sy-off" id="syState">hors ligne</span></h4>
+          <div class="ie-f"><label>URL du projet Supabase</label><input id="sy-url" placeholder="https://xxxxx.supabase.co" autocapitalize="off" autocorrect="off"></div>
+          <div class="ie-f"><label>Clé publique (anon key)</label><input id="sy-key" placeholder="eyJhbGciOi..." autocapitalize="off" autocorrect="off"></div>
+          <div class="ie-f"><label>E-mail</label><input id="sy-mail" type="email" autocapitalize="off"></div>
+          <div class="ie-f"><label>Mot de passe</label><input id="sy-pass" type="password"></div>
+          <div class="ie-row"><button class="ie-save" id="syLogin" style="flex:1">Se connecter</button>
+            <button class="ie-del" id="syLogout" style="flex:0 0 auto">Déconnexion</button></div>
+          <div class="sy-help">Ces identifiants restent sur cet appareil. Voir <code>supabase-setup.sql</code> pour créer les tables.</div>
+        </div>
+        <div class="ie-sec"><h4>Transférer</h4>
+          <div class="ie-row">
+            <button class="ie-save" id="syPush" style="flex:1">⬆ Envoyer vers le cloud</button>
+            <button class="ie-save" id="syPull" style="flex:1;background:#2c6e7c">⬇ Récupérer</button>
+          </div>
+          <div class="sy-help">« Envoyer » écrase la version cloud par celle de cet appareil. « Récupérer » fait l'inverse. Sauvegarde 💾 conseillée avant un « Récupérer ».</div>
+          <div class="sy-log" id="syLog">Prêt.</div>
+        </div>
+      </div></div>
       <div class="inv-editor" id="depEditor"><div class="ie-wrap">
         <div class="ie-top"><h2 id="deTitle">Dépense</h2><button class="ie-close" id="deClose">✕</button></div>
         <div class="ie-sec"><h4>Justificatif</h4>
@@ -2111,6 +2140,118 @@ function renderInvoices(){
     +'<button class="inv-del" data-id="'+f.id+'">Suppr.</button></div></div>').join('')
     : '<div class="log-empty">Aucune facture. Crée-en une depuis une fiche de course (« 🧾 Créer une facture ») ou avec « + Facture vierge ».</div>';
 }
+
+
+/* ===== Synchronisation cloud (Supabase REST) ===== */
+function syCfg(){ try{return JSON.parse(localStorage.getItem('sync-cfg')||'{}')}catch(e){return{}} }
+function syCfgSet(o){ try{localStorage.setItem('sync-cfg',JSON.stringify(o))}catch(e){} }
+function syLog(msg,append){
+  const el=$('#syLog'); if(!el) return;
+  el.textContent = append ? (el.textContent+'\n'+msg) : msg;
+  el.scrollTop=el.scrollHeight;
+}
+function syStatus(){
+  const c=syCfg(), on=!!(c.url&&c.key&&c.token);
+  const b=$('#syState'); if(!b) return on;
+  b.textContent = on ? ('connecté'+(c.email?' · '+c.email:'')) : 'hors ligne';
+  b.className = 'sy-badge '+(on?'sy-on':'sy-off');
+  return on;
+}
+function syHeaders(c,extra){
+  return Object.assign({'apikey':c.key,'Authorization':'Bearer '+c.token,'Content-Type':'application/json'}, extra||{});
+}
+function syLogin(){
+  const url=$('#sy-url').value.trim().replace(/\/+$/,''), key=$('#sy-key').value.trim();
+  const email=$('#sy-mail').value.trim(), pass=$('#sy-pass').value;
+  if(!url||!key||!email||!pass){ syLog('Renseigne les 4 champs.'); return; }
+  syLog('Connexion…');
+  fetch(url+'/auth/v1/token?grant_type=password',{
+    method:'POST', headers:{'apikey':key,'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,password:pass})
+  }).then(r=>r.json()).then(j=>{
+    if(!j.access_token) throw new Error(j.error_description||j.msg||j.message||'identifiants refusés');
+    syCfgSet({url:url,key:key,email:email,token:j.access_token,refresh:j.refresh_token,at:Date.now()});
+    syStatus(); syLog('✓ Connecté. Tu peux envoyer ou récupérer tes données.');
+  }).catch(e=>syLog('✗ Échec : '+e.message));
+}
+function syRefresh(){
+  const c=syCfg();
+  if(!c.refresh) return Promise.reject(new Error('non connecté'));
+  return fetch(c.url+'/auth/v1/token?grant_type=refresh_token',{
+    method:'POST', headers:{'apikey':c.key,'Content-Type':'application/json'},
+    body:JSON.stringify({refresh_token:c.refresh})
+  }).then(r=>r.json()).then(j=>{
+    if(!j.access_token) throw new Error('session expirée — reconnecte-toi');
+    c.token=j.access_token; c.refresh=j.refresh_token||c.refresh; c.at=Date.now(); syCfgSet(c);
+    return c;
+  });
+}
+function syFetch(path,opts,retry){
+  const c=syCfg();
+  if(!c.url||!c.token) return Promise.reject(new Error('non connecté'));
+  const o=Object.assign({},opts||{});
+  o.headers=syHeaders(c,o.headers);
+  return fetch(c.url+path,o).then(r=>{
+    if(r.status===401 && !retry) return syRefresh().then(()=>syFetch(path,opts,true));
+    if(!r.ok) return r.text().then(t=>{ throw new Error('HTTP '+r.status+' '+t.slice(0,120)); });
+    return r.status===204?null:r.json().catch(()=>null);
+  });
+}
+function syPush(){
+  if(!syStatus()){ syLog('Connecte-toi d\'abord.'); return; }
+  syLog('Préparation…');
+  const kv=collectAllData().keys;
+  const rows=Object.entries(kv).map(([k,v])=>({k:k,v:v,updated_at:new Date().toISOString()}));
+  photoAll().then(ph=>{
+    const prows=Object.entries(ph).map(([id,data])=>({id:id,data:data,updated_at:new Date().toISOString()}));
+    syLog('Envoi de '+rows.length+' entrées et '+prows.length+' justificatifs…',true);
+    const opt=b=>({method:'POST',headers:{'Prefer':'resolution=merge-duplicates'},body:JSON.stringify(b)});
+    return syFetch('/rest/v1/guidepro_kv',opt(rows))
+      .then(()=> prows.length ? chunkPush(prows) : null)
+      .then(()=>syLog('✓ Envoi terminé.',true));
+  }).catch(e=>syLog('✗ '+e.message,true));
+}
+function chunkPush(rows){
+  /* les photos sont volumineuses : envoi par paquets de 5 */
+  let i=0;
+  const step=()=>{
+    if(i>=rows.length) return Promise.resolve();
+    const part=rows.slice(i,i+5); i+=5;
+    syLog('  justificatifs '+Math.min(i,rows.length)+'/'+rows.length,true);
+    return syFetch('/rest/v1/guidepro_photos',{method:'POST',headers:{'Prefer':'resolution=merge-duplicates'},body:JSON.stringify(part)}).then(step);
+  };
+  return step();
+}
+function syPull(){
+  if(!syStatus()){ syLog('Connecte-toi d\'abord.'); return; }
+  if(!confirm('Récupérer les données du cloud ?\n\nLes données de cet appareil seront remplacées par celles du cloud.')) return;
+  syLog('Téléchargement…');
+  syFetch('/rest/v1/guidepro_kv?select=k,v',{method:'GET'}).then(rows=>{
+    (rows||[]).forEach(r=>{ try{ localStorage.setItem(r.k,r.v); }catch(e){} });
+    syLog('✓ '+((rows||[]).length)+' entrées récupérées. Justificatifs…',true);
+    return syFetch('/rest/v1/guidepro_photos?select=id,data',{method:'GET'});
+  }).then(ph=>{
+    return Promise.all((ph||[]).map(r=>photoPut(r.id,r.data).catch(()=>{}))).then(()=>(ph||[]).length);
+  }).then(n=>{
+    syLog('✓ '+n+' justificatifs récupérés. Rechargement…',true);
+    refreshLogCount(); render();
+    try{ renderLog(); renderInvoices(); renderDeps(); renderBilan(); }catch(e){}
+    syLog('✓ Terminé.',true);
+  }).catch(e=>syLog('✗ '+e.message,true));
+}
+(function bindSync(){
+  const b=$('#syncOpen'); if(!b){ setTimeout(bindSync,60); return; }
+  b.onclick=()=>{
+    const c=syCfg();
+    $('#sy-url').value=c.url||''; $('#sy-key').value=c.key||''; $('#sy-mail').value=c.email||'';
+    syStatus(); $('#syncPanel').classList.add('on');
+  };
+  $('#syClose').onclick=()=>$('#syncPanel').classList.remove('on');
+  $('#syLogin').onclick=syLogin;
+  $('#syLogout').onclick=()=>{ syCfgSet({}); syStatus(); syLog('Déconnecté.'); };
+  $('#syPush').onclick=syPush;
+  $('#syPull').onclick=syPull;
+})();
 
 /* ===== Compta : dépenses, justificatifs, bilan ===== */
 let DE_CUR=null, DE_PHOTO=null;
