@@ -394,6 +394,34 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   .kn-card li{font-size:11.5px;color:var(--rock2);margin:2px 0}
   .kn-img{display:block;max-width:200px;max-height:170px;margin:8px auto;border-radius:8px;background:#fff}
   .kn-credit{font-size:10px;color:var(--muted);margin:10px 2px 0;text-align:center}
+  /* ── compta ── */
+  .cp-tabs{display:flex;gap:6px;margin-bottom:12px;background:#fff;padding:5px;border-radius:12px;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+  .cp-tabs button{flex:1;background:none;border:none;border-radius:9px;padding:9px 4px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
+  .cp-tabs button.on{background:var(--ice);color:#fff}
+  .cp-panel{display:none} .cp-panel.on{display:block}
+  .dep-card{background:#fff;border-radius:11px;padding:11px 13px;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:8px;display:flex;gap:11px;align-items:center;border-left:4px solid #c0563f}
+  .dep-card .dc-main{flex:1;min-width:0}
+  .dep-card .dc-desc{font-weight:700;font-size:13.5px}
+  .dep-card .dc-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .dep-card .dc-amt{font-weight:800;font-size:14px;color:#c0563f;white-space:nowrap}
+  .dep-card .dc-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;cursor:pointer;background:#eee;flex-shrink:0}
+  .dep-card .dc-nophoto{width:44px;height:44px;border-radius:8px;background:rgba(0,0,0,.05);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+  .cp-sum{display:flex;gap:8px;margin-bottom:12px}
+  .cp-sum div{flex:1;background:#fff;border-radius:11px;padding:11px;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+  .cp-sum .v{font-size:17px;font-weight:800;font-family:'JetBrains Mono'}
+  .cp-sum .l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+  .cp-sum .rec .v{color:#22694a} .cp-sum .dep .v{color:#c0563f} .cp-sum .net .v{color:var(--ice-deep)}
+  .cp-table{width:100%;border-collapse:collapse;background:#fff;border-radius:11px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);font-size:12px}
+  .cp-table th{background:var(--ice-deep);color:#fff;padding:8px 7px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em}
+  .cp-table td{padding:8px 7px;border-top:1px solid rgba(0,0,0,.06)}
+  .cp-table td.num{text-align:right;font-family:'JetBrains Mono';font-weight:700;white-space:nowrap}
+  .cp-table tr.rec{background:rgba(34,105,74,.06)} .cp-table tr.rec td.num{color:#22694a}
+  .cp-table tr.dep{background:rgba(192,86,63,.06)} .cp-table tr.dep td.num{color:#c0563f}
+  .cp-table tr.unpaid td{opacity:.62;font-style:italic}
+  .photo-view{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:400;display:none;align-items:center;justify-content:center;padding:12px}
+  .photo-view.on{display:flex}
+  .photo-view img{max-width:100%;max-height:88vh;border-radius:8px}
+  .photo-view button{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.9);border:none;border-radius:50%;width:40px;height:40px;font-size:19px;cursor:pointer}
   /* factures */
   #invView{display:none}
   body.inv-on #invView{display:block}
@@ -512,7 +540,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;Pro</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v130</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v133</span></span>
     </div>
   </div>
 </header>
@@ -685,14 +713,62 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
         <div id="logList"></div>
       </div>
       <div id="invView">
-        <div class="log-stats" id="invStats"></div>
-        <div class="log-tools">
-          <button id="invNew">+ Facture vierge</button>
-          <button id="invExport">⬇ Export JSON</button>
-          <label for="invImp" style="display:inline-block">⬆ Import JSON<input id="invImp" type="file" accept=".json" style="display:none"></label>
+        <div class="cp-tabs">
+          <button data-cp="fact" class="on">🧾 Factures</button>
+          <button data-cp="dep">📷 Dépenses</button>
+          <button data-cp="bil">📊 Bilan</button>
         </div>
-        <div id="invList"></div>
+        <div class="cp-panel on" id="cpFact">
+          <div class="log-stats" id="invStats"></div>
+          <div class="log-tools">
+            <button id="invNew">+ Facture vierge</button>
+            <button id="invExport">⬇ Export JSON</button>
+            <label for="invImp" style="display:inline-block">⬆ Import JSON<input id="invImp" type="file" accept=".json" style="display:none"></label>
+          </div>
+          <div id="invList"></div>
+        </div>
+        <div class="cp-panel" id="cpDep">
+          <div class="log-stats" id="depStats"></div>
+          <div class="log-tools">
+            <label for="depShot" style="display:inline-block;background:var(--ice);color:#fff;border-color:var(--ice);font-weight:700">📷 Photographier un ticket<input id="depShot" type="file" accept="image/*" capture="environment" style="display:none"></label>
+            <label for="depPick" style="display:inline-block">🖼 Depuis la galerie<input id="depPick" type="file" accept="image/*" style="display:none"></label>
+            <button id="depNew">+ Dépense sans photo</button>
+          </div>
+          <div id="depList"></div>
+        </div>
+        <div class="cp-panel" id="cpBil">
+          <div class="cp-sum" id="bilSum"></div>
+          <div class="log-tools">
+            <select id="bilYear" style="padding:8px 10px;border-radius:9px;border:1.5px solid rgba(0,0,0,.15);font-family:inherit;font-size:13px"></select>
+            <button id="bilCsv">⬇ Export tableur (CSV)</button>
+          </div>
+          <div style="overflow-x:auto"><table class="cp-table" id="bilTable"></table></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:9px">Les factures non payées apparaissent en grisé italique et ne sont pas comptées dans l'encaissé.</div>
+        </div>
       </div>
+      <div class="photo-view" id="photoView"><button id="pvClose">✕</button><img id="pvImg" alt="Justificatif"></div>
+      <div class="inv-editor" id="depEditor"><div class="ie-wrap">
+        <div class="ie-top"><h2 id="deTitle">Dépense</h2><button class="ie-close" id="deClose">✕</button></div>
+        <div class="ie-sec"><h4>Justificatif</h4>
+          <div id="dePhotoBox" style="text-align:center"></div>
+          <div class="ie-row" style="margin-top:8px">
+            <label for="deShot" style="flex:1;text-align:center;padding:9px;border:1.5px solid rgba(0,0,0,.15);border-radius:9px;cursor:pointer;font-size:13px">📷 Reprendre<input id="deShot" type="file" accept="image/*" capture="environment" style="display:none"></label>
+            <label for="dePick" style="flex:1;text-align:center;padding:9px;border:1.5px solid rgba(0,0,0,.15);border-radius:9px;cursor:pointer;font-size:13px">🖼 Galerie<input id="dePick" type="file" accept="image/*" style="display:none"></label>
+          </div>
+        </div>
+        <div class="ie-sec"><h4>Dépense</h4>
+          <div class="ie-row"><div class="ie-f"><label>Date</label><input id="de-date" type="date"></div>
+            <div class="ie-f"><label>Montant (CHF)</label><input id="de-montant" type="number" step="0.05" inputmode="decimal"></div></div>
+          <div class="ie-f"><label>Description</label><input id="de-desc" placeholder="Ex. Essence Zermatt, nuit Rothornhütte…"></div>
+          <div class="ie-f"><label>Catégorie</label><select id="de-cat"></select></div>
+          <div class="ie-f"><label>Course / client (optionnel)</label><input id="de-course" placeholder="Ex. Dufourspitze — M. Dupont"></div>
+          <div class="ie-toggle"><input type="checkbox" id="de-refact"><label for="de-refact">Refacturée au client</label></div>
+        </div>
+        <div class="ie-actions">
+          <button class="ie-del" id="deDelete">Supprimer</button>
+          <button class="ie-save" id="deSave">Enregistrer</button>
+        </div>
+      </div></div>
       <div class="inv-editor" id="invEditor"><div class="ie-wrap">
         <div class="ie-top"><h2 id="ieTitle">Facture</h2><button class="ie-close" id="ieClose">✕</button></div>
         <div class="ie-sec"><h4>Facture</h4>
@@ -1249,6 +1325,70 @@ function fraisFor(c, nOverride){
 function topoFor(c){ const v=activeVar(c); return (v&&v.ref&&TOPO[v.ref])? TOPO[v.ref] : c.topo; }
 function effortShow(c){ const v=activeVar(c); return (v&&v.ref&&EFFORT[v.ref])? EFFORT[v.ref] : c.effort; }
 function dShow(c){ const v=activeVar(c); return v? v.d : (c.dMin===c.dMax? c.dMin+' j' : c.dMin+'–'+c.dMax+' j'); }
+
+/* ===== Dépenses & justificatifs ===== */
+const DEP_CATS=['Carburant / transport','Refuge / hébergement','Remontées mécaniques','Repas','Matériel','Formation','Assurance / cotisations','Téléphone / abonnements','Autre'];
+function getDeps(){ try{return JSON.parse(localStorage.getItem('depenses-v1')||'[]')}catch(e){return[]} }
+function setDeps(a){ try{localStorage.setItem('depenses-v1',JSON.stringify(a))}catch(e){alert('Stockage plein.')} }
+function nextDepId(){ return 'd'+Date.now()+Math.floor(Math.random()*900); }
+
+/* Photos en IndexedDB (quota bien supérieur au localStorage) */
+let PDB=null;
+function photoDB(){
+  return new Promise((res,rej)=>{
+    if(PDB) return res(PDB);
+    const r=indexedDB.open('guidepro-photos',1);
+    r.onupgradeneeded=()=>{ if(!r.result.objectStoreNames.contains('photos')) r.result.createObjectStore('photos'); };
+    r.onsuccess=()=>{ PDB=r.result; res(PDB); };
+    r.onerror=()=>rej(r.error);
+  });
+}
+function photoPut(id,dataUrl){
+  return photoDB().then(db=>new Promise((res,rej)=>{
+    const t=db.transaction('photos','readwrite'); t.objectStore('photos').put(dataUrl,id);
+    t.oncomplete=()=>res(true); t.onerror=()=>rej(t.error);
+  }));
+}
+function photoGet(id){
+  return photoDB().then(db=>new Promise((res)=>{
+    const t=db.transaction('photos','readonly'); const q=t.objectStore('photos').get(id);
+    q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null);
+  })).catch(()=>null);
+}
+function photoDel(id){
+  return photoDB().then(db=>new Promise((res)=>{
+    const t=db.transaction('photos','readwrite'); t.objectStore('photos').delete(id);
+    t.oncomplete=()=>res(true); t.onerror=()=>res(false);
+  })).catch(()=>false);
+}
+function photoAll(){
+  return photoDB().then(db=>new Promise((res)=>{
+    const t=db.transaction('photos','readonly'), st=t.objectStore('photos'), out={};
+    const q=st.openCursor();
+    q.onsuccess=e=>{ const c=e.target.result; if(c){ out[c.key]=c.value; c.continue(); } else res(out); };
+    q.onerror=()=>res(out);
+  })).catch(()=>({}));
+}
+/* Compression : un ticket lisible pèse ~120 Ko au lieu de 4 Mo */
+function compressImage(file, maxPx, quality){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        const sc=Math.min(1,maxPx/Math.max(w,h));
+        w=Math.round(w*sc); h=Math.round(h*sc);
+        const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+        cv.getContext('2d').drawImage(img,0,0,w,h);
+        res(cv.toDataURL('image/jpeg',quality));
+      };
+      img.onerror=rej; img.src=fr.result;
+    };
+    fr.onerror=rej; fr.readAsDataURL(file);
+  });
+}
+
 /* ===== Nœuds & secours — données ===== */
 const KNOTS = [{"cat": "Encordement", "nom": "Nœud de huit", "desc": "LE nœud d'encordement de référence, en bout de corde, directement sur les deux pontets du baudrier. Faire un huit lâche à ~1 m du bout, passer le brin dans les pontets, puis repasser le brin en suivant exactement le chemin du nœud.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Figure-eight%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Achtknoop.svg?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Klettern%20achterknoten.jpg?width=440"]}, {"cat": "Encordement", "nom": "Nœud de huit repassé (en double)", "desc": "Encordement en milieu de corde directement sur le baudrier, sans mousqueton. Standard en alpinisme et sur glacier. Faire un huit lâche avec la corde en double (la ganse), passer la ganse dans les pontets, puis la repasser en suivant le nœud.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Figure-eight%20loop%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/FigureOfEightLoop.jpg?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Double%20Figure-Eight%20Loop.jpg?width=440"]}, {"cat": "Encordement", "nom": "Nœud de guide", "desc": "Simple boucle en plein poing. Historiquement le nœud du milieu de cordée ; sert aujourd'hui surtout de boucle rapide ou de nœud d'arrêt sur ganse. Faire une ganse, puis un nœud simple avec la ganse entière.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Overhand%20loop%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Kletter%20gelegter%20und%20gesteckter%20sackstich.jpg?width=440"]}, {"cat": "Encordement", "nom": "Nœud de papillon", "desc": "La boucle du milieu de corde moderne : symétrique, elle tient dans les trois directions. Encordement du milieu sur mousqueton, isolation d'un toron abîmé. Deux tours de corde autour de la main, croiser, tirer la boucle centrale à travers les deux autres.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Alpine%20butterfly%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Butterfly%20Loop%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Schmetterlingsknoten.jpg?width=440"]}, {"cat": "Encordement", "nom": "Demi double-nœud de pêcheur", "desc": "Verrouiller un encordement en milieu de corde (méthode boucle passée au baudrier) ou sécuriser un nœud principal. Premier nœud en pêcheur simple autour du brin porteur, puis fermeture avec le double-nœud de pêcheur.", "etapes": []}, {"cat": "Amarrage", "nom": "Nœud de cabestan", "desc": "Le nœud du relais : vachage réglable sur mousqueton, ajustable d'une main sans se déconnecter. Deux boucles identiques, superposer la seconde derrière la première, clipper les deux dans le mousqueton.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Clove%20hitch%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Mastworp.svg?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Klettern%20mastwurf.jpg?width=440"]}, {"cat": "Amarrage", "nom": "Nœud de bouline doublé", "desc": "Boucle d'amarrage autour d'un arbre ou d'un becquet ; se défait facilement même après forte charge. Bouline classique réalisée avec un doublage du passage pour plus de sécurité, toujours verrouillée par un nœud d'arrêt.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Double%20bowline%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Paalsteek.svg?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Doublebowline.jpg?width=440"]}, {"cat": "Amarrage", "nom": "Nœud Sanheux", "desc": "Amarrage sur ancrage permettant un réglage fin de la tension, utile pour équilibrer un relais. Montage sur ganse avec passages croisés — suivre la fiche photo, l'ordre des passages est essentiel.", "etapes": []}, {"cat": "Amarrage", "nom": "Nœud de tour mort arrêté", "desc": "Amarrage rapide autour d'un point (piquet, arbre) : le tour mort absorbe la charge, les demi-clés verrouillent. Un tour complet autour du support, puis deux demi-clés sur le brin dormant.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Round%20turn%20and%20two%20half%20hitches%20knot.png?width=440"]}, {"cat": "Amarrage", "nom": "Nœud de blocage (nœud de mule)", "desc": "Bloquer un demi-cabestan ou un descendeur sous tension, mains libres — la base de toute manœuvre de réchappe. Ganse passée derrière le brin chargé pour former le blocage, verrouillée par un nœud d'arrêt sur ganse autour du brin porteur.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Mule%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Schleifknoten.jpg?width=440"]}, {"cat": "Assurage", "nom": "Nœud de demi-cabestan", "desc": "Assurage sur mousqueton HMS sans appareil : freine dans les deux sens, absorbe une partie de l'énergie. Le plan B universel. Une boucle clippée dans le mousqueton avec le brin dormant passé derrière — le nœud se retourne selon le sens de traction.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Munter%20hitch%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Munter%20hitch.svg?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Klettern%20halbmastwurf.jpg?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Halbmastwurf.jpg?width=440"]}, {"cat": "Assurage", "nom": "Demi-cabestan autobloquant", "desc": "Variante du demi-cabestan qui se bloque seule sous charge — utile pour hisser ou assurer un second avec renvoi. Demi-cabestan complété d'un passage supplémentaire qui crée l'effet autobloquant ; suivre la fiche photo.", "etapes": []}, {"cat": "Assurage", "nom": "Passage demi-cabestan → cabestan", "desc": "Convertir un assurage en fixation sans ouvrir le mousqueton — transition propre au relais. Manipulation du brin dormant qui transforme le demi-cabestan en cabestan fixe, corde toujours connectée.", "etapes": []}, {"cat": "Auto-assurage", "nom": "Nœud de Prussik", "desc": "L'autobloquant historique : bloque dans les deux sens. Remontée sur corde, mouflage, contre-assurance. Tête d'alouette avec la cordelette autour de la corde, répétée 2 à 3 fois, spires bien rangées.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Prusik%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Prusik%20knot.svg?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Klettern%20prusikknoten.jpg?width=440"]}, {"cat": "Auto-assurage", "nom": "Nœud de Machard", "desc": "L'autobloquant du rappel : facile à faire et à faire coulisser, il bloque dans un sens. Enrouler la cordelette en boucle fermée autour de la corde (4 à 6 spires), clipper les deux ganses dans un mousqueton.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Klemheist%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Klemheist%20knot.svg?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/FB-KreuzklemmalsSelbstSicherung.JPG?width=440"]}, {"cat": "Liaison", "nom": "Nœud simple doublé", "desc": "Jonction des cordes de rappel : compact et il roule sur le rocher au rappel de la corde, limitant les coincements. Un nœud simple fait avec les deux brins ensemble, bien serré brin par brin.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Overhand%20bend%20knot.png?width=440"]}, {"cat": "Liaison", "nom": "Nœud de pêcheur simple", "desc": "Base des jonctions : nœud d'arrêt coulissant, premier étage du pêcheur double. Nœud simple autour de l'autre brin, refait en miroir avec le second brin.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Fisherman's%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Fisherman's%20knot.jpg?width=440"]}, {"cat": "Liaison", "nom": "Double-nœud de pêcheur", "desc": "LA jonction de référence pour fermer un anneau de cordelette ou relier deux cordes de diamètre proche. Deux tours autour de l'autre brin puis passage dans les spires, en miroir de chaque côté.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Double%20fisherman's%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Double%20fisherman's%20knot.jpg?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Doppelter%20Spierenstich.jpg?width=440"]}, {"cat": "Liaison", "nom": "Nœud de pêcheur triple", "desc": "Jonction pour cordelettes glissantes (Dyneema, Kevlar) : un tour de plus que le double pour compenser la faible friction. Comme le double-nœud de pêcheur, avec trois tours de chaque côté.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Triple%20fisherman's%20knot.png?width=440"]}, {"cat": "Liaison", "nom": "Nœud de sangle", "desc": "Le seul nœud admis pour fermer une sangle en anneau (nœud d'eau). Nœud simple dans une extrémité, repassé en sens inverse par l'autre extrémité, sangles bien à plat.", "etapes": [], "img": ["https://commons.wikimedia.org/wiki/Special:FilePath/Water%20knot.png?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Klettern%20bandschlingenknoten%206von6.jpg?width=440", "https://commons.wikimedia.org/wiki/Special:FilePath/Klettern%20bandschlingenknoten.jpg?width=440"]}, {"cat": "Liaison", "nom": "Nœud roumain", "desc": "Jonction alternative de cordes de rappel, pensée pour bien passer les arêtes au rappel de la corde. Montage asymétrique sur les deux brins — suivre la fiche photo pour l'ordre des passages.", "etapes": []}, {"cat": "Freinage", "nom": "Nœud de freinage ENSA", "desc": "Nœuds intermédiaires sur la corde entre les membres d'une cordée glacier : ils se coincent dans la lèvre de crevasse et freinent la chute. Série de nœuds compacts réalisés à intervalles réguliers sur la corde tendue entre les équipiers.", "etapes": []}];
 const SECOURS = [{"cat": "Techniques de secours", "nom": "Remontée sur corde", "desc": "Remonter le long d'une corde fixe ou après une chute en crevasse, avec deux autobloquants.", "etapes": ["Machard ventral relié au pontet (ou Tibloc)", "2e machard sous le premier, avec une pédale (sangle 120) pour le pied", "Pousser sur la pédale, faire coulisser le machard ventral, répéter", "Sécuriser régulièrement par un nœud de mule sur le brin libre"]}, {"cat": "Techniques de secours", "nom": "Mouflage simple (3:1)", "svg": "<svg viewBox=\"0 0 300 200\" style=\"max-width:280px;display:block;margin:8px auto\"><rect x=\"120\" y=\"8\" width=\"60\" height=\"14\" rx=\"4\" fill=\"#19424c\"/><text x=\"150\" y=\"19\" text-anchor=\"middle\" font-size=\"9\" fill=\"#fff\">ANCRAGE</text><path d=\"M138 22 L138 175\" stroke=\"#2c6e7c\" stroke-width=\"4\" fill=\"none\"/><rect x=\"128\" y=\"52\" width=\"20\" height=\"16\" rx=\"3\" fill=\"#b8720e\"/><text x=\"98\" y=\"64\" text-anchor=\"end\" font-size=\"10\" fill=\"#b8720e\">autobloquant<tspan x=\"98\" dy=\"11\">de maintien</tspan></text><circle cx=\"138\" cy=\"158\" r=\"11\" fill=\"none\" stroke=\"#e8734a\" stroke-width=\"4\"/><path d=\"M138 169 L138 192\" stroke=\"#1c2830\" stroke-width=\"4\"/><text x=\"150\" y=\"196\" font-size=\"10\" fill=\"#555\">charge</text><path d=\"M149 158 C 190 150 195 100 162 40\" stroke=\"#2c6e7c\" stroke-width=\"4\" fill=\"none\"/><rect x=\"152\" y=\"96\" width=\"20\" height=\"16\" rx=\"3\" fill=\"#b8720e\" transform=\"rotate(14 162 104)\"/><text x=\"196\" y=\"108\" font-size=\"10\" fill=\"#b8720e\">autobloquant<tspan x=\"196\" dy=\"11\">tracteur</tspan></text><path d=\"M162 40 L162 12\" stroke=\"#22694a\" stroke-width=\"4\"/><path d=\"M156 20 L162 8 L168 20\" fill=\"none\" stroke=\"#22694a\" stroke-width=\"3\"/><text x=\"176\" y=\"16\" font-size=\"11\" fill=\"#22694a\" font-weight=\"700\">tirer (3:1)</text></svg>", "desc": "Sortir un équipier d'une crevasse quand il ne peut pas remonter seul. Démultiplication par 3.", "etapes": ["Ancrer la corde (corps-mort, broche) + autobloquant de maintien", "Renvoyer la corde vers la victime avec une poulie/mousqueton sur autobloquant", "Tirer : 3 m de corde tirée = 1 m gagné", "Bloquer à chaque pause avec l'autobloquant de maintien"]}, {"cat": "Techniques de secours", "nom": "Passage de nœud en descente", "desc": "Franchir un nœud (jonction de cordes) pendant une descente en rappel ou une évacuation au demi-cabestan.", "etapes": ["S'arrêter avant le nœud, vacher l'autobloquant", "Transférer la charge sur l'autobloquant", "Repasser le frein sous le nœud, reprendre le mou", "Retransférer la charge sur le frein, déverrouiller, continuer"]}, {"cat": "Techniques de secours", "nom": "Corps-mort (ancrage neige)", "desc": "Ancrage en neige avec un piolet (ou ski, sac) enterré horizontalement.", "etapes": ["Creuser une tranchée perpendiculaire à la traction, profonde selon la neige", "Sangle en tête d'alouette au milieu du piolet, sortie vers le bas de la tranchée", "Enterrer et tasser fermement", "Toujours contrôler en charge progressive avant d'engager"]}, {"cat": "Techniques de secours", "nom": "Mariner double (transfert de charge)", "desc": "Nœud largable SOUS TENSION : indispensable pour transférer la charge d'un blessé de ton baudrier vers le relais, ou libérer un système coincé.", "etapes": ["Machard (ou Tibloc) sur la corde chargée, relié à une sangle ou cordelette", "Sur le mousqueton du relais : 2 tours morts avec la sangle", "Puis 4-5 tours serrés AUTOUR des deux brins de la sangle", "Finir en passant une boucle ENTRE les deux brins (sécurité) + mousqueton", "Pour larguer : retirer la sécurité et dérouler progressivement — le mariner rend la charge en douceur"]}, {"cat": "Techniques de secours", "nom": "Mouflages démultipliés (5:1, 7:1) — variations", "desc": "Quand le 3:1 ne suffit pas (victime lourde, corde qui cisaille la lèvre, sauveteur seul) : ajouter des renvois pour démultiplier.", "etapes": ["5:1 : sur le brin de traction du 3:1, ajouter un 2e autobloquant + poulie renvoyée à l'ancrage — on tire vers le bas", "7:1 : monter un petit 3:1 QUI TIRE le brin de traction du 3:1 principal (mouflage sur mouflage)", "Règle : chaque renvoi ajoute du frottement — des poulies réelles (pas de simples mousquetons) préservent le rendement", "Toujours garder l'autobloquant de maintien à l'ancrage : il encaisse à chaque pause", "Protéger la corde à la lèvre de la crevasse (sac, piolet, bâton)"]}, {"cat": "Relais & assurage", "nom": "Relais triangulé fixe (répartition des forces)", "desc": "Relier 2-3 points pour un point central unique et redondant. La règle d'or : angle entre les brins INFÉRIEUR À 60° — au-delà, chaque point encaisse plus que sa part (à 120°, chaque point prend 100 % de la charge !).", "svg": "<svg viewBox=\"0 0 300 190\" style=\"max-width:280px;display:block;margin:8px auto\"><circle cx=\"70\" cy=\"28\" r=\"9\" fill=\"none\" stroke=\"#19424c\" stroke-width=\"3\"/><circle cx=\"230\" cy=\"28\" r=\"9\" fill=\"none\" stroke=\"#19424c\" stroke-width=\"3\"/><path d=\"M70 37 L150 120 L230 37\" fill=\"none\" stroke=\"#2c6e7c\" stroke-width=\"4\"/><path d=\"M70 37 L150 120\" stroke=\"#2c6e7c\" stroke-width=\"4\"/><circle cx=\"150\" cy=\"126\" r=\"10\" fill=\"#e8734a\"/><path d=\"M150 136 L150 175\" stroke=\"#1c2830\" stroke-width=\"4\"/><path d=\"M118 78 A46 46 0 0 1 182 78\" fill=\"none\" stroke=\"#b8720e\" stroke-width=\"2\" stroke-dasharray=\"4 3\"/><text x=\"150\" y=\"66\" text-anchor=\"middle\" font-size=\"14\" fill=\"#b8720e\" font-weight=\"700\">&lt; 60°</text><text x=\"150\" y=\"188\" text-anchor=\"middle\" font-size=\"11\" fill=\"#555\">charge</text><text x=\"38\" y=\"30\" font-size=\"11\" fill=\"#555\">pt 1</text><text x=\"248\" y=\"30\" font-size=\"11\" fill=\"#555\">pt 2</text><text x=\"168\" y=\"130\" font-size=\"11\" fill=\"#555\">central</text></svg>", "etapes": ["Sangle (120/240) mousquetonnée sur chaque point", "Tirer une boucle vers le bas entre les points, dans la direction de la charge", "Nouer la boucle (nœud de guide ou huit) → point central FIXE : si un point lâche, aucun choc ni glissement", "Vérifier l'angle < 60° (rallonger la sangle si nécessaire)", "Variante « semi-directionnelle » (boucle vrillée non nouée) : seulement si la direction de charge peut changer — attention au glissement si un point cède"]}, {"cat": "Relais & assurage", "nom": "Assurage au relais (second et transfert)", "desc": "Assurer le second directement sur le relais, garder les mains libres, et pouvoir transférer la charge en cas de pépin.", "etapes": ["Second au demi-cabestan : HMS sur le POINT CENTRAL du relais (jamais sur le pontet) — dynamique et réversible sous charge", "Ou plaquette (reverso mode autobloquant) sur le point central : bloque seul, mains libres — mais difficile à débloquer sous tension (petit mouflage ou mariner pour libérer)", "Vacher le second arrivé AVANT de le sortir de l'assurage", "Pour hisser ou redescendre depuis la plaquette : renvoi + autobloquant obligatoires", "Toujours : point central unique, charges vers le bas, mousquetons vissés en opposition si doute"]}, {"cat": "Encordement", "nom": "Encordement glacier (cordée de 2)", "desc": "L'encordement de base en terrain glaciaire : distance et réserves de corde pour pouvoir moufler.", "etapes": ["Distance entre équipiers : 12–15 m de corde utile", "Chacun garde des anneaux de RÉSERVE (buste ou sac) — indispensables pour le mouflage et la réchappe", "Encordement au huit repassé directement sur le baudrier (ou huit sur mousquetons selon habitude)", "Option neige molle / gros ponts : 2-3 nœuds freineurs (nœuds simples) sur la corde entre les équipiers — ils cisaillent dans la lèvre et freinent la chute", "Corde TENDUE en permanence : le mou est l'ennemi n°1 (facteur de chute dans la crevasse)"]}, {"cat": "Encordement", "nom": "Encordement glacier (cordée de 3)", "desc": "La configuration la plus sûre sur glacier : le poids de deux retient le troisième.", "etapes": ["Premier et dernier en bout de corde (huit repassé), celui du milieu sur un nœud de papillon + mousquetons à vis", "Distances : 8–10 m entre chaque équipier", "Le plus léger / moins expérimenté au milieu", "Réserves de corde aux deux extrémités", "À la montée comme à la descente : le guide se place côté aval du danger principal"]}, {"cat": "Encordement", "nom": "Corde courte / anneaux à la main (terrain facile)", "desc": "La technique du guide par excellence : progresser encordé court en terrain facile mais exposé, réactif à la seconde.", "etapes": ["Anneaux de buste verrouillés au baudrier (nœud de blocage sur les anneaux — jamais tenus seulement à la main)", "3–5 m de corde entre guide et client, quelques anneaux EN MAIN pour amortir et réguler", "Corde toujours LÉGÈREMENT tendue, client en aval dans la pente", "Anticiper : raccourcir avant le passage délicat, pas dedans", "⚠ Technique de guide : demande formation et jugement — un arrêt de chute en corde courte se joue dans la demi-seconde"]}, {"cat": "Encordement", "nom": "Encordement d'arête (corde tendue)", "desc": "Sur les arêtes rocheuses ou neigeuses : courte distance et protection par le terrain.", "etapes": ["5–10 m entre équipiers selon le terrain", "Le guide passe la corde derrière les becquets, gendarmes et lunules en avançant — le terrain assure", "Sur fil de neige : en cas de chute du client d'un côté, sauter du côté OPPOSÉ (le contrepoids sauve)", "Passages durs : assurage en flèche sur becquet ou friend, le client rejoint", "Ne jamais avancer avec du mou entre les équipiers"]}];
@@ -1650,7 +1790,7 @@ function devisPDF(c){
 
 /* ===== Sauvegarde / restauration complète ===== */
 const BK_PREFIXES=['matedit:','fraisedit:','ms:'];
-const BK_KEYS=['sorties-v1','factures-v1'];
+const BK_KEYS=['sorties-v1','factures-v1','depenses-v1'];
 function collectAllData(){
   const data={_meta:{app:'Guide Pro', date:new Date().toISOString(), version:(document.getElementById('vtag')||{}).textContent||''}, keys:{}};
   for(let i=0;i<localStorage.length;i++){
@@ -1661,27 +1801,29 @@ function collectAllData(){
   }
   return data;
 }
-function doFullBackup(){
+function doFullBackup(cb){
   const data=collectAllData();
-  const n=Object.keys(data.keys).length;
-  const a=document.createElement('a');
-  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,1));
-  a.download='guidepro-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';
-  a.click();
-  return n;
+  photoAll().then(ph=>{
+    data.photos=ph;
+    const n=Object.keys(data.keys).length+Object.keys(ph).length;
+    const a=document.createElement('a');
+    a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data));
+    a.download='guidepro-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();
+    if(cb) cb(n);
+  });
 }
 $('#fullBackup').onclick=function(){
-  const n=doFullBackup();
-  this.textContent='💾 Sauvegardé ('+n+' éléments) ✓';
-  setTimeout(()=>this.textContent='💾 Sauvegarde complète',2500);
+  const b=this; b.textContent='💾 …';
+  doFullBackup(n=>{ b.textContent='💾 Sauvegardé ('+n+' éléments) ✓'; setTimeout(()=>b.textContent='💾 Sauvegarde complète',2500); });
 };
 (function bindFab(){
   const b=document.getElementById('fabSave');
   if(!b){ setTimeout(bindFab,50); return; }
   b.onclick=function(){
-    const n=doFullBackup();
-    this.classList.add('done'); this.textContent='✓';
-    setTimeout(()=>{ this.classList.remove('done'); this.textContent='💾'; },1800);
+    const el=this; el.textContent='…';
+    doFullBackup(()=>{ el.classList.add('done'); el.textContent='✓';
+      setTimeout(()=>{ el.classList.remove('done'); el.textContent='💾'; },1800); });
   };
 })();
 $('#fullRestore').addEventListener('change',function(){
@@ -1694,8 +1836,13 @@ $('#fullRestore').addEventListener('change',function(){
       const n=Object.keys(data.keys).length;
       if(!confirm('Restaurer '+n+' éléments'+(data._meta&&data._meta.date?' (sauvegarde du '+data._meta.date.slice(0,10)+')':'')+' ?\n\nLes données actuelles de même nom seront remplacées.')) return;
       Object.entries(data.keys).forEach(([k,v])=>{ try{ localStorage.setItem(k,v); }catch(e){} });
-      refreshLogCount(); render(); if(document.body.classList.contains('log-on')) renderLog();
-      alert('Restauration terminée : '+n+' éléments. Journal, factures, agenda et personnalisations rechargés.');
+      const ph=data.photos||{};
+      Promise.all(Object.entries(ph).map(([k,v])=>photoPut(k,v).catch(()=>{}))).then(()=>{
+        refreshLogCount(); render();
+        if(document.body.classList.contains('log-on')) renderLog();
+        try{ renderDeps(); renderBilan(); }catch(e){}
+        alert('Restauration terminée : '+n+' éléments + '+Object.keys(ph).length+' justificatifs.');
+      });
     }catch(e){ alert('Fichier de sauvegarde invalide.'); }
   };
   r.readAsText(f); this.value='';
@@ -1964,8 +2111,144 @@ function renderInvoices(){
     +'<button class="inv-del" data-id="'+f.id+'">Suppr.</button></div></div>').join('')
     : '<div class="log-empty">Aucune facture. Crée-en une depuis une fiche de course (« 🧾 Créer une facture ») ou avec « + Facture vierge ».</div>';
 }
+
+/* ===== Compta : dépenses, justificatifs, bilan ===== */
+let DE_CUR=null, DE_PHOTO=null;
+
+function fmtCHF(n){ return (Math.round(n*100)/100).toLocaleString('fr-CH',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function renderDeps(){
+  const d=getDeps().slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const y=new Date().getFullYear();
+  const tot=d.filter(x=>(x.date||'').slice(0,4)==String(y)).reduce((s,x)=>s+(+x.montant||0),0);
+  $('#depStats').innerHTML='<div><b>'+fmtCHF(tot)+'</b><span>CHF dépensés en '+y+'</span></div>'
+    +'<div><b>'+d.length+'</b><span>justificatifs</span></div>';
+  if(!d.length){ $('#depList').innerHTML='<div class="log-empty">Aucune dépense. Photographie ton premier ticket avec le bouton ci-dessus.</div>'; return; }
+  $('#depList').innerHTML=d.map(x=>
+    '<div class="dep-card" data-id="'+x.id+'">'
+    +(x.photo?'<img class="dc-thumb" data-photo="'+x.id+'" alt="ticket">':'<div class="dc-nophoto">🧾</div>')
+    +'<div class="dc-main"><div class="dc-desc">'+esc(x.desc||'(sans description)')+'</div>'
+    +'<div class="dc-meta">'+esc(x.date||'')+' · '+esc(x.cat||'')+(x.course?' · '+esc(x.course):'')+(x.refact?' · refacturée':'')+'</div></div>'
+    +'<div class="dc-amt">'+fmtCHF(+x.montant||0)+'</div></div>').join('');
+  document.querySelectorAll('#depList .dc-thumb').forEach(img=>{
+    photoGet(img.dataset.photo).then(u=>{ if(u) img.src=u; });
+  });
+}
+$('#depList').addEventListener('click',e=>{
+  const th=e.target.closest('.dc-thumb');
+  const card=e.target.closest('.dep-card'); if(!card) return;
+  if(th && th.src){ $('#pvImg').src=th.src; $('#photoView').classList.add('on'); return; }
+  openDep(card.dataset.id);
+});
+$('#pvClose').onclick=()=>$('#photoView').classList.remove('on');
+$('#photoView').onclick=e=>{ if(e.target.id==='photoView') $('#photoView').classList.remove('on'); };
+
+function openDep(id, photoData){
+  const all=getDeps();
+  DE_CUR = id ? (all.find(x=>x.id===id)||null) : {id:nextDepId(), date:new Date().toISOString().slice(0,10), cat:DEP_CATS[0], montant:'', desc:'', course:'', refact:false, photo:false};
+  if(!DE_CUR) return;
+  DE_PHOTO = photoData||null;
+  $('#deTitle').textContent = id ? 'Modifier la dépense' : 'Nouvelle dépense';
+  $('#de-cat').innerHTML=DEP_CATS.map(c=>'<option'+(c===DE_CUR.cat?' selected':'')+'>'+c+'</option>').join('');
+  $('#de-date').value=DE_CUR.date||''; $('#de-montant').value=DE_CUR.montant||'';
+  $('#de-desc').value=DE_CUR.desc||''; $('#de-course').value=DE_CUR.course||'';
+  $('#de-refact').checked=!!DE_CUR.refact;
+  $('#deDelete').style.display=id?'':'none';
+  const box=$('#dePhotoBox');
+  if(DE_PHOTO){ box.innerHTML='<img src="'+DE_PHOTO+'" style="max-width:100%;max-height:230px;border-radius:9px">'; }
+  else if(DE_CUR.photo){ box.innerHTML='<div style="color:var(--muted);font-size:12px">chargement…</div>'; photoGet(DE_CUR.id).then(u=>{ box.innerHTML=u?'<img src="'+u+'" style="max-width:100%;max-height:230px;border-radius:9px">':'<div style="color:var(--muted);font-size:12px">Photo introuvable</div>'; }); }
+  else box.innerHTML='<div style="color:var(--muted);font-size:12px">Aucun justificatif</div>';
+  $('#depEditor').classList.add('on');
+}
+function handleShot(file){
+  if(!file) return;
+  compressImage(file,1400,0.62).then(url=>{
+    if($('#depEditor').classList.contains('on')){
+      DE_PHOTO=url; $('#dePhotoBox').innerHTML='<img src="'+url+'" style="max-width:100%;max-height:230px;border-radius:9px">';
+    } else openDep(null,url);
+  }).catch(()=>alert("Impossible de lire l'image."));
+}
+['#depShot','#depPick','#deShot','#dePick'].forEach(id=>{
+  const el=$(id); if(el) el.addEventListener('change',function(){ handleShot(this.files[0]); this.value=''; });
+});
+$('#depNew').onclick=()=>openDep(null);
+$('#deClose').onclick=()=>$('#depEditor').classList.remove('on');
+$('#deSave').onclick=()=>{
+  if(!DE_CUR) return;
+  DE_CUR.date=$('#de-date').value; DE_CUR.montant=parseFloat($('#de-montant').value)||0;
+  DE_CUR.desc=$('#de-desc').value.trim(); DE_CUR.cat=$('#de-cat').value;
+  DE_CUR.course=$('#de-course').value.trim(); DE_CUR.refact=$('#de-refact').checked;
+  const done=()=>{
+    const all=getDeps(); const i=all.findIndex(x=>x.id===DE_CUR.id);
+    if(i>=0) all[i]=DE_CUR; else all.push(DE_CUR);
+    setDeps(all); $('#depEditor').classList.remove('on'); DE_PHOTO=null; renderDeps(); renderBilan();
+  };
+  if(DE_PHOTO){ DE_CUR.photo=true; photoPut(DE_CUR.id,DE_PHOTO).then(done).catch(()=>{ alert('Photo non enregistrée (stockage).'); DE_CUR.photo=false; done(); }); }
+  else done();
+};
+$('#deDelete').onclick=()=>{
+  if(!DE_CUR||!confirm('Supprimer cette dépense et son justificatif ?')) return;
+  photoDel(DE_CUR.id);
+  setDeps(getDeps().filter(x=>x.id!==DE_CUR.id));
+  $('#depEditor').classList.remove('on'); renderDeps(); renderBilan();
+};
+
+/* ── Bilan / tableur ── */
+function bilRows(year){
+  const rows=[];
+  getInvoices().forEach(f=>{
+    const tot=(f.lines||[]).reduce((s,l)=>s+(+l.qte||0)*(+l.pu||0),0);
+    rows.push({date:f.date||'',type:'Recette',ref:f.num||'',desc:f.title||f.client||'Facture',cat:'Guidage',montant:tot,paid:!!f.paid});
+  });
+  getDeps().forEach(d=>{
+    rows.push({date:d.date||'',type:'Dépense',ref:d.photo?'📎':'',desc:d.desc||'',cat:d.cat||'',montant:-(+d.montant||0),paid:true});
+  });
+  return rows.filter(r=>!year||r.date.slice(0,4)===year).sort((a,b)=>b.date.localeCompare(a.date));
+}
+function renderBilan(){
+  const sel=$('#bilYear');
+  const years=[...new Set(bilRows(null).map(r=>r.date.slice(0,4)).filter(Boolean))].sort().reverse();
+  const cur=sel.value||String(new Date().getFullYear());
+  sel.innerHTML=years.map(y=>'<option'+(y===cur?' selected':'')+'>'+y+'</option>').join('')||'<option>'+cur+'</option>';
+  const rows=bilRows(sel.value||cur);
+  const rec=rows.filter(r=>r.montant>0&&r.paid).reduce((s,r)=>s+r.montant,0);
+  const att=rows.filter(r=>r.montant>0&&!r.paid).reduce((s,r)=>s+r.montant,0);
+  const dep=rows.filter(r=>r.montant<0).reduce((s,r)=>s-r.montant,0);
+  $('#bilSum').innerHTML='<div class="rec"><div class="v">'+fmtCHF(rec)+'</div><div class="l">Encaissé</div></div>'
+    +'<div class="dep"><div class="v">'+fmtCHF(dep)+'</div><div class="l">Dépenses</div></div>'
+    +'<div class="net"><div class="v">'+fmtCHF(rec-dep)+'</div><div class="l">Résultat</div></div>';
+  $('#bilTable').innerHTML='<thead><tr><th>Date</th><th>Libellé</th><th>Catégorie</th><th style="text-align:right">Montant</th></tr></thead><tbody>'
+    +(rows.length?rows.map(r=>'<tr class="'+(r.montant>0?'rec':'dep')+(r.montant>0&&!r.paid?' unpaid':'')+'">'
+      +'<td>'+esc(r.date)+'</td><td>'+esc(r.ref?r.ref+' · ':'')+esc(r.desc)+'</td><td>'+esc(r.cat)+'</td>'
+      +'<td class="num">'+(r.montant>0?'+':'')+fmtCHF(r.montant)+'</td></tr>').join('')
+      :'<tr><td colspan="4" style="text-align:center;color:#888;padding:18px">Aucun mouvement pour cette année.</td></tr>')
+    +'</tbody>';
+  if(att>0) $('#bilSum').insertAdjacentHTML('beforeend','');
+}
+$('#bilYear').onchange=renderBilan;
+$('#bilCsv').onclick=()=>{
+  const rows=bilRows($('#bilYear').value);
+  const csv='Date;Type;Référence;Libellé;Catégorie;Montant CHF;Statut\n'
+    +rows.map(r=>[r.date,r.type,r.ref,(r.desc||'').replace(/;/g,','),r.cat,(Math.round(r.montant*100)/100).toString().replace('.',','),r.paid?'payé':'en attente'].join(';')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,%EF%BB%BF'+encodeURIComponent(csv);
+  a.download='guidepro-compta-'+($('#bilYear').value||'')+'.csv'; a.click();
+};
+
+/* ── sous-onglets ── */
+document.querySelector('.cp-tabs').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-cp]'); if(!b) return;
+  document.querySelectorAll('.cp-tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.cp-panel').forEach(p=>p.classList.remove('on'));
+  const map={fact:'#cpFact',dep:'#cpDep',bil:'#cpBil'};
+  $(map[b.dataset.cp]).classList.add('on');
+  if(b.dataset.cp==='dep') renderDeps();
+  if(b.dataset.cp==='bil') renderBilan();
+});
+
 function openInvoices(){
   document.body.classList.add('inv-on');
+  try{ renderDeps(); renderBilan(); }catch(e){}
   document.body.classList.remove('log-on','map-on','cal-on','knots-on');
   if($('#calToggle'))$('#calToggle').setAttribute('aria-pressed','false');
   $('#invToggle').setAttribute('aria-pressed','true');
@@ -2851,7 +3134,7 @@ window.addEventListener('appinstalled', ()=>{ const b=$('#installBtn'); if(b) b.
   <button data-view="map"><span class="bi">🗺</span>Carte</button>
   <button data-view="cal"><span class="bi">📅</span>Agenda</button>
   <button data-view="log"><span class="bi">📒</span>Journal</button>
-  <button data-view="inv"><span class="bi">🧾</span>Factures</button>
+  <button data-view="inv"><span class="bi">💰</span>Compta</button>
   <button data-view="knots"><span class="bi">🪢</span>Nœuds</button>
 </nav>
 </body>

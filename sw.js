@@ -1,5 +1,5 @@
 /* Courses & Tarifs — service worker (réseau d'abord pour les pages) */
-const CACHE = 'guidepro-v124';
+const CACHE = 'guidepro-v125';
 const CORE = ['./', './index.html', './manifest.webmanifest?v=guidepro', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
