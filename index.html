@@ -512,7 +512,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;Pro</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v129</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v130</span></span>
     </div>
   </div>
 </header>
@@ -970,6 +970,7 @@ const COURSES = [
   {nom:`Les Courtes — face NE`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:3856, cotN:4.5, cot:`D / 50–55°`, dMin:1,dMax:2, maxP:1, eng:1900, danger:3, est:true, m1:4,m2:6, refuge:`Refuge d'Argentière (2771 m)`, note:`La face NE des Courtes : la « petite sœur » du Couturier, 700 m à 50–55°. Superbe introduction aux grandes faces N du bassin d'Argentière. 1:1.`},
   {nom:`Mont Dolent — face N`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`Suisse`, alt:3823, cotN:4.5, cot:`AD+/D / 45–50°`, dMin:2,dMax:2, maxP:1, eng:1900, danger:2, est:true, m1:4,m2:7, refuge:`Cabane de la A Neuve (2735 m) / bivouac du Dolent`, note:`La pyramide des trois frontières par sa face N : pente de neige élégante à 45–50°, sommet-balcon unique entre Suisse, France et Italie.`},
   {nom:`Eiger — face N (voie Heckmair)`, disc:`alpinisme`, massif:`Alpes bernoises`, pays:`Suisse`, alt:3967, cotN:7, cot:`ED2`, dMin:2,dMax:3, maxP:1, eng:9000, danger:3, est:true, m1:3,m2:9, refuge:`Bivouac dans la face / hôtel Eigergletscher`, note:`LA face nord : 1800 m de l'itinéraire Heckmair (1938) — Fissure Difficile, Traversée Hinterstoisser, Rampe, Traversée des Dieux, Araignée Blanche. Le monument absolu. Client d'élite exclusivement. 1:1.`},
+ {nom:`Super Couloir (Mont Blanc du Tacul)`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:4248, cotN:5.5, cot:`TD+/ED− (glace 80-90°, mixte)`, dMin:1,dMax:2, maxP:1, eng:2400, danger:3, est:true, m1:3,m2:6, refuge:`Cosmiques`, note:`La goulotte de référence de la face N du Tacul (Boivin-Gabarrou 1975) : ~700 m de glace et mixte soutenus, ressauts raides, sortie sur l'arête. Accès benne du Midi. Conditions froides indispensables (printemps). Client TD+ glace autonome. 1:1.`},
  {nom:`Cervin — arête de Zmutt`, disc:`alpinisme`, massif:`Valais`, pays:`Suisse`, alt:4478, cotN:5, cot:`D (IV)`, dMin:2,dMax:2, maxP:1, eng:3500, danger:3, est:true, m1:7,m2:9, refuge:`Schönbielhütte / Hörnlihütte`, note:`LA grande course du Cervin pour qui a déjà fait le Hörnli : l'arête NW élégante, doigts de Zmutt, galerie Carrel, sommet par l'épaule italienne. Conditions sèches indispensables. 1:1.`},
  {nom:`Petite Aiguille Verte`, disc:`alpinisme`, massif:`Mont-Blanc`, pays:`France`, alt:3512, cotN:1.5, cot:`F/PD`, dMin:1,dMax:1, maxP:3, eng:600, danger:1, est:true, m1:6,m2:9, refuge:`— (benne Grands Montets)`, note:`L'initiation alpinisme la plus classique de Chamonix : arête de neige et rocher facile dès la benne des Grands Montets, demi-journée possible. Première fois crampons/piolet, familles bienvenues.`},
  {nom:`Grand Capucin`, disc:`rocher`, massif:`Mont-Blanc`, pays:`France`, alt:3838, cotN:5.5, cot:`TD+/ED− (6a-6b)`, dMin:1,dMax:2, maxP:1, eng:2200, danger:2, est:true, m1:6,m2:9, refuge:`Cosmiques / Torino`, vars:[{"l":"Voie des Suisses (TD+, 6a — la classique)","d":"1-2 j","eng":2200},{"l":"Voie Bonatti (ED−, 6b — historique)","d":"2 j","eng":2500}], note:`Le monolithe de granite rouge du Tacul (400 m). Escalade d'anthologie en altitude, descente en rappels. Client 6a en fissures. 1:1.`},
@@ -2177,10 +2178,6 @@ const CLASSIQUES=[
  {n:'Eiger — arête Mittellegi', l:'Mittellegi'},
  {n:'Bishorn', l:'Bishorn'},
  {n:'Castor', l:'Castor'},
- {n:'Allalinhorn', l:'Allalinhorn'},
- {n:'Weissmies — arête SE (Südgrat)', l:'Weissmies SE'},
- {n:'Nadelhorn', l:'Nadelhorn'},
- {n:"Riffelhorn — arêtes d'entraînement", l:'Riffelhorn (prépa Cervin)'},
  {n:'Gran Paradiso', l:'Grand Paradis'},
  {n:'Barre des Écrins', l:'Barre des Écrins'},
 ];
@@ -2198,14 +2195,13 @@ const GRANDES=[
  {n:'Petit Dru — face N (voie Allain)', l:'Drus (Pierre Allain)'},
  {n:'Grande Rocheuse — couloir N', l:'Grande Rocheuse'},
  {n:'Piz Badile — arête N', l:'Badile (Cassin)'},
- {n:'Grandes Jorasses — Éperon Walker (face N)', l:'Jorasses Linceul'},
  {n:'Mont Maudit — arête Kuffner', l:'Kuffner'},
  {n:'Éperon de la Brenva (Mont Blanc)', l:'Brenva'},
  {n:"Arête de l'Innominata (Mont Blanc)", l:'Innominata'},
  {n:"Grand Pilier d'Angle — Cecchinel-Nominé", l:"Grand Pilier d'Angle"},
- {n:'Pilier Gervasutti (Mont Blanc du Tacul)', l:'Gervasutti'},
- {n:'Aiguille du Midi — éperon Frendo', l:'Frendo'},
  {n:'Petit Clocher du Portalet — État de choc', l:'État de choc (Portalet)'},
+ {n:'Super Couloir (Mont Blanc du Tacul)', l:'Super Couloir (Tacul)'},
+ {n:'Traversée Rochefort–Jorasses', l:'Traversée Rochefort–Jorasses'},
 ];
 function renderClassics(){
   const rail=document.getElementById('clRail'); if(!rail) return;
