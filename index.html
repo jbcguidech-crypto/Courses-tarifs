@@ -366,6 +366,17 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   .viewtoggle{display:none !important}
   @media print{.bottombar{display:none}}
   .fab-save{position:fixed;right:14px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:149;width:52px;height:52px;border-radius:50%;background:#22694a;color:#fff;border:none;font-size:22px;box-shadow:0 4px 16px rgba(0,0,0,.28);cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+  .fab-cloud{position:fixed;right:76px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:149;width:52px;height:52px;border-radius:50%;background:#2c6e7c;color:#fff;border:none;font-size:21px;box-shadow:0 4px 16px rgba(0,0,0,.28);cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+  .fab-cloud:active{transform:scale(.92)}
+  .fab-cloud.done{background:#2d8a5e}
+  .fab-cloud.err{background:#c0563f}
+  @media print{.fab-cloud{display:none}}
+  .fab-cloud{position:fixed;right:76px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:149;width:52px;height:52px;border-radius:50%;background:#2c6e7c;color:#fff;border:none;font-size:21px;box-shadow:0 4px 16px rgba(0,0,0,.28);cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+  .fab-cloud:active{transform:scale(.92)}
+  .fab-cloud.done{background:#2d8a5e}
+  .fab-cloud.err{background:#c0563f}
+  .fab-cloud.off{opacity:.45}
+  @media print{.fab-cloud{display:none}}
   .fab-save:active{transform:scale(.92)}
   .fab-save.done{background:#2d8a5e}
   @media print{.fab-save{display:none}}
@@ -562,7 +573,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;Pro</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v137</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v138</span></span>
     </div>
   </div>
 </header>
@@ -1866,6 +1877,45 @@ $('#fullBackup').onclick=function(){
   doFullBackup(n=>{ b.textContent='💾 Sauvegardé ('+n+' éléments) ✓'; setTimeout(()=>b.textContent='💾 Sauvegarde complète',2500); });
 };
 (function bindFab(){
+  const cb=document.getElementById('fabCloud');
+  if(cb){
+    const refl=()=>{ const c=syCfg(); cb.classList.toggle('off', !(c.url&&c.token)); };
+    refl(); setInterval(refl,4000);
+    cb.onclick=function(){
+      const c=syCfg();
+      if(!(c.url&&c.token)){
+        this.classList.add('err'); this.textContent='!';
+        setTimeout(()=>{ this.classList.remove('err'); this.textContent='☁️'; },1600);
+        showView('log'); setTimeout(()=>{ const o=$('#syncOpen'); if(o) o.click(); },350);
+        return;
+      }
+      const el=this; el.textContent='…';
+      Promise.resolve(syAutoPush(true)).then(()=>{
+        el.classList.add('done'); el.textContent='✓';
+        setTimeout(()=>{ el.classList.remove('done'); el.textContent='☁️'; },1800);
+      }).catch(()=>{
+        el.classList.add('err'); el.textContent='✕';
+        setTimeout(()=>{ el.classList.remove('err'); el.textContent='☁️'; },2200);
+      });
+    };
+  }
+  (function bindFabCloud(){
+    const cb=document.getElementById('fabCloud');
+    if(!cb){ setTimeout(bindFabCloud,60); return; }
+    cb.onclick=function(){
+      const el=this;
+      if(!syCfg().token){ showView('log'); setTimeout(()=>{ const o=$('#syncOpen'); if(o) o.click(); },250); return; }
+      const fin=ok=>{ el.classList.add(ok?'done':'err'); el.textContent=ok?'✓':'✕';
+        setTimeout(()=>{ el.classList.remove('done','err'); el.textContent='☁️'; },1900); };
+      const m=syMeta();
+      if(!Object.keys(m.dirty||{}).length && !Object.keys(m.pdirty||{}).length){ fin(true); return; }
+      el.textContent='…';
+      syAutoPush(true).then(()=>{
+        const m2=syMeta();
+        fin(!Object.keys(m2.dirty||{}).length && !Object.keys(m2.pdirty||{}).length);
+      }).catch(()=>fin(false));
+    };
+  })();
   const b=document.getElementById('fabSave');
   if(!b){ setTimeout(bindFab,50); return; }
   b.onclick=function(){
@@ -3464,6 +3514,8 @@ window.addEventListener('appinstalled', ()=>{ const b=$('#installBtn'); if(b) b.
 
 </script>
 <div class="sy-pill" id="syPill"></div>
+<button class="fab-cloud" id="fabCloud" title="Envoyer vers le cloud" aria-label="Envoyer vers le cloud">☁️</button>
+<button class="fab-cloud" id="fabCloud" title="Envoyer vers le cloud" aria-label="Envoyer vers le cloud">☁️</button>
 <button class="fab-save" id="fabSave" title="Sauvegarde complète" aria-label="Sauvegarde complète">💾</button>
 <nav class="bottombar" id="bottombar">
   <button data-view="cards"><span class="bi">🏔</span>Courses</button>
