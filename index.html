@@ -430,6 +430,8 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   .sy-log{font-size:11.5px;color:var(--rock2);background:rgba(0,0,0,.03);border-radius:9px;padding:9px 11px;margin-top:10px;white-space:pre-wrap;line-height:1.5;max-height:170px;overflow-y:auto}
   .sy-help{font-size:11.5px;color:var(--muted);line-height:1.6;margin-top:6px}
   .sy-help code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px;font-size:11px}
+  .sy-pill{position:fixed;right:14px;bottom:calc(134px + env(safe-area-inset-bottom));z-index:148;background:rgba(25,66,76,.92);color:#fff;font-size:11.5px;font-weight:600;padding:6px 12px;border-radius:14px;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+  @media print{.sy-pill{display:none}}
   /* factures */
   #invView{display:none}
   body.inv-on #invView{display:block}
@@ -548,7 +550,7 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
       <h1>Guide&nbsp;Pro</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v134</span></span>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v135</span></span>
     </div>
   </div>
 </header>
@@ -772,7 +774,8 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
             <button class="ie-save" id="syPush" style="flex:1">⬆ Envoyer vers le cloud</button>
             <button class="ie-save" id="syPull" style="flex:1;background:#2c6e7c">⬇ Récupérer</button>
           </div>
-          <div class="sy-help">« Envoyer » écrase la version cloud par celle de cet appareil. « Récupérer » fait l'inverse. Sauvegarde 💾 conseillée avant un « Récupérer ».</div>
+          <div class="ie-toggle" style="margin-top:10px"><input type="checkbox" id="sy-auto" checked><label for="sy-auto">Synchronisation automatique</label></div>
+          <div class="sy-help">En automatique, l'app récupère les nouveautés à l'ouverture et envoie tes modifications quelques secondes après chaque saisie. Seules les données réellement modifiées circulent, et une modification faite ici n'est jamais écrasée par le cloud.<br><br>Les deux boutons ci-dessus restent utiles en dépannage : « Envoyer » impose la version de cet appareil, « Récupérer » impose celle du cloud. Sauvegarde 💾 conseillée avant un « Récupérer » manuel.</div>
           <div class="sy-log" id="syLog">Prêt.</div>
         </div>
       </div></div>
@@ -1356,9 +1359,11 @@ function effortShow(c){ const v=activeVar(c); return (v&&v.ref&&EFFORT[v.ref])? 
 function dShow(c){ const v=activeVar(c); return v? v.d : (c.dMin===c.dMax? c.dMin+' j' : c.dMin+'–'+c.dMax+' j'); }
 
 /* ===== Dépenses & justificatifs ===== */
+function syTouch(k){ try{ if(typeof syMark==='function') syMark(k); }catch(e){} }
+function syTouchPhoto(id){ try{ if(typeof syMarkPhoto==='function') syMarkPhoto(id); }catch(e){} }
 const DEP_CATS=['Carburant / transport','Refuge / hébergement','Remontées mécaniques','Repas','Matériel','Formation','Assurance / cotisations','Téléphone / abonnements','Autre'];
 function getDeps(){ try{return JSON.parse(localStorage.getItem('depenses-v1')||'[]')}catch(e){return[]} }
-function setDeps(a){ try{localStorage.setItem('depenses-v1',JSON.stringify(a))}catch(e){alert('Stockage plein.')} }
+function setDeps(a){ try{localStorage.setItem('depenses-v1',JSON.stringify(a)); syTouch('depenses-v1');}catch(e){alert('Stockage plein.')} }
 function nextDepId(){ return 'd'+Date.now()+Math.floor(Math.random()*900); }
 
 /* Photos en IndexedDB (quota bien supérieur au localStorage) */
@@ -1375,7 +1380,8 @@ function photoDB(){
 function photoPut(id,dataUrl){
   return photoDB().then(db=>new Promise((res,rej)=>{
     const t=db.transaction('photos','readwrite'); t.objectStore('photos').put(dataUrl,id);
-    t.oncomplete=()=>res(true); t.onerror=()=>rej(t.error);
+    t.oncomplete=()=>{ try{ syMarkPhoto(id); }catch(e){} res(true); };
+    t.onerror=()=>rej(t.error);
   }));
 }
 function photoGet(id){
@@ -1424,7 +1430,7 @@ const SECOURS = [{"cat": "Techniques de secours", "nom": "Remontée sur corde", 
 
 /* ===== Factures — données ===== */
 function getInvoices(){ try{return JSON.parse(localStorage.getItem('factures-v1')||'[]')}catch(e){return[]} }
-function setInvoices(a){ try{localStorage.setItem('factures-v1',JSON.stringify(a))}catch(e){} }
+function setInvoices(a){ try{localStorage.setItem('factures-v1',JSON.stringify(a)); syTouch('factures-v1');}catch(e){} }
 function nextInvNum(){
   const y=new Date().getFullYear();
   const list=getInvoices().filter(f=>(f.num||'').indexOf('F'+y+'-')===0);
@@ -1433,7 +1439,7 @@ function nextInvNum(){
 }
 /* ===== Journal des sorties — données ===== */
 function getLog(){ try{return JSON.parse(localStorage.getItem('sorties-v1')||'[]')}catch(e){return[]} }
-function setLog(a){ try{localStorage.setItem('sorties-v1',JSON.stringify(a))}catch(e){} }
+function setLog(a){ try{localStorage.setItem('sorties-v1',JSON.stringify(a)); syTouch('sorties-v1');}catch(e){} }
 let LOGCOUNT={};
 function refreshLogCount(){ LOGCOUNT={}; getLog().forEach(x=>{ LOGCOUNT[x.nom]=(LOGCOUNT[x.nom]||0)+1; }); }
 refreshLogCount();
@@ -1454,7 +1460,7 @@ const MAT_OVERRIDE = {"Traversée Rochefort–Jorasses": {"client": ["Chaussures
 function matBaseKey(c){ const v=activeVar(c); return (v&&v.ref&&MAT_OVERRIDE[v.ref])? v.ref : (MAT_OVERRIDE[c.nom]? c.nom : ('_kit:'+c.kit)); }
 function matBase(c){ const v=activeVar(c); return (v&&v.ref&&MAT_OVERRIDE[v.ref]) || MAT_OVERRIDE[c.nom] || KITS[c.kit] || {client:[],guide:[]}; }
 function getMatEdit(key){ try{ const r=localStorage.getItem('matedit:'+key); return r?JSON.parse(r):null; }catch(e){ return null; } }
-function setMatEdit(key,v){ try{ localStorage.setItem('matedit:'+key, JSON.stringify(v)); }catch(e){} }
+function setMatEdit(key,v){ try{ localStorage.setItem('matedit:'+key, JSON.stringify(v)); syTouch('matedit:'+key); }catch(e){} }
 function clearMatEdit(key){ try{ localStorage.removeItem('matedit:'+key); }catch(e){} }
 function matFor(c){
   const key=matBaseKey(c);
@@ -1465,7 +1471,7 @@ function matFor(c){
 function matBadge(st){ return st==='ok' ? '<span class="st ok">●&nbsp;✓</span>' : '<span class="st wip">●</span>'; }
 function esc(s){return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
 function getMS(n){try{return JSON.parse(localStorage.getItem('ms:'+n)||'{}')}catch(e){return{}}}
-function setMS(n,v){try{localStorage.setItem('ms:'+n,JSON.stringify(v))}catch(e){}}
+function setMS(n,v){try{localStorage.setItem('ms:'+n,JSON.stringify(v)); syTouch('ms:'+n);}catch(e){}}
 function materielHTML(c){
   const k=matFor(c); if(!k) return '';
   const st=getMS(c.nom); const sc=st.c||{}; const sg=st.g||{};
@@ -1597,7 +1603,7 @@ function usesRemontee(c){
 function nuitsFor(c){ const d=activeVar(c)? (parseInt(dShow(c))||c.dMin) : c.dMin; return Math.max(0, (d||1)-1); }
 // Frais estimés par personne selon le nombre de clients n
 function getFraisEdit(key){ try{ const r=localStorage.getItem('fraisedit:'+key); return r?JSON.parse(r):null; }catch(e){ return null; } }
-function setFraisEdit(key,v){ try{ localStorage.setItem('fraisedit:'+key, JSON.stringify(v)); }catch(e){} }
+function setFraisEdit(key,v){ try{ localStorage.setItem('fraisedit:'+key, JSON.stringify(v)); syTouch('fraisedit:'+key); }catch(e){} }
 function clearFraisEdit(key){ try{ localStorage.removeItem('fraisedit:'+key); }catch(e){} }
 function fraisKey(c){ const v=activeVar(c); return (v&&v.ref)? v.ref : c.nom; }
 // Valeurs par défaut (barème pays) pour une course, avant édition
@@ -2170,8 +2176,10 @@ function syLogin(){
     body:JSON.stringify({email:email,password:pass})
   }).then(r=>r.json()).then(j=>{
     if(!j.access_token) throw new Error(j.error_description||j.msg||j.message||'identifiants refusés');
-    syCfgSet({url:url,key:key,email:email,token:j.access_token,refresh:j.refresh_token,at:Date.now()});
-    syStatus(); syLog('✓ Connecté. Tu peux envoyer ou récupérer tes données.');
+    syCfgSet({url:url,key:key,email:email,token:j.access_token,refresh:j.refresh_token,at:Date.now(),auto:true});
+    syStatus(); $('#sy-auto').checked=true;
+    syLog('✓ Connecté. Synchronisation automatique active.');
+    setTimeout(()=>syAutoPull().then(()=>syAutoPush(true)),600);
   }).catch(e=>syLog('✗ Échec : '+e.message));
 }
 function syRefresh(){
@@ -2208,7 +2216,7 @@ function syPush(){
     const opt=b=>({method:'POST',headers:{'Prefer':'resolution=merge-duplicates'},body:JSON.stringify(b)});
     return syFetch('/rest/v1/guidepro_kv',opt(rows))
       .then(()=> prows.length ? chunkPush(prows) : null)
-      .then(()=>syLog('✓ Envoi terminé.',true));
+      .then(()=>{ const mm=syMeta(); mm.dirty={}; mm.pdirty={}; syMetaSet(mm); syLog('✓ Envoi terminé.',true); });
   }).catch(e=>syLog('✗ '+e.message,true));
 }
 function chunkPush(rows){
@@ -2251,7 +2259,109 @@ function syPull(){
   $('#syLogout').onclick=()=>{ syCfgSet({}); syStatus(); syLog('Déconnecté.'); };
   $('#syPush').onclick=syPush;
   $('#syPull').onclick=syPull;
+  $('#sy-auto').checked=syAutoOn();
+  $('#sy-auto').onchange=function(){
+    const c=syCfg(); c.auto=this.checked; syCfgSet(c);
+    syLog(this.checked?'Synchronisation automatique activée.':'Synchronisation automatique désactivée — utilise les boutons.',true);
+    if(this.checked) syScheduleAuto();
+  };
 })();
+
+
+/* ===== Synchro automatique : suivi des modifications ===== */
+let SY_APPLYING=false, SY_TIMER=null, SY_BUSY=false;
+function syTracked(k){ return BK_KEYS.includes(k) || BK_PREFIXES.some(pfx=>k.indexOf(pfx)===0); }
+function syMeta(){ try{return JSON.parse(localStorage.getItem('sync-meta')||'{}')}catch(e){return{}} }
+function syMetaSet(o){ try{localStorage.setItem('sync-meta',JSON.stringify(o))}catch(e){} }
+function syMark(k){
+  if(SY_APPLYING) return;
+  const m=syMeta(); m.mtime=m.mtime||{}; m.dirty=m.dirty||{};
+  m.mtime[k]=new Date().toISOString(); m.dirty[k]=1; syMetaSet(m);
+  syScheduleAuto();
+}
+function syMarkPhoto(id){
+  if(SY_APPLYING) return;
+  const m=syMeta(); m.pdirty=m.pdirty||{}; m.pdirty[id]=1; syMetaSet(m);
+  syScheduleAuto();
+}
+/* interception centralisée des écritures locales */
+(function(){
+  const orig=localStorage.setItem.bind(localStorage);
+  localStorage.setItem=function(k,v){ orig(k,v); try{ if(syTracked(k)) syMark(k); }catch(e){} };
+})();
+
+function syAutoOn(){ return syCfg().auto!==false; }
+function syScheduleAuto(){
+  if(!syAutoOn()||!syCfg().token) return;
+  clearTimeout(SY_TIMER);
+  SY_TIMER=setTimeout(()=>syAutoPush(), 8000);
+}
+function syPill(txt){
+  const el=$('#syPill'); if(!el) return;
+  el.textContent=txt||''; el.style.opacity=txt?'1':'0';
+}
+/* envoi automatique : uniquement ce qui a changé */
+function syAutoPush(silent){
+  const c=syCfg();
+  if(!c.token||SY_BUSY) return Promise.resolve();
+  const m=syMeta(), dirty=Object.keys(m.dirty||{}), pdirty=Object.keys(m.pdirty||{});
+  if(!dirty.length&&!pdirty.length) return Promise.resolve();
+  SY_BUSY=true; syPill('☁️ envoi…');
+  const rows=dirty.map(k=>({k:k,v:localStorage.getItem(k),updated_at:(m.mtime||{})[k]||new Date().toISOString()})).filter(r=>r.v!==null);
+  const chain = rows.length
+    ? syFetch('/rest/v1/guidepro_kv',{method:'POST',headers:{'Prefer':'resolution=merge-duplicates'},body:JSON.stringify(rows)})
+    : Promise.resolve();
+  return chain.then(()=>{
+    if(!pdirty.length) return;
+    return Promise.all(pdirty.map(id=>photoGet(id))).then(vals=>{
+      const prows=pdirty.map((id,i)=>({id:id,data:vals[i],updated_at:new Date().toISOString()})).filter(r=>r.data);
+      return prows.length?chunkPush(prows):null;
+    });
+  }).then(()=>{
+    const mm=syMeta(); mm.dirty={}; mm.pdirty={}; mm.lastPush=new Date().toISOString(); syMetaSet(mm);
+    syPill('☁️ à jour'); setTimeout(()=>syPill(''),2200);
+    if(!silent) syLog('✓ Envoi automatique ('+rows.length+' entrées, '+pdirty.length+' photos).',true);
+  }).catch(e=>{ syPill('☁️ hors ligne'); setTimeout(()=>syPill(''),2600); })
+   .then(()=>{ SY_BUSY=false; });
+}
+/* récupération automatique : n'applique que ce qui est plus récent et non modifié ici */
+function syAutoPull(){
+  const c=syCfg();
+  if(!c.token||SY_BUSY) return Promise.resolve();
+  SY_BUSY=true; syPill('☁️ lecture…');
+  const m=syMeta(), mt=m.mtime||{}, dirty=m.dirty||{};
+  return syFetch('/rest/v1/guidepro_kv?select=k,v,updated_at',{method:'GET'}).then(rows=>{
+    let n=0;
+    SY_APPLYING=true;
+    (rows||[]).forEach(r=>{
+      if(dirty[r.k]) return;                       // modifié ici : le local gagne, il sera envoyé
+      const loc=mt[r.k];
+      if(loc && new Date(r.updated_at)<=new Date(loc)) return;  // pas plus récent
+      try{ localStorage.setItem(r.k,r.v); mt[r.k]=r.updated_at; n++; }catch(e){}
+    });
+    SY_APPLYING=false;
+    const mm=syMeta(); mm.mtime=mt; mm.lastPull=new Date().toISOString(); syMetaSet(mm);
+    if(n){
+      refreshLogCount(); render();
+      try{ renderLog(); renderInvoices(); renderDeps(); renderBilan(); }catch(e){}
+      syPill('☁️ '+n+' mise'+(n>1?'s':'')+' à jour');
+    } else syPill('☁️ à jour');
+    setTimeout(()=>syPill(''),2400);
+    return n;
+  }).catch(()=>{ SY_APPLYING=false; syPill('☁️ hors ligne'); setTimeout(()=>syPill(''),2600); })
+   .then(v=>{ SY_BUSY=false; return v; });
+}
+/* déclencheurs */
+function syBootAuto(){
+  if(!syAutoOn()||!syCfg().token) return;
+  syAutoPull().then(()=>syAutoPush(true));
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'){ if(syAutoOn()&&syCfg().token) syAutoPull().then(()=>syAutoPush(true)); }
+  else { syAutoPush(true); }
+});
+window.addEventListener('online',()=>syScheduleAuto());
+setTimeout(syBootAuto,1500);
 
 /* ===== Compta : dépenses, justificatifs, bilan ===== */
 let DE_CUR=null, DE_PHOTO=null;
@@ -2324,7 +2434,7 @@ $('#deSave').onclick=()=>{
     if(i>=0) all[i]=DE_CUR; else all.push(DE_CUR);
     setDeps(all); $('#depEditor').classList.remove('on'); DE_PHOTO=null; renderDeps(); renderBilan();
   };
-  if(DE_PHOTO){ DE_CUR.photo=true; photoPut(DE_CUR.id,DE_PHOTO).then(done).catch(()=>{ alert('Photo non enregistrée (stockage).'); DE_CUR.photo=false; done(); }); }
+  if(DE_PHOTO){ DE_CUR.photo=true; syTouchPhoto(DE_CUR.id); photoPut(DE_CUR.id,DE_PHOTO).then(done).catch(()=>{ alert('Photo non enregistrée (stockage).'); DE_CUR.photo=false; done(); }); }
   else done();
 };
 $('#deDelete').onclick=()=>{
@@ -3269,6 +3379,7 @@ window.addEventListener('beforeinstallprompt', e=>{
 window.addEventListener('appinstalled', ()=>{ const b=$('#installBtn'); if(b) b.hidden=true; });
 
 </script>
+<div class="sy-pill" id="syPill"></div>
 <button class="fab-save" id="fabSave" title="Sauvegarde complète" aria-label="Sauvegarde complète">💾</button>
 <nav class="bottombar" id="bottombar">
   <button data-view="cards"><span class="bi">🏔</span>Courses</button>
