@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guide 2.0</title>
+<title>Guide Pro</title>
 <meta name="theme-color" content="#19242c">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Guide 2.0">
+<meta name="apple-mobile-web-app-title" content="Guide Pro">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -511,8 +511,8 @@ border:1.5px solid rgba(0,0,0,.13);border-radius:9px;background:#fff url("data:i
   <div class="head-inner">
     <button class="cgc-link" id="cgcOpenTop">Conditions générales ↗</button>
     <div class="brand">
-      <h1>Guide&nbsp;2.0</h1>
-      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v127</span></span>
+      <h1>Guide&nbsp;Pro</h1>
+      <span class="sub">UIAGM &nbsp;·&nbsp; <span id="vtag" style="opacity:.75;font-size:10.5px">version 2026-06-24 · v128</span></span>
     </div>
   </div>
 </header>
@@ -1651,7 +1651,7 @@ function devisPDF(c){
 const BK_PREFIXES=['matedit:','fraisedit:','ms:'];
 const BK_KEYS=['sorties-v1','factures-v1'];
 function collectAllData(){
-  const data={_meta:{app:'Guide 2.0', date:new Date().toISOString(), version:(document.getElementById('vtag')||{}).textContent||''}, keys:{}};
+  const data={_meta:{app:'Guide Pro', date:new Date().toISOString(), version:(document.getElementById('vtag')||{}).textContent||''}, keys:{}};
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
     if(BK_KEYS.includes(k) || BK_PREFIXES.some(p=>k.indexOf(p)===0)){
@@ -1665,7 +1665,7 @@ function doFullBackup(){
   const n=Object.keys(data.keys).length;
   const a=document.createElement('a');
   a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,1));
-  a.download='guide20-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';
+  a.download='guidepro-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';
   a.click();
   return n;
 }
@@ -2559,7 +2559,7 @@ function renderKnots(){
         +'</div></label>';
     });
   });
-  $('#knList').innerHTML=html+'<div class="kn-credit">Illustrations de nœuds : Wikimedia Commons (licences libres) · Schémas relais/mouflage : Guide 2.0. Les images nécessitent une connexion.</div>';
+  $('#knList').innerHTML=html+'<div class="kn-credit">Illustrations de nœuds : Wikimedia Commons (licences libres) · Schémas relais/mouflage : Guide Pro. Les images nécessitent une connexion.</div>';
   $('#knInfo').textContent=KN_SEL.size+' sélectionné'+(KN_SEL.size>1?'s':'');
 }
 function openKnots(){
@@ -2623,7 +2623,7 @@ function knotsPDF(items, client){
   +'<p class="dev">'+(client?'Préparé pour '+esc2(client)+' · ':'')+today+' · '+items.length+' techniques</p>'
   +body
   +'<div class="warn"><b>Important :</b> ce mémo accompagne la formation pratique avec votre guide — il ne la remplace pas. Chaque nœud doit être appris, vérifié et répété sous supervision avant toute utilisation autonome.</div>'
-  +'<div style="font-size:9.5px;color:#999;margin-top:6px">Illustrations de nœuds : Wikimedia Commons (licences libres). Schémas relais/mouflage : Guide 2.0.</div>'
+  +'<div style="font-size:9.5px;color:#999;margin-top:6px">Illustrations de nœuds : Wikimedia Commons (licences libres). Schémas relais/mouflage : Guide Pro.</div>'
   +'<div class="foot">'+esc2(GUIDE_INFO.nom)+' · '+esc2(GUIDE_INFO.titre)+' · '+esc2(GUIDE_INFO.tel)+' · '+esc2(GUIDE_INFO.email)+'</div>'
   +'</body></html>';
   printDoc(html);
